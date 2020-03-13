@@ -57,6 +57,10 @@
 //Animation
 #include "cSimpleAssimpSkinnedMeshLoader_OneMesh.h"
 
+//AI
+#include "AIManager.h"
+#include "Coordinator.h"
+
 // Used to visualize the attenuation of the lights...
 #include "LightManager/cLightHelper.h"
 

@@ -82,6 +82,10 @@ std::vector<nPhysics::iPhysicsComponent*> g_vec_pGameComponentObjects;
 std::vector<iObject*> g_vec_pClothObjects;
 std::map<std::string /*FriendlyName*/, iObject*> g_map_GameObjectsByFriendlyName;
 
+//AI
+Coordinator* gCoordinator;
+AIManager* gAIManager;
+
 // returns NULL (0) if we didn't find it.
 iObject* pFindObjectByFriendlyName(std::string name);
 iObject* pFindObjectByFriendlyNameMap(std::string name);

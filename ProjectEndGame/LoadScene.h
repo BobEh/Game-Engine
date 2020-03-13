@@ -273,6 +273,12 @@ int LoadTextures()
 
 int LoadObjects()
 {
+	//AI
+	gAIManager = new AIManager();
+	gCoordinator = new Coordinator();
+
+	//Objects
+
 	iObject* pCloth = pFactory->CreateObject("cloth", nPhysics::eComponentType::cloth);
 	pCloth->setMeshName("sphere");
 	pCloth->setFriendlyName("sphere");	// We use to search 

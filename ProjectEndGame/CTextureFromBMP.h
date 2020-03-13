@@ -23,11 +23,22 @@ typedef unsigned char uchar;
 class CTextureFromBMP
 {
 public:
+	enum class eTextureStatus
+	{
+		error,
+		not_loaded,
+		ready_to_goto_gpu,
+		on_gpu
+	};
 	CTextureFromBMP();
 	~CTextureFromBMP();
 	// Returns true if able to load texture and store it
 	// Updated: December 2010 for ATI cards, too!
-	bool CreateNewTextureFromBMPFile2( std::string textureName, std::string fileNameFullPath, /*GLenum textureUnit,*/ bool bGenerateMIPMap );		
+	bool CreateNewTextureFromBMPFile2( std::string textureName, std::string fileNameFullPath, /*GLenum textureUnit,*/ bool bGenerateMIPMap );	
+
+	bool load_texture_file(std::string textureName, std::string fileNameFullPath, /*GLenum textureUnit,*/ bool bGenerateMIPMap);
+
+	bool push_texture_to_GPU();
 
 	// _____  _     _                        _     _                         
 	//|_   _|| |_  (_) ___  _ __  __ _  _ _ | |_  (_) ___  _ _   ___ __ __ __
@@ -96,15 +107,17 @@ public:
 
 	C24BitBMPpixel getPixelAtRowColumn(unsigned int row, unsigned int column );
 	C24BitBMPpixel getPixelAtUV( float U, float V );
-
+	eTextureStatus status;
+	std::string m_textureName;
+	std::string m_fileNameFullPath;
 private:
+	
 	// The actual image information
 	C24BitBMPpixel* m_p_theImages;	
 	//C32BitBMPpixel* m_p_theImages32;	
 	
 	GLuint m_textureNumber;				// The texture number
-	std::string m_textureName;
-	std::string m_fileNameFullPath;
+
 	//GLenum m_textureUnit;				// The actual texture unit it's loaded to
 	GLint m_oldTextureEnvironmentMode;
 	bool m_bIsCubeMap;

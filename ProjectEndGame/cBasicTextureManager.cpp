@@ -9,6 +9,40 @@ void cBasicTextureManager::SetBasePath(std::string basepath)
 }
 
 
+int cBasicTextureManager::push_loaded_textures_to_gpu()
+{
+	int count = 0;
+	for (auto& x : m_map_TexNameToTexture)
+	{
+		if (x.second->status == CTextureFromBMP::eTextureStatus::ready_to_goto_gpu)
+		{
+			if (!x.second->push_texture_to_GPU())
+			{
+				x.second->status = CTextureFromBMP::eTextureStatus::error;
+				continue;
+			}
+			count++;
+		}
+	}
+	return count;
+}
+
+bool cBasicTextureManager::Create2DTextureFromBMPFile_threaded(std::string textureFileName, bool bGenerateMIPMap)
+{
+	sTextureThreadData* data = new sTextureThreadData();
+
+	data->texture = new CTextureFromBMP();
+	data->texture->m_textureName = textureFileName;
+	data->texture->m_fileNameFullPath = this->m_basePath + "\\" + textureFileName;
+
+	this->m_map_TexNameToTexture[textureFileName] = data->texture;
+
+	std::thread thread(load_texture_threaded_function, data);
+	thread.detach();
+
+	return false;
+}
+
 bool cBasicTextureManager::Create2DTextureFromBMPFile( std::string textureFileName, bool bGenerateMIPMap )
 {
 	std::string fileToLoadFullPath = this->m_basePath + "/" + textureFileName;

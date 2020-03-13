@@ -30,9 +30,11 @@ namespace phys
 			cNode(const sSoftBodyNodeDef& nodeDef);
 			inline bool IsFixed() { return Mass == 0.0f; }
 			std::vector<cSpring*> Springs;
+			bool IsNeighbor(cNode* other);
 			float Radius;
 			float Mass;
 			glm::vec3 Position;
+			glm::vec3 PreviousPosition;
 			glm::vec3 Velocity;
 			glm::vec3 Acceleration;
 
@@ -58,6 +60,8 @@ namespace phys
 
 		virtual void ClearAccelerations();
 		void Integrate(float deltaTime, const glm::vec3& gravity);
+		bool Collide(cNode* bodyA, cNode* bodyB);
+		bool CollideNodeNode(cNode* bodyA, cNode* bodyB);
 
 		size_t NumNodes();
 		bool GetNodeRadius(size_t index, float& radiusOut);

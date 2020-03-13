@@ -7,7 +7,7 @@
 
 namespace phys
 {
-	cWorld::cWorld() : mDeltaTime(0.03f), mGravity(glm::vec3(0.0f,1.0f,0.0f))
+	cWorld::cWorld() : mDeltaTime(0.03f), mGravity(glm::vec3(0.0f,-1.0f,0.0f))
 	{
 		// TODO: The constructor should initialize all
 		//       internal variables to reasonable values

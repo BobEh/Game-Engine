@@ -295,11 +295,11 @@ int LoadObjects()
 	nPhysics::sClothDef physicsCloth;
 	physicsCloth.CornerA = glm::vec3(0.0f, 40.0f, 0.0f);
 	physicsCloth.CornerB = glm::vec3(-10.0f, 40.0f, 0.0f);
-	physicsCloth.DownDirection = glm::vec3(0.0f, -1.0f, 0.0f);
-	physicsCloth.NodeMass = 1.0f;
+	physicsCloth.DownDirection = glm::vec3(0.0f, 1.0f, 0.0f);
+	physicsCloth.NodeMass = 0.5f;
 	physicsCloth.NumNodesAcross = 4;
 	physicsCloth.NumNodesDown = 4;
-	physicsCloth.SpringConstant = 1.0f;
+	physicsCloth.SpringConstant = 20.0f;
 	nPhysics::iClothComponent* pClothPhysics = physicsFactory->CreateCloth(physicsCloth);
 	g_vec_pGameComponentObjects.push_back(pClothPhysics);
 	pCloth->SetComponent(pClothPhysics);
@@ -383,7 +383,7 @@ int LoadObjects()
 	//pSphere->SetMassType(0);
 	nPhysics::sBallDef physicsBall;
 	physicsBall.Mass = 1.0f;
-	physicsBall.Position = glm::vec3(0.0f, 50.0f, 0.0f);
+	physicsBall.Position = glm::vec3(10.0f, 50.0f, 0.0f);
 	physicsBall.Radius = 1.0f;
 	physicsBall.Angle = 1.0f;
 	physicsBall.Rotation = glm::vec3(1.0f, 1.0f, 1.0f);
@@ -394,7 +394,7 @@ int LoadObjects()
 	::g_vec_pGameObjects.push_back(pSphere);
 	physicsWorld->AddComponent(pSphere->GetComponent());
 
-	for (int i = 0; i < 12; i++)
+	for (int i = 0; i < 3; i++)
 	{
 		iObject* pAnotherSphere = pFactory->CreateObject("sphere", nPhysics::eComponentType::ball);
 		float scaleRadius = randInRange(1.0f, 5.0f);

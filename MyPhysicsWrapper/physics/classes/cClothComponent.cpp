@@ -24,14 +24,16 @@ namespace nPhysics
 			for (size_t idxAcross = 0; idxAcross < theClothDef.NumNodesAcross; idxAcross++)
 			{
 				
-				physDef.Nodes[idxNode].Position = theClothDef.CornerA + sepAcross * (float)idxAcross + sepDown * (float)idxDown;
+				physDef.Nodes[idxNode].Position = theClothDef.CornerA + sepAcross * (float)idxAcross - sepDown * (float)idxDown;
 				physDef.Nodes[idxNode].Mass = theClothDef.NodeMass;
 				idxNode++;
 			}
 		}
-		// corner mass to zero
-		physDef.Nodes[0].Mass = 0.0f;
-		physDef.Nodes[theClothDef.NumNodesAcross - 1].Mass = 0.0f;
+		// top row mass to zero
+		for (size_t idxAcross = 0; idxAcross < theClothDef.NumNodesAcross; idxAcross++)
+		{
+			physDef.Nodes[idxAcross].Mass = 0.0f;
+		}
 		// spring info
 		for (size_t idxDown = 0; idxDown < theClothDef.NumNodesDown - 1; idxDown++)		
 		{

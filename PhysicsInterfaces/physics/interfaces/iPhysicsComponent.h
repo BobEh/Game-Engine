@@ -24,7 +24,7 @@ namespace nPhysics
 
 		virtual void GetPosition(glm::vec3& positionOut) = 0;
 		virtual void SetPosition(glm::vec3 positionIn) = 0;
-
+		virtual void GetScale(float& scaleOut) = 0;
 		virtual void GetVelocity(glm::vec3& velocityOut) = 0;
 
 		virtual size_t NumNodes() = 0;

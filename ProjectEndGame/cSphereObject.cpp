@@ -59,7 +59,9 @@ glm::quat cSphereObject::getRotationXYZ()
 }
 float cSphereObject::getScale()
 {
-	return this->_scale;
+	float scale = 1.0f;
+	this->GetComponent()->GetScale(scale);
+	return scale;
 }
 glm::mat4 cSphereObject::getMatWorld()
 {

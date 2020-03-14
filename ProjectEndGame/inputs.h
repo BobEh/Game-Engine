@@ -251,8 +251,8 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 	const float CAMERASPEED = 1.0f;
 	const float MOVESPEED = 2.0f;
 
-	//iObject* pCurrentObject = pFindObjectByFriendlyName("mainCharacter");
-	iObject* pCurrentObject = g_vec_pGameObjects.at(0);
+	iObject* pCurrentObject = pFindObjectByFriendlyName("mainCharacter");
+	//iObject* pCurrentObject = g_vec_pGameObjects.at(0);
 
 	if (!isShiftKeyDownByAlone(mods) && !isCtrlKeyDownByAlone(mods))
 	{

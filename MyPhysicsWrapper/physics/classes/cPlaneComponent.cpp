@@ -11,7 +11,7 @@ void nPhysics::cPlaneComponent::GetTransform(glm::mat4& transformOut)
 
 void nPhysics::cPlaneComponent::GetPosition(glm::vec3& positionOut)
 {
-	positionOut = position;
+	mBody->GetPosition(positionOut);
 }
 
 void nPhysics::cPlaneComponent::SetPosition(glm::vec3 positionIn)
@@ -27,6 +27,11 @@ void nPhysics::cPlaneComponent::ApplyForce(const glm::vec3& force)
 void nPhysics::cPlaneComponent::GetVelocity(glm::vec3& velocityOut)
 {
 	velocityOut = velocity;
+}
+
+void nPhysics::cPlaneComponent::GetScale(float& scaleOut)
+{
+	mBody->GetScale(scaleOut);
 }
 
 int nPhysics::cPlaneComponent::GetMassType()

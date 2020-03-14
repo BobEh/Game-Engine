@@ -114,6 +114,16 @@ namespace phys
 			mNodes[idx]->Acceleration.z = 0.0f;
 		}
 	}
+	//random function
+	template <class T>
+	T randInRange(T min, T max)
+	{
+		double value =
+			min + static_cast <double> (rand())
+			/ (static_cast <double> (RAND_MAX / (static_cast<double>(max - min))));
+		return static_cast<T>(value);
+	};
+	glm::vec3 wind = glm::vec3(0.0f);
 	void cSoftBody::Integrate(float dt, const glm::vec3& gravity)
 	{
 		size_t numNodes = mNodes.size();
@@ -121,6 +131,26 @@ namespace phys
 		for (size_t idx = 0; idx < numNodes; idx++)
 		{			
 			mNodes[idx]->Acceleration = gravity;
+		}
+		// step 1.5 - wind
+		glm::vec3 windAddition;
+		float windClamp = 2.0f;
+		if (wind.x > windClamp || wind.z > windClamp)
+		{
+			windAddition = glm::vec3(randInRange(-0.2f, 0.02f), 0.0f, randInRange(-0.2f, 0.02f));
+		}
+		else if (wind.x < -windClamp || wind.z < -windClamp)
+		{
+			windAddition = glm::vec3(randInRange(-0.02f, 0.2f), 0.0f, randInRange(-0.02f, 0.2f));
+		}
+		else
+		{
+			windAddition = glm::vec3(randInRange(-0.2f, 0.2f), 0.0f, randInRange(-0.2f, 0.2f));
+		}
+		wind = wind + windAddition;
+		for (size_t idx = 0; idx < numNodes; idx++)
+		{
+			mNodes[idx]->Acceleration += wind;
 		}
 		// step 2 - Accumulate spring forces based on current positions
 		size_t numSprings = mSprings.size();
@@ -329,7 +359,7 @@ namespace phys
 		for (size_t idx = 0; idx < this->mNodes.size(); idx++)
 		{			
 			float distanceSphereToNode = glm::distance(spherePosition, mNodes[idx]->Position);
-			float collisionDistance = sphereRadius + mNodes[idx]->Radius + 2.0f;
+			float collisionDistance = sphereRadius + mNodes[idx]->Radius;
 			if (distanceSphereToNode < collisionDistance)
 			{
 				closeNodes.push_back(mNodes[idx]);

@@ -280,7 +280,7 @@ int LoadObjects()
 	//Objects
 
 	iObject* pCloth = pFactory->CreateObject("cloth", nPhysics::eComponentType::cloth);
-	pCloth->setMeshName("cube");
+	pCloth->setMeshName("sphere");
 	pCloth->setFriendlyName("sphere");	// We use to search 
 	pCloth->setPositionXYZ(glm::vec3(0.0f, 50.0f, 0.0f));
 	pCloth->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
@@ -305,8 +305,8 @@ int LoadObjects()
 	physicsCloth.NodeMass = 0.6f;
 	physicsCloth.NumNodesAcross = 40;
 	physicsCloth.NumNodesDown = 20;
-	physicsCloth.SpringConstant = 55.0f;
-	physicsCloth.NodeRadius = 0.8f;
+	physicsCloth.SpringConstant = 75.0f;
+	physicsCloth.NodeRadius = 1.0f;
 	nPhysics::iClothComponent* pClothPhysics = physicsFactory->CreateCloth(physicsCloth);
 	g_vec_pGameComponentObjects.push_back(pClothPhysics);
 	pCloth->SetComponent(pClothPhysics);
@@ -314,12 +314,13 @@ int LoadObjects()
 	physicsWorld->AddComponent(pCloth->GetComponent());
 
 	iObject* pMainCharacter = pFactory->CreateObject("sphere", nPhysics::eComponentType::ball);
+	
 	nPhysics::sBallDef characterPhysics;
-	characterPhysics.Mass = pMainCharacter->getScale();
+	characterPhysics.Mass = 1.0;
 	characterPhysics.Position = glm::vec3(0.0f, 50.0f, 0.0f);
 	characterPhysics.Radius = 5.0f;
 	characterPhysics.Rotation = glm::vec3(0.0f, 0.0f, 0.0f);
-	characterPhysics.Scale = glm::vec3(1.0f, 1.0f, 1.0f);
+	characterPhysics.Scale = glm::vec3(0.05f, 0.05f, 0.05f);
 	characterPhysics.Angle = 1.0f;
 	nPhysics::iBallComponent* pCharacterPhysics = physicsFactory->CreateBall(characterPhysics);
 	g_vec_pGameComponentObjects.push_back(pCharacterPhysics);
@@ -356,7 +357,7 @@ int LoadObjects()
 	pMainCharacter->setTexture("sandTexture_1024.bmp", 2);
 	pMainCharacter->setTextureRatio(1, 1);
 	pMainCharacter->setTransprancyValue(1.0f);
-	//g_vec_pGameObjects.push_back(pMainCharacter);
+	g_vec_pGameObjects.push_back(pMainCharacter);
 	physicsWorld->AddComponent(pMainCharacter->GetComponent());
 	if (mainCharacterMeshInfo)
 	{
@@ -374,7 +375,7 @@ int LoadObjects()
 	pSphere->setFriendlyName("sphere");	// We use to search 
 	pSphere->setPositionXYZ(glm::vec3(0.0f, 50.0f, 0.0f));
 	pSphere->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
-	pSphere->setScale(4.0f);
+	pSphere->setScale(1.0f);
 	pSphere->setObjectColourRGBA(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 	//pSphere->setDebugColour(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 	pSphere->setVelocity(glm::vec3(0.0f, 0.0f, 0.0f));
@@ -389,12 +390,12 @@ int LoadObjects()
 	pSphere->setIsWireframe(false);
 	//pSphere->SetMassType(0);
 	nPhysics::sBallDef physicsBall;
-	physicsBall.Mass = 4.0f;
+	physicsBall.Mass = 1.0f;
 	physicsBall.Position = glm::vec3(10.0f, 50.0f, 0.0f);
-	physicsBall.Radius = 4.0f;
+	physicsBall.Radius = 1.0f;
 	physicsBall.Angle = 1.0f;
 	physicsBall.Rotation = glm::vec3(1.0f, 1.0f, 1.0f);
-	physicsBall.Scale = glm::vec3(4.0f, 4.0f, 4.0f);
+	physicsBall.Scale = glm::vec3(1.0f, 1.0f, 1.0f);
 	nPhysics::iBallComponent* pSpherePhysics = physicsFactory->CreateBall(physicsBall);
 	g_vec_pGameComponentObjects.push_back(pSpherePhysics);
 	pSphere->SetComponent(pSpherePhysics);
@@ -554,7 +555,7 @@ int LoadObjects()
 	pFloor->setMeshName("floor");
 	pFloor->setFriendlyName("floor");	// We use to search 
 	pFloor->setPositionXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
-	pFloor->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
+	pFloor->setRotationXYZ(glm::vec3(glm::radians(90.0f), 0.0f, 0.0f));
 	pFloor->setScale(1.0f);
 	pFloor->setObjectColourRGBA(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 	pFloor->setAccel(glm::vec3(0.0f, 0.0f, 0.0f));

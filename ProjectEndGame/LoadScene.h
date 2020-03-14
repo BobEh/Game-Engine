@@ -357,7 +357,7 @@ int LoadObjects()
 	pMainCharacter->setTexture("sandTexture_1024.bmp", 2);
 	pMainCharacter->setTextureRatio(1, 1);
 	pMainCharacter->setTransprancyValue(1.0f);
-	g_vec_pGameObjects.push_back(pMainCharacter);
+	g_vec_pCharacterObjects.push_back(pMainCharacter);
 	physicsWorld->AddComponent(pMainCharacter->GetComponent());
 	if (mainCharacterMeshInfo)
 	{

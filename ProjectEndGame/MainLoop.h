@@ -211,16 +211,38 @@ void DrawSecondPass()
 	// set pass number back to 0 to render the rest of the scene
 	glUniform1i(passNumber_UniLoc, 0);
 
-	for (int index = 0; index != ::g_vec_pGameObjects.size(); index++)
+	for (int index = 0; index != ::g_vec_pCharacterObjects.size(); index++)
 	{
 		glm::mat4 matModel = glm::mat4(1.0f);
 
-		iObject* pCurrentObject = ::g_vec_pGameObjects[index];
+		iObject* pCurrentObject = ::g_vec_pCharacterObjects[index];
 
 		//glm::vec3 resetThePosition = glm::vec3(0.0f, 0.0f, 0.0f);
 		//pCurrentObject->GetComponent()->GetPosition(resetThePosition);
 
 		//pCurrentObject->setPositionXYZ(resetThePosition);
+		glm::vec3 currentVelocity;
+		pCurrentObject->GetVelocity(currentVelocity);
+		if (currentVelocity.x == 0.0f && currentVelocity.y == 0.0f)
+		{
+			currentVelocity += 0.000001f;
+		}
+		glm::vec3 normalizedVelocity = glm::normalize(currentVelocity);
+		glm::quat orientation = glm::quatLookAt(normalizedVelocity, glm::vec3(0.0f, 1.0f, 0.0f));
+		orientation.x = 0.0f;
+		orientation.z = 0.0f;
+		pCurrentObject->setRotationXYZ(orientation);
+
+		DrawObject(matModel, pCurrentObject,
+			shaderProgID, pTheVAOManager);
+
+	}//for (int index...
+
+	for (int index = 0; index != ::g_vec_pGameObjects.size(); index++)
+	{
+		glm::mat4 matModel = glm::mat4(1.0f);
+
+		iObject* pCurrentObject = ::g_vec_pGameObjects[index];
 
 		DrawObject(matModel, pCurrentObject,
 			shaderProgID, pTheVAOManager);

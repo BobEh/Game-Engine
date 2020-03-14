@@ -80,6 +80,7 @@ std::vector<iObject*> g_vec_pEnvironmentObjects;
 std::vector<iObject*> g_vec_pGameFBOObjects;
 std::vector<nPhysics::iPhysicsComponent*> g_vec_pGameComponentObjects;
 std::vector<iObject*> g_vec_pClothObjects;
+std::vector<iObject*> g_vec_pCharacterObjects;
 std::map<std::string /*FriendlyName*/, iObject*> g_map_GameObjectsByFriendlyName;
 
 //AI

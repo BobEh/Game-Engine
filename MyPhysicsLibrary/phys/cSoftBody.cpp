@@ -33,7 +33,7 @@ namespace phys
 		}
 		
 	}
-	cSoftBody::cNode::cNode(const sSoftBodyNodeDef& nodeDef) : Position(nodeDef.Position), PreviousPosition(glm::vec3(0.0f,0.0f,0.0f)), Mass(nodeDef.Mass), Velocity(0.0f,0.0f,0.0f), Acceleration(0.0f,0.0f,0.0f), Radius(1.0f)
+	cSoftBody::cNode::cNode(const sSoftBodyNodeDef& nodeDef) : Position(nodeDef.Position), PreviousPosition(glm::vec3(0.0f,0.0f,0.0f)), Mass(nodeDef.Mass), Velocity(0.0f,0.0f,0.0f), Acceleration(0.0f,0.0f,0.0f), Radius(nodeDef.Radius)
 	{
 
 	}
@@ -165,7 +165,7 @@ namespace phys
 			return false;
 		}
 
-		return CollideNodeNode(bodyA, bodyB);
+		//return CollideNodeNode(bodyA, bodyB);
 	}
 	bool cSoftBody::CollideNodeNode(cNode* bodyA, cNode* bodyB)
 	{
@@ -317,6 +317,8 @@ namespace phys
 		std::vector<cNode*> closeNodes;
 		glm::vec3 spherePosition;
 		sphere->GetPosition(spherePosition);
+		glm::vec3 spherePreviousPosition;
+		sphere->GetPreviousPosition(spherePreviousPosition);
 		float sphereRadius;
 		sphere->GetRadius(sphereRadius);
 		float sphereMass;
@@ -327,7 +329,7 @@ namespace phys
 		for (size_t idx = 0; idx < this->mNodes.size(); idx++)
 		{			
 			float distanceSphereToNode = glm::distance(spherePosition, mNodes[idx]->Position);
-			float collisionDistance = sphereRadius + mNodes[idx]->Radius + 5.0f;
+			float collisionDistance = sphereRadius + mNodes[idx]->Radius + 2.0f;
 			if (distanceSphereToNode < collisionDistance)
 			{
 				closeNodes.push_back(mNodes[idx]);
@@ -336,12 +338,12 @@ namespace phys
 
 		for (size_t idx = 0; idx < closeNodes.size(); idx++)
 		{
-			glm::vec3 cA = spherePosition;
+			glm::vec3 cA = spherePreviousPosition;
 			glm::vec3 cB = closeNodes[idx]->PreviousPosition;
-			glm::vec3 vA = spherePosition - spherePosition;
+			glm::vec3 vA = spherePosition - spherePreviousPosition;
 			glm::vec3 vB = closeNodes[idx]->Position - closeNodes[idx]->PreviousPosition;
 			float rA = sphereRadius;
-			float rB = mNodes[idx]->Radius;
+			float rB = closeNodes[idx]->Radius;
 			float t(0.0f);
 
 			int result = nCollide::intersect_moving_sphere_sphere(cA, rA, vA, cB, rB, vB, t);
@@ -354,25 +356,25 @@ namespace phys
 			// get the masses
 			
 			float ma = sphereMass;
-			float mb = mNodes[idx]->Mass;
+			float mb = closeNodes[idx]->Mass;
 			float mt = ma + mb;
 
 			if (result == -1)
 			{
 				// already colliding
 
-				float initialDistance = glm::distance(spherePosition, mNodes[idx]->PreviousPosition);
+				float initialDistance = glm::distance(spherePreviousPosition, closeNodes[idx]->PreviousPosition);
 				float targetDistance = rA + rB;
 
-				glm::vec3 impulseToA = glm::normalize(spherePosition - mNodes[idx]->PreviousPosition);
+				glm::vec3 impulseToA = glm::normalize(spherePreviousPosition - closeNodes[idx]->PreviousPosition);
 				impulseToA *= (targetDistance - initialDistance);
 
 				// just push the cloth out of the way
 				//bodyA->mPosition = bodyA->mPreviousPosition;
-				mNodes[idx]->Position = mNodes[idx]->PreviousPosition;
+				closeNodes[idx]->Position = closeNodes[idx]->PreviousPosition;
 				// apply the impulse
 				//bodyA->mVelocity += impulseToA * (mb / mt);
-				mNodes[idx]->Velocity -= impulseToA * (ma / mt);
+				closeNodes[idx]->Velocity -= impulseToA * (ma / mt);
 
 				//integrate
 				//IntegrateRigidBody(bodyA, mDeltaTime);
@@ -386,14 +388,14 @@ namespace phys
 			// everybody to ones
 			// just push the cloth
 			//bodyA->mPosition = bodyA->mPreviousPosition + vA * t;
-			mNodes[idx]->Position = mNodes[idx]->PreviousPosition + vB * t;
+			closeNodes[idx]->Position = closeNodes[idx]->PreviousPosition + vB * t;
 
 			vA = sphereVelocity;
-			vB = mNodes[idx]->Velocity;
+			vB = closeNodes[idx]->Velocity;
 
 			float c = 0.2f;
 			//bodyA->mVelocity = (c * mb * (vB - vA) + ma * vA + mb * vB) / mt;
-			mNodes[idx]->Velocity = (c * ma * (vA - vB) + ma * vA + mb * vB) / mt;
+			closeNodes[idx]->Velocity = ((c * ma * (vA - vB) + ma * vA + mb * vB)) / mt;
 
 			// integrate
 			//IntegrateRigidBody(bodyA, mDeltaTime * (1.0f - t));

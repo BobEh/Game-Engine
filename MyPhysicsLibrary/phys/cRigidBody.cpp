@@ -93,6 +93,10 @@ namespace phys
 	{
 		this->mPosition = positionIn;
 	}
+	void cRigidBody::GetPreviousPosition(glm::vec3& positionOut)
+	{
+		positionOut = mPreviousPosition;
+	}
 	void cRigidBody::GetVelocity(glm::vec3& velocityOut)
 	{
 		velocityOut = this->mVelocity;

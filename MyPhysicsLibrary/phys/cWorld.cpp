@@ -67,12 +67,9 @@ namespace phys
 		// Step 3: Clear the accelerations!
 		for (size_t idx = 0; idx < numBodies; idx++)
 		{
-			//glm::set(mBodies[idx]->mAcceleration, 0.0f, 0.0f, 0.0f);
-			//mBodies[idx]->mAcceleration.x = 0.0f;
-			//mBodies[idx]->mAcceleration.y = 0.0f;
-			//mBodies[idx]->mAcceleration.z = 0.0f;
 			mBodies[idx]->ClearAccelerations();
 		}
+		// I don't have the collision listener working....
 		// Step 4: Tell everybody about the collisions
 		//if (mCollisionListener)
 		//{
@@ -158,9 +155,9 @@ namespace phys
 		{
 			return CollideRigid(dynamic_cast<cRigidBody*>(bodyA), dynamic_cast<cRigidBody*>(bodyB));
 		}
-		else if (typeA == eBodyType::rigid && typeB == eBodyType::soft)
+		else if (typeA == eBodyType::soft && typeB == eBodyType::rigid)
 		{
-			return CollideSoft(dynamic_cast<cRigidBody*>(bodyA), dynamic_cast<cSoftBody*>(bodyB));
+			return CollideSoft(dynamic_cast<cSoftBody*>(bodyA), dynamic_cast<cRigidBody*>(bodyB));
 		}
 		return false;
 	}
@@ -205,26 +202,26 @@ namespace phys
 		return false;
 	}
 
-	bool cWorld::CollideSoft(cRigidBody* bodyA, cSoftBody* bodyB)
+	bool cWorld::CollideSoft(cSoftBody* bodyA, cRigidBody* bodyB)
 	{
 		// TODO:
 		// 
 		// 1) Based on shape type, determine which specific collision handling
 		//    method to use.
 		// 2) Cast up the shapes, call the methods, return the result.
-		if (bodyA->IsStatic())
+		if (bodyB->IsStatic())
 		{
 			return false;
 		}
-		eShapeType shapeTypeA = bodyA->GetShapeType();
+		eShapeType shapeTypeB = bodyB->GetShapeType();
 
-		if (shapeTypeA == eShapeType::plane)
+		if (shapeTypeB == eShapeType::plane)
 		{
 			return false;
 		}
-		if (shapeTypeA == eShapeType::sphere)
+		if (shapeTypeB == eShapeType::sphere)
 		{
-			bool result = bodyB->CollideSphereCloth(bodyA);
+			bool result = bodyA->CollideSphereCloth(bodyB);
 			return result;
 		}
 		return false;

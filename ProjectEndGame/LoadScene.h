@@ -280,11 +280,11 @@ int LoadObjects()
 	//Objects
 
 	iObject* pCloth = pFactory->CreateObject("cloth", nPhysics::eComponentType::cloth);
-	pCloth->setMeshName("sphere");
+	pCloth->setMeshName("cube");
 	pCloth->setFriendlyName("sphere");	// We use to search 
 	pCloth->setPositionXYZ(glm::vec3(0.0f, 50.0f, 0.0f));
 	pCloth->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
-	pCloth->setScale(1.0f);
+	pCloth->setScale(0.2f);
 	pCloth->setObjectColourRGBA(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 	//pCloth->setDebugColour(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 	pCloth->setVelocity(glm::vec3(0.0f, 0.0f, 0.0f));
@@ -299,13 +299,14 @@ int LoadObjects()
 	pCloth->setIsWireframe(false);
 	//pSphere->SetMassType(0);
 	nPhysics::sClothDef physicsCloth;
-	physicsCloth.CornerA = glm::vec3(0.0f, 5.0f, 0.0f);
-	physicsCloth.CornerB = glm::vec3(-5.0f, 5.0f, 0.0f);
+	physicsCloth.CornerA = glm::vec3(5.0f, 20.0f, 0.0f);
+	physicsCloth.CornerB = glm::vec3(-20.0f, 20.0f, 0.0f);
 	physicsCloth.DownDirection = glm::vec3(0.0f, 1.0f, 0.0f);
-	physicsCloth.NodeMass = 0.5f;
-	physicsCloth.NumNodesAcross = 4;
-	physicsCloth.NumNodesDown = 4;
-	physicsCloth.SpringConstant = 20.0f;
+	physicsCloth.NodeMass = 0.6f;
+	physicsCloth.NumNodesAcross = 40;
+	physicsCloth.NumNodesDown = 20;
+	physicsCloth.SpringConstant = 55.0f;
+	physicsCloth.NodeRadius = 0.8f;
 	nPhysics::iClothComponent* pClothPhysics = physicsFactory->CreateCloth(physicsCloth);
 	g_vec_pGameComponentObjects.push_back(pClothPhysics);
 	pCloth->SetComponent(pClothPhysics);
@@ -373,7 +374,7 @@ int LoadObjects()
 	pSphere->setFriendlyName("sphere");	// We use to search 
 	pSphere->setPositionXYZ(glm::vec3(0.0f, 50.0f, 0.0f));
 	pSphere->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
-	pSphere->setScale(1.0f);
+	pSphere->setScale(4.0f);
 	pSphere->setObjectColourRGBA(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 	//pSphere->setDebugColour(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 	pSphere->setVelocity(glm::vec3(0.0f, 0.0f, 0.0f));
@@ -388,12 +389,12 @@ int LoadObjects()
 	pSphere->setIsWireframe(false);
 	//pSphere->SetMassType(0);
 	nPhysics::sBallDef physicsBall;
-	physicsBall.Mass = 1.0f;
+	physicsBall.Mass = 4.0f;
 	physicsBall.Position = glm::vec3(10.0f, 50.0f, 0.0f);
-	physicsBall.Radius = 1.0f;
+	physicsBall.Radius = 4.0f;
 	physicsBall.Angle = 1.0f;
 	physicsBall.Rotation = glm::vec3(1.0f, 1.0f, 1.0f);
-	physicsBall.Scale = glm::vec3(1.0f, 1.0f, 1.0f);
+	physicsBall.Scale = glm::vec3(4.0f, 4.0f, 4.0f);
 	nPhysics::iBallComponent* pSpherePhysics = physicsFactory->CreateBall(physicsBall);
 	g_vec_pGameComponentObjects.push_back(pSpherePhysics);
 	pSphere->SetComponent(pSpherePhysics);
@@ -424,7 +425,7 @@ int LoadObjects()
 		pAnotherSphere->setIsWireframe(false);
 		//pAnotherSphere->SetMassType(0);
 		nPhysics::sBallDef physicsAnotherBall;
-		physicsAnotherBall.Mass = 1.0f;
+		physicsAnotherBall.Mass = scaleRadius;
 		physicsAnotherBall.Position = glm::vec3(randInRange(-45.0f, 45.0f), randInRange(40.0f, 60.0f), randInRange(-45.0f, 45.0f));
 		physicsAnotherBall.Radius = scaleRadius;
 		physicsAnotherBall.Angle = 1.0f;

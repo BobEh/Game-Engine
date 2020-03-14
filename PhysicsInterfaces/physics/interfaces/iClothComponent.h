@@ -12,6 +12,7 @@ namespace nPhysics
 		size_t NumNodesDown;
 		float NodeMass;
 		float SpringConstant;
+		float NodeRadius;
 	};
 
 	class iClothComponent : public iPhysicsComponent

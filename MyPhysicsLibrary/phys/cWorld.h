@@ -98,7 +98,7 @@ namespace phys
 		// CollideSoft
 		// Entry point for collision detection.
 		// Returns the result of specific Collide[shapeA][ShapeB] methods.
-		bool CollideSoft(cRigidBody* bodyA, cSoftBody* bodyB);
+		bool CollideSoft(cSoftBody* bodyA, cRigidBody* bodyB);
 
 		// CollideSpherePlane
 		// Handles collision detection and reaction between a sphere and a plane.
@@ -118,7 +118,7 @@ namespace phys
 		// Handles collision detection and reaction between a sphere and a cloth.
 		// Returns true if a collision occured.
 		// Returns false if no collision occured.
-		bool CollideSphereCloth(cRigidBody* bodyA, cSoftBody* bodyB);
+		bool CollideSphereCloth(cSoftBody* bodyA, cRigidBody* bodyB);
 
 	private:
 

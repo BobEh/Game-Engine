@@ -13,6 +13,7 @@ namespace phys
 	{
 		glm::vec3 Position;
 		float Mass;
+		float Radius;
 	};
 	struct sSoftBodyDef
 	{

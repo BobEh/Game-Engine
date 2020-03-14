@@ -26,6 +26,7 @@ namespace nPhysics
 				
 				physDef.Nodes[idxNode].Position = theClothDef.CornerA + sepAcross * (float)idxAcross - sepDown * (float)idxDown;
 				physDef.Nodes[idxNode].Mass = theClothDef.NodeMass;
+				physDef.Nodes[idxNode].Radius = theClothDef.NodeRadius;
 				idxNode++;
 			}
 		}

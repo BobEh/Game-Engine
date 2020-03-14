@@ -30,6 +30,8 @@ namespace phys
 		// 0.f will result in a static rigid body.
 		// A positive value will result in a dynamic rigid body.
 		float Mass;
+		// Radius
+		float Radius;
 		// Position
 		// The initial position of the rigid body.
 		glm::vec3 Position;
@@ -101,6 +103,8 @@ namespace phys
 		virtual void GetPosition(glm::vec3& positionOut);
 		virtual void SetPosition(glm::vec3 positionIn);
 		virtual void GetVelocity(glm::vec3& velocityOut);
+		void GetRadius(float& radius);
+		void GetMass(float& mass);
 		virtual int GetMassType();
 		virtual void SetMassType(int physicsType);
 		virtual std::string GetPlaneType();
@@ -128,6 +132,8 @@ namespace phys
 		// Expected to be non-negative.
 		// A value of 0 infers a static rigid body.
 		float mMass;
+		//Radius
+		float mRadius;
 		// Inverse mass
 		// Stored for convenience.
 		// If mMass is 0, mInvMass will also be 0.

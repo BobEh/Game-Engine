@@ -5,6 +5,7 @@
 #include <physics\interfaces\iRigidBody.h>
 #include <vector>
 #include "cCollisionBody.h"
+#include "cRigidBody.h"
 
 namespace phys
 {
@@ -62,6 +63,7 @@ namespace phys
 		void Integrate(float deltaTime, const glm::vec3& gravity);
 		bool Collide(cNode* bodyA, cNode* bodyB);
 		bool CollideNodeNode(cNode* bodyA, cNode* bodyB);
+		bool CollideSphereCloth(cRigidBody* theSphere);
 
 		size_t NumNodes();
 		bool GetNodeRadius(size_t index, float& radiusOut);

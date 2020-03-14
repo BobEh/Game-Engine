@@ -7,7 +7,7 @@
 
 namespace phys
 {
-	cWorld::cWorld() : mDeltaTime(0.03f), mGravity(glm::vec3(0.0f,-1.0f,0.0f))
+	cWorld::cWorld() : mDeltaTime(0.03f), mGravity(glm::vec3(0.0f,-5.0f,0.0f))
 	{
 		// TODO: The constructor should initialize all
 		//       internal variables to reasonable values
@@ -144,7 +144,7 @@ namespace phys
 		body->mPreviousPosition = body->mPosition;
 
 		// Gaffer on games integration - Create a class called mIntegrator and add it to cWorld objects
-		std::cout << "In the integrator position X: " << body->mPosition.x << ", Y: " << body->mPosition.y << ", Z: " << body->mPosition.z << std::endl;
+		//std::cout << "In the integrator position X: " << body->mPosition.x << ", Y: " << body->mPosition.y << ", Z: " << body->mPosition.z << std::endl;
 		
 		mIntegrator.Euler(body->mPosition, body->mVelocity, body->mAcceleration, mGravity, dt);
 
@@ -156,15 +156,15 @@ namespace phys
 		eBodyType typeB = bodyB->GetBodyType();
 		if (typeA == eBodyType::rigid && typeB == eBodyType::rigid)
 		{
-			return Collide(dynamic_cast<cRigidBody*>(bodyA), dynamic_cast<cRigidBody*>(bodyB));
+			return CollideRigid(dynamic_cast<cRigidBody*>(bodyA), dynamic_cast<cRigidBody*>(bodyB));
 		}
-		else
+		else if (typeA == eBodyType::rigid && typeB == eBodyType::soft)
 		{
-			//IntegrateSoftBody(dynamic_cast<cSoftBody*>(body), dt);
+			return CollideSoft(dynamic_cast<cRigidBody*>(bodyA), dynamic_cast<cSoftBody*>(bodyB));
 		}
 		return false;
 	}
-	bool cWorld::Collide(cRigidBody* bodyA, cRigidBody* bodyB)
+	bool cWorld::CollideRigid(cRigidBody* bodyA, cRigidBody* bodyB)
 	{
 		// TODO:
 		// 
@@ -205,8 +205,32 @@ namespace phys
 		return false;
 	}
 
-	bool cWorld::CollideSpherePlane(cRigidBody* sphereBody, cSphere* sphereShape,
-		cRigidBody* planeBody, cPlane* planeShape)
+	bool cWorld::CollideSoft(cRigidBody* bodyA, cSoftBody* bodyB)
+	{
+		// TODO:
+		// 
+		// 1) Based on shape type, determine which specific collision handling
+		//    method to use.
+		// 2) Cast up the shapes, call the methods, return the result.
+		if (bodyA->IsStatic())
+		{
+			return false;
+		}
+		eShapeType shapeTypeA = bodyA->GetShapeType();
+
+		if (shapeTypeA == eShapeType::plane)
+		{
+			return false;
+		}
+		if (shapeTypeA == eShapeType::sphere)
+		{
+			bool result = bodyB->CollideSphereCloth(bodyA);
+			return result;
+		}
+		return false;
+	}
+
+	bool cWorld::CollideSpherePlane(cRigidBody* sphereBody, cSphere* sphereShape, cRigidBody* planeBody, cPlane* planeShape)
 	{
 		// TODO:
 		// 
@@ -256,7 +280,7 @@ namespace phys
 		glm::vec3 q;
 
 		int result = nCollide::intersect_moving_sphere_plane(c, r, v, n, d, t, q);
-		std::cout << "I hit the ground!!!! :O" << std::endl;
+		//std::cout << "I hit the ground!!!! :O" << std::endl;
 		if (result == 0)
 		{
 			// no collision
@@ -287,7 +311,7 @@ namespace phys
 		// lose some energy
 		glm::vec3 nComponent = glm::proj(sphereBody->mVelocity, planeShape->GetNormal());
 		// rewind
-		sphereBody->mVelocity -= nComponent * 0.2f;
+		sphereBody->mVelocity -= nComponent * 0.6f;
 
 		sphereBody->mPosition = (c + v * t);
 		//integrate

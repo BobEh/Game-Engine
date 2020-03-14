@@ -3,11 +3,11 @@
 
 namespace phys
 {
-	sRigidBodyDef::sRigidBodyDef() : Mass(0.0f), Position(glm::vec3(0.0f, 0.0f, 0.0f)), Velocity(glm::vec3(0.0f, 0.0f, 0.0f))
+	sRigidBodyDef::sRigidBodyDef() : Mass(0.0f), Position(glm::vec3(0.0f, 0.0f, 0.0f)), Velocity(glm::vec3(0.0f, 0.0f, 0.0f)), Radius(1.0f)
 	{
 
 	} 
-	cRigidBody::cRigidBody(const sRigidBodyDef& def, iShape* shape) : cCollisionBody(eBodyType::rigid), mShape(shape), mPosition(def.Position), mVelocity(def.Velocity), mMass(def.Mass), mRotation(def.Rotation), mAngle(def.Angle), mScale(def.Scale)
+	cRigidBody::cRigidBody(const sRigidBodyDef& def, iShape* shape) : cCollisionBody(eBodyType::rigid), mShape(shape), mPosition(def.Position), mVelocity(def.Velocity), mMass(def.Mass), mRotation(def.Rotation), mAngle(def.Angle), mScale(def.Scale), mRadius(def.Radius)
 	{
 		if (mMass == 0.0f)
 		{
@@ -96,6 +96,14 @@ namespace phys
 	void cRigidBody::GetVelocity(glm::vec3& velocityOut)
 	{
 		velocityOut = this->mVelocity;
+	}
+	void cRigidBody::GetRadius(float& radius)
+	{
+		radius = mRadius;
+	}
+	void cRigidBody::GetMass(float& mass)
+	{
+		mass = mMass;
 	}
 	std::string cRigidBody::GetPlaneType()
 	{

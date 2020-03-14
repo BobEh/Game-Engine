@@ -263,7 +263,7 @@ void cSphereObject::GetVelocity(glm::vec3& velocityOut)
 
 void cSphereObject::ApplyForce(const glm::vec3& force)
 {
-	//this->_component->ApplyForce(force);
+	this->_component->ApplyForce(force);
 }
 
 int cSphereObject::GetMassType()

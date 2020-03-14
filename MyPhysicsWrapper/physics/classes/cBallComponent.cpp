@@ -68,6 +68,7 @@ nPhysics::cBallComponent::cBallComponent(nPhysics::sBallDef theBallDef)
 	physDef.Rotation = theBallDef.Rotation;
 	physDef.Angle = theBallDef.Angle;
 	physDef.Scale = theBallDef.Scale;
+	physDef.Radius = theBallDef.Radius;
 	phys::iShape* shape = new phys::cSphere(theBallDef.Radius);
 	mBody = new phys::cRigidBody(physDef, shape);
 	

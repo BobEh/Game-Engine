@@ -251,7 +251,8 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 	const float CAMERASPEED = 1.0f;
 	const float MOVESPEED = 2.0f;
 
-	iObject* pCurrentObject = pFindObjectByFriendlyName("mainCharacter");
+	//iObject* pCurrentObject = pFindObjectByFriendlyName("mainCharacter");
+	iObject* pCurrentObject = g_vec_pGameObjects.at(0);
 
 	if (!isShiftKeyDownByAlone(mods) && !isCtrlKeyDownByAlone(mods))
 	{
@@ -372,30 +373,36 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 	{
 		if (key == GLFW_KEY_A)
 		{
-			pCurrentObject->setRotationXYZ(glm::vec3(0.0f, glm::radians(90.0f), 0.0f));
-			pCurrentObject->setVelocity(glm::vec3(pCurrentObject->getVelocity().x, 0.0f, 20.0f));
+			//pCurrentObject->setRotationXYZ(glm::vec3(0.0f, glm::radians(90.0f), 0.0f));
+			//pCurrentObject->setVelocity(glm::vec3(pCurrentObject->getVelocity().x, 0.0f, 20.0f));
+			pCurrentObject->ApplyForce(glm::vec3(0.0f, 0.0f, 1.0f));
 		}
 		if (key == GLFW_KEY_D)
 		{
 			//pCurrentObject->setRotationXYZ(glm::vec3(0.0f, glm::radians(-90.0f), 0.0f));
 			//pCurrentObject->setVelocity(glm::vec3(pCurrentObject->getVelocity().x, 0.0f, 20.0f));
-			pCurrentObject->ApplyForce(glm::vec3(0.0f, 0.0f, 20.0f));
+			pCurrentObject->ApplyForce(glm::vec3(0.0f, 0.0f, -1.0f));
 		}
 		if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
 		{
-			pCurrentObject->setVelocity(glm::vec3(pCurrentObject->getVelocity().x, 65.0f, 0.0f));
+			pCurrentObject->ApplyForce(glm::vec3(0.0f, 15.0f, 0.0f));
 			//jumping = true;
-			currentAnimationName = "Jump";
+			//currentAnimationName = "Jump";
 		}
 		if (key == GLFW_KEY_S)
 		{
 			//rolling = true;
-			currentAnimationName = "Roll";
+			//currentAnimationName = "Roll";
+			pCurrentObject->ApplyForce(glm::vec3(-1.0f, 0.0f, 0.0f));
+		}
+		if (key == GLFW_KEY_W)
+		{
+			pCurrentObject->ApplyForce(glm::vec3(1.0f, 0.0f, 0.0f));
 		}
 		if (key == GLFW_KEY_ENTER)
 		{
 			//attacking = true;
-			currentAnimationName = "Attack";
+			//currentAnimationName = "Attack";
 		}
 		if (key == GLFW_KEY_1)
 		{

@@ -299,8 +299,8 @@ int LoadObjects()
 	pCloth->setIsWireframe(false);
 	//pSphere->SetMassType(0);
 	nPhysics::sClothDef physicsCloth;
-	physicsCloth.CornerA = glm::vec3(0.0f, 40.0f, 0.0f);
-	physicsCloth.CornerB = glm::vec3(-10.0f, 40.0f, 0.0f);
+	physicsCloth.CornerA = glm::vec3(0.0f, 5.0f, 0.0f);
+	physicsCloth.CornerB = glm::vec3(-5.0f, 5.0f, 0.0f);
 	physicsCloth.DownDirection = glm::vec3(0.0f, 1.0f, 0.0f);
 	physicsCloth.NodeMass = 0.5f;
 	physicsCloth.NumNodesAcross = 4;

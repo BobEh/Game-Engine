@@ -33,7 +33,7 @@ namespace phys
 		}
 		
 	}
-	cSoftBody::cNode::cNode(const sSoftBodyNodeDef& nodeDef) : Position(nodeDef.Position), Mass(nodeDef.Mass), Velocity(0.0f,0.0f,0.0f), Acceleration(0.0f,0.0f,0.0f), Radius(1.0f)
+	cSoftBody::cNode::cNode(const sSoftBodyNodeDef& nodeDef) : Position(nodeDef.Position), PreviousPosition(glm::vec3(0.0f,0.0f,0.0f)), Mass(nodeDef.Mass), Velocity(0.0f,0.0f,0.0f), Acceleration(0.0f,0.0f,0.0f), Radius(1.0f)
 	{
 
 	}
@@ -133,6 +133,7 @@ namespace phys
 		for (size_t idx = 0; idx < numNodes; idx++)
 		{
 			cNode* node = mNodes[idx];
+			node->PreviousPosition = node->Position;
 			if (node->IsFixed())
 				continue;
 			node->Velocity += node->Acceleration * dt;
@@ -269,6 +270,135 @@ namespace phys
 		//IntegrateRigidBody(bodyA, mDeltaTime * (1.0f - t));
 		//IntegrateRigidBody(bodyB, mDeltaTime * (1.0f - t));
 
+		return true;
+	}
+
+
+	bool cSoftBody::CollideSphereCloth(cRigidBody* sphere)
+	{
+		// TODO:
+		// 
+		// From our textbook, REAL-TIME COLLISION DETECTION, ERICSON
+		// Use intersect_moving_sphere_sphere(...inputs...outputs...)
+		// to determine if:
+		// case A: The spheres don't collide during the timestep.
+		// case B: The spheres were already colliding at the beginning of the timestep.
+		// case C: The spheres collided during the timestep.
+		//
+		// case A: Return false to indicate no collision happened.
+		//
+		// case B: Do the timestep again for these spheres after
+		//         applying an impulse that should separate them.
+		// 
+		// 1) Determine the penetration-depth of the spheres at the beginning of the timestep.
+		//    (This penetration-depth is the distance the spheres must travel during
+		//    the timestep in order to separate.)
+		// 2) Use the sphere's centers to define the direction of our impulse vector.
+		// 3) Use (penetration-depth / DT) to define the magnitude of our impulse vector.
+		//    (The impulse vector is now distance/time ...a velocity!)
+		// 4) Apply a portion of the impulse vector to sphereA's velocity.
+		// 5) Apply a portion of the impulse vector to sphereB's velocity.
+		//    (Be sure to apply the impulse in opposing directions.)
+		// 6) Reset the spheres' positions.
+		// 7) Re-do the integration for the timestep.
+		// 8) Return true to indicate a collision has happened.
+		// 
+		// 
+		// case C: 
+		//
+		// 1) Use the outputs from the Ericson function to determine
+		//    and set the spheres positions to the point of impact.
+		// 2) Use the inelastic collision response equations from
+		//    Wikepedia to set they're velocities post-impact.
+		// 3) Re-integrate the spheres with their new velocities
+		//    over the remaining portion of the timestep.
+		// 4) Return true to indicate a collision has happened.
+
+		std::vector<cNode*> closeNodes;
+		glm::vec3 spherePosition;
+		sphere->GetPosition(spherePosition);
+		float sphereRadius;
+		sphere->GetRadius(sphereRadius);
+		float sphereMass;
+		sphere->GetMass(sphereMass);
+		glm::vec3 sphereVelocity;
+		sphere->GetVelocity(sphereVelocity);
+
+		for (size_t idx = 0; idx < this->mNodes.size(); idx++)
+		{			
+			float distanceSphereToNode = glm::distance(spherePosition, mNodes[idx]->Position);
+			float collisionDistance = sphereRadius + mNodes[idx]->Radius + 5.0f;
+			if (distanceSphereToNode < collisionDistance)
+			{
+				closeNodes.push_back(mNodes[idx]);
+			}
+		}
+
+		for (size_t idx = 0; idx < closeNodes.size(); idx++)
+		{
+			glm::vec3 cA = spherePosition;
+			glm::vec3 cB = closeNodes[idx]->PreviousPosition;
+			glm::vec3 vA = spherePosition - spherePosition;
+			glm::vec3 vB = closeNodes[idx]->Position - closeNodes[idx]->PreviousPosition;
+			float rA = sphereRadius;
+			float rB = mNodes[idx]->Radius;
+			float t(0.0f);
+
+			int result = nCollide::intersect_moving_sphere_sphere(cA, rA, vA, cB, rB, vB, t);
+			if (result == 0)
+			{
+				// no collision
+				continue;
+			}
+
+			// get the masses
+			
+			float ma = sphereMass;
+			float mb = mNodes[idx]->Mass;
+			float mt = ma + mb;
+
+			if (result == -1)
+			{
+				// already colliding
+
+				float initialDistance = glm::distance(spherePosition, mNodes[idx]->PreviousPosition);
+				float targetDistance = rA + rB;
+
+				glm::vec3 impulseToA = glm::normalize(spherePosition - mNodes[idx]->PreviousPosition);
+				impulseToA *= (targetDistance - initialDistance);
+
+				// just push the cloth out of the way
+				//bodyA->mPosition = bodyA->mPreviousPosition;
+				mNodes[idx]->Position = mNodes[idx]->PreviousPosition;
+				// apply the impulse
+				//bodyA->mVelocity += impulseToA * (mb / mt);
+				mNodes[idx]->Velocity -= impulseToA * (ma / mt);
+
+				//integrate
+				//IntegrateRigidBody(bodyA, mDeltaTime);
+				//IntegrateRigidBody(bodyB, mDeltaTime);
+
+				return true;
+			}
+
+			// collided
+
+			// everybody to ones
+			// just push the cloth
+			//bodyA->mPosition = bodyA->mPreviousPosition + vA * t;
+			mNodes[idx]->Position = mNodes[idx]->PreviousPosition + vB * t;
+
+			vA = sphereVelocity;
+			vB = mNodes[idx]->Velocity;
+
+			float c = 0.2f;
+			//bodyA->mVelocity = (c * mb * (vB - vA) + ma * vA + mb * vB) / mt;
+			mNodes[idx]->Velocity = (c * ma * (vA - vB) + ma * vA + mb * vB) / mt;
+
+			// integrate
+			//IntegrateRigidBody(bodyA, mDeltaTime * (1.0f - t));
+			//IntegrateRigidBody(bodyB, mDeltaTime * (1.0f - t));
+		}
 		return true;
 	}
 	size_t cSoftBody::NumNodes()

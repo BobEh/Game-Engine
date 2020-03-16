@@ -177,10 +177,9 @@ void DrawObject(glm::mat4 m, iObject* pCurrentObject, GLint shaderProgID, cVAOMa
 			m *= rotation;
 
 			//Scale
+			float theScale = pCurrentObject->getScale();
 			glm::mat4 scale = glm::scale(glm::mat4(1.0f),
-				glm::vec3(pCurrentObject->getScale(),
-					pCurrentObject->getScale(),
-					pCurrentObject->getScale()));
+				glm::vec3(theScale));
 			m = m * scale;
 		}
 		//}

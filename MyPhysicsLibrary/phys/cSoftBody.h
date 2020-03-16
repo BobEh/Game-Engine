@@ -6,6 +6,7 @@
 #include <vector>
 #include "cCollisionBody.h"
 #include "cRigidBody.h"
+#include "shapes.h"
 
 namespace phys
 {
@@ -64,6 +65,7 @@ namespace phys
 		void Integrate(float deltaTime, const glm::vec3& gravity);
 		bool Collide(cNode* bodyA, cNode* bodyB);
 		bool CollideNodeNode(cNode* bodyA, cNode* bodyB);
+		bool CollideSpherePlane(cRigidBody* thePlane, cPlane* theShape);
 		bool CollideSphereCloth(cRigidBody* theSphere);
 
 		size_t NumNodes();

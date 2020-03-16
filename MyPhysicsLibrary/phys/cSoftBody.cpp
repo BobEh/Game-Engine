@@ -1,6 +1,7 @@
 #include "cSoftBody.h"
 #include <numeric>
 #include "nCollide.h"
+#include <glm\gtx\projection.hpp>
 
 namespace phys
 {
@@ -134,22 +135,28 @@ namespace phys
 		}
 		// step 1.5 - wind
 		glm::vec3 windAddition;
-		float windClamp = 2.0f;
+		float windClamp = 1.0f;
+		float maxSpeed = 2.0f;
+		
 		if (wind.x > windClamp || wind.z > windClamp)
 		{
-			windAddition = glm::vec3(randInRange(-0.2f, 0.02f), 0.0f, randInRange(-0.2f, 0.02f));
+			windAddition = glm::vec3(randInRange(-0.02f, 0.002f), 0.0f, randInRange(-0.02f, 0.002f));
 		}
 		else if (wind.x < -windClamp || wind.z < -windClamp)
 		{
-			windAddition = glm::vec3(randInRange(-0.02f, 0.2f), 0.0f, randInRange(-0.02f, 0.2f));
+			windAddition = glm::vec3(randInRange(-0.002f, 0.02f), 0.0f, randInRange(-0.002f, 0.02f));
 		}
 		else
 		{
-			windAddition = glm::vec3(randInRange(-0.2f, 0.2f), 0.0f, randInRange(-0.2f, 0.2f));
+			windAddition = glm::vec3(randInRange(-0.02f, 0.02f), 0.0f, randInRange(-0.02f, 0.02f));
 		}
 		wind = wind + windAddition;
 		for (size_t idx = 0; idx < numNodes; idx++)
 		{
+			if (mNodes[idx]->Acceleration.x > maxSpeed || mNodes[idx]->Acceleration.z > maxSpeed || mNodes[idx]->Acceleration.x < -maxSpeed || mNodes[idx]->Acceleration.z < -maxSpeed)
+			{
+				wind = glm::vec3(0.0f);
+			}
 			mNodes[idx]->Acceleration += wind;
 		}
 		// step 2 - Accumulate spring forces based on current positions
@@ -196,6 +203,118 @@ namespace phys
 		}
 
 		//return CollideNodeNode(bodyA, bodyB);
+	}
+	bool cSoftBody::CollideSpherePlane(cRigidBody* thePlane, cPlane* theShape)
+	{
+		// TODO:
+		// 
+		// From our textbook, REAL-TIME COLLISION DETECTION, ERICSON
+		// Use intersect_moving_sphere_plane(...inputs...outputs...)
+		// to determine if:
+		// case A: The sphere did not collide during the timestep.
+		// case B: The sphere was already colliding at the beginning of the timestep.
+		// case C: The sphere collided during the timestep.
+		//
+		// case A: Return false to indicate no collision happened.
+		//
+		// case B: Do the timestep again for this sphere after applying an
+		//         impulse that should separate it from the plane.
+		// 
+		// 1) From our textbook, use closest_point_on_plane(..inputs..) to determine the 
+		//    penetration-depth of the sphere at the beginning of the timestep.
+		//    (This penetration-depth is the distance the sphere must travel during
+		//    the timestep in order to escape the plane.)
+		// 2) Use the sphere's center and the closest point on the plane to define
+		//    the direction of our impulse vector.
+		// 3) Use (penetration-depth / DT) to define the magnitude of our impulse vector.
+		//    (The impulse vector is now distance/time ...a velocity!)
+		// 4) Apply the impulse vector to sphere velocity.
+		// 5) Reset the sphere position.
+		// 6) Re-do the integration for the timestep.
+		// 7) Return true to indicate a collision has happened.
+		// 
+		// 
+		// case C: Rewind to the point of impact, reflect, then replay.
+		//
+		// 1) Use the outputs from the Ericson function to determine
+		//    and set the sphere position to the point of impact.
+		// 2) Reflect the sphere's velocity about the plane's normal vector.
+		// 3) Apply some energy loss (to the velocity) in the direction
+		//    of the plane's normal vector.
+		// 4) Re-integrate the sphere with its new velocity over the remaining
+		//    portion of the timestep.
+		// 5) Return true to indicate a collision has happened.
+
+		std::vector<cNode*> closeNodes;
+		glm::vec3 planePosition;
+		thePlane->GetPosition(planePosition);
+		glm::vec3 spherePreviousPosition;
+
+		for (size_t idx = 0; idx < this->mNodes.size(); idx++)
+		{
+			float distanceSphereToNode = glm::distance(planePosition, mNodes[idx]->Position);
+			float collisionDistance = mNodes[idx]->Radius;
+			if (distanceSphereToNode < collisionDistance)
+			{
+				closeNodes.push_back(mNodes[idx]);
+			}
+		}
+
+		for (int idx = 0; idx < closeNodes.size(); idx++)
+		{
+
+			glm::vec3 c = closeNodes[idx]->PreviousPosition;
+			float r = closeNodes[idx]->Radius;
+			glm::vec3 v = closeNodes[idx]->Position - closeNodes[idx]->PreviousPosition;
+			glm::vec3 n = theShape->GetNormal();
+			float d = theShape->GetConstant();
+			float t(0.0f);
+			glm::vec3 q;
+
+			int result = nCollide::intersect_moving_sphere_plane(c, r, v, n, d, t, q);
+			//std::cout << "I hit the ground!!!! :O" << std::endl;
+			if (result == 0)
+			{
+				// no collision
+				return false;
+			}
+			if (result == -1)
+			{
+				// already colliding at the beginning of the timestep
+
+				glm::vec3 pointOnPlane = nCollide::closest_point_on_plane(closeNodes[idx]->PreviousPosition, theShape->GetNormal(), theShape->GetConstant());
+				// figure out an impulse that should have the sphere escape the plane
+				float distance = glm::distance(closeNodes[idx]->PreviousPosition, pointOnPlane);
+				float targetDistance = r;
+				glm::vec3 impulse = n * (targetDistance - distance) / 0.03f;
+				//reset
+				closeNodes[idx]->Position = closeNodes[idx]->PreviousPosition;
+				//apply impulse
+				closeNodes[idx]->Velocity += impulse;
+				//re-do the timestep
+				//IntegrateRigidBody(closeNodes[idx], 0.03f);
+				this->Integrate(0.03f, glm::vec3(0.0f, -1.0f, 0.0f));
+
+				//return true;
+				//continue;
+			}
+			// it collided
+
+			// reflect
+			closeNodes[idx]->Velocity = glm::reflect(closeNodes[idx]->Velocity, theShape->GetNormal());
+			// lose some energy
+			glm::vec3 nComponent = glm::proj(closeNodes[idx]->Velocity, theShape->GetNormal());
+			// rewind
+			closeNodes[idx]->Velocity -= nComponent * 0.6f;
+
+			closeNodes[idx]->Position = (c + v * t);
+			//integrate
+			//IntegrateRigidBody(closeNodes[idx], 0.03f * (1.0f - t));
+			//finished
+			
+		}
+		this->Integrate(0.03f, glm::vec3(0.0f, -1.0f, 0.0f));
+		return true;
 	}
 	bool cSoftBody::CollideNodeNode(cNode* bodyA, cNode* bodyB)
 	{
@@ -409,8 +528,10 @@ namespace phys
 				//integrate
 				//IntegrateRigidBody(bodyA, mDeltaTime);
 				//IntegrateRigidBody(bodyB, mDeltaTime);
+				//this->Integrate(0.03f, glm::vec3(0.0f, -1.0f, 0.0f));
 
-				return true;
+				//return true;
+				continue;
 			}
 
 			// collided
@@ -430,7 +551,9 @@ namespace phys
 			// integrate
 			//IntegrateRigidBody(bodyA, mDeltaTime * (1.0f - t));
 			//IntegrateRigidBody(bodyB, mDeltaTime * (1.0f - t));
+			
 		}
+		this->Integrate(0.03f, glm::vec3(0.0f, -1.0f, 0.0f));
 		return true;
 	}
 	size_t cSoftBody::NumNodes()

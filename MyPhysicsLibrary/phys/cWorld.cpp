@@ -159,6 +159,10 @@ namespace phys
 		{
 			return CollideSoft(dynamic_cast<cSoftBody*>(bodyA), dynamic_cast<cRigidBody*>(bodyB));
 		}
+		else if (typeA == eBodyType::rigid && typeB == eBodyType::soft)
+		{
+			return CollideSoft(dynamic_cast<cSoftBody*>(bodyA), dynamic_cast<cRigidBody*>(bodyB));
+		}
 		return false;
 	}
 	bool cWorld::CollideRigid(cRigidBody* bodyA, cRigidBody* bodyB)
@@ -217,9 +221,11 @@ namespace phys
 
 		if (shapeTypeB == eShapeType::plane)
 		{
-			return false;
+			//return false;
+			bool result = bodyA->CollideSpherePlane(bodyB, dynamic_cast<cPlane*>(bodyB->GetShape()));
+			return result;
 		}
-		if (shapeTypeB == eShapeType::sphere)
+		else if (shapeTypeB == eShapeType::sphere)
 		{
 			bool result = bodyA->CollideSphereCloth(bodyB);
 			return result;

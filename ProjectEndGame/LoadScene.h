@@ -302,10 +302,10 @@ int LoadObjects()
 	physicsCloth.CornerA = glm::vec3(5.0f, 20.0f, 0.0f);
 	physicsCloth.CornerB = glm::vec3(-20.0f, 20.0f, 0.0f);
 	physicsCloth.DownDirection = glm::vec3(0.0f, 1.0f, 0.0f);
-	physicsCloth.NodeMass = 0.6f;
+	physicsCloth.NodeMass = 0.4f;
 	physicsCloth.NumNodesAcross = 40;
 	physicsCloth.NumNodesDown = 20;
-	physicsCloth.SpringConstant = 75.0f;
+	physicsCloth.SpringConstant = 25.0f;
 	physicsCloth.NodeRadius = 1.0f;
 	nPhysics::iClothComponent* pClothPhysics = physicsFactory->CreateCloth(physicsCloth);
 	g_vec_pGameComponentObjects.push_back(pClothPhysics);
@@ -318,7 +318,7 @@ int LoadObjects()
 	nPhysics::sBallDef characterPhysics;
 	characterPhysics.Mass = 1.0;
 	characterPhysics.Position = glm::vec3(0.0f, 50.0f, 0.0f);
-	characterPhysics.Radius = 5.0f;
+	characterPhysics.Radius = 1.0f;
 	characterPhysics.Rotation = glm::vec3(0.0f, 0.0f, 0.0f);
 	characterPhysics.Scale = glm::vec3(0.05f, 0.05f, 0.05f);
 	characterPhysics.Angle = 1.0f;
@@ -357,7 +357,7 @@ int LoadObjects()
 	pMainCharacter->setTexture("sandTexture_1024.bmp", 2);
 	pMainCharacter->setTextureRatio(1, 1);
 	pMainCharacter->setTransprancyValue(1.0f);
-	g_vec_pCharacterObjects.push_back(pMainCharacter);
+	//g_vec_pCharacterObjects.push_back(pMainCharacter);
 	physicsWorld->AddComponent(pMainCharacter->GetComponent());
 	if (mainCharacterMeshInfo)
 	{
@@ -384,14 +384,14 @@ int LoadObjects()
 	pSphere->setInverseMass(1.0f);
 	pSphere->setTexture("StoneTex_1024.bmp", 1);
 	pSphere->setTextureRatio(1, 1);
-	pSphere->SetPlaneType("floor");
+	//pSphere->SetPlaneType("floor");
 	pSphere->setTransprancyValue(1.0f);
 	pSphere->setIsVisible(true);
 	pSphere->setIsWireframe(false);
 	//pSphere->SetMassType(0);
 	nPhysics::sBallDef physicsBall;
 	physicsBall.Mass = 1.0f;
-	physicsBall.Position = glm::vec3(10.0f, 50.0f, 0.0f);
+	physicsBall.Position = glm::vec3(20.0f, 50.0f, -30.0f);
 	physicsBall.Radius = 1.0f;
 	physicsBall.Angle = 1.0f;
 	physicsBall.Rotation = glm::vec3(1.0f, 1.0f, 1.0f);
@@ -402,7 +402,7 @@ int LoadObjects()
 	::g_vec_pGameObjects.push_back(pSphere);
 	physicsWorld->AddComponent(pSphere->GetComponent());
 
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < 0; i++)
 	{
 		iObject* pAnotherSphere = pFactory->CreateObject("sphere", nPhysics::eComponentType::ball);
 		float scaleRadius = randInRange(1.0f, 5.0f);

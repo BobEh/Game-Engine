@@ -325,7 +325,7 @@ void DrawObject(glm::mat4 m, iObject* pCurrentObject, GLint shaderProgID, cVAOMa
 
 		if (currentAnimationName == "Walk")
 		{
-			HACK_FrameTime += 0.003f;
+			HACK_FrameTime += 0.009f;
 		}
 		else if (currentAnimationName == "Jump")
 		{
@@ -433,6 +433,14 @@ iObject* pFindObjectByFriendlyName(std::string name)
 		{
 			// Found it!!
 			return ::g_vec_pGameFBOObjects[index];
+		}
+	}
+	for (unsigned int index = 0; index != g_vec_pCharacterObjects.size(); index++)
+	{
+		if (::g_vec_pCharacterObjects[index]->getFriendlyName() == name)
+		{
+			// Found it!!
+			return ::g_vec_pCharacterObjects[index];
 		}
 	}
 	// Didn't find it

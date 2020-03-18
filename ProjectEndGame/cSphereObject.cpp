@@ -260,7 +260,8 @@ void cSphereObject::SetPosition(glm::vec3 positionIn)
 
 void cSphereObject::GetVelocity(glm::vec3& velocityOut)
 {
-	velocityOut = this->_velocity;
+	glm::vec3 result = glm::vec3(0.0f);
+	this->_component->GetVelocity(velocityOut);
 }
 
 void cSphereObject::ApplyForce(const glm::vec3& force)

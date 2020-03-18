@@ -141,11 +141,11 @@ void DrawFirstPass()
 
 	if (pMainCharacter != nullptr && currentAnimationName != "Jump" && currentAnimationName != "Roll" && currentAnimationName != "Dying" && currentAnimationName != "Attack")
 	{
-		if (pMainCharacter->getVelocity().z > 21.0f)
+		if (pMainCharacter->getVelocity().z > 10.0f || pMainCharacter->getVelocity().x > 10.0f || pMainCharacter->getVelocity().z < -10.0f || pMainCharacter->getVelocity().x < -10.0f)
 		{
 			currentAnimationName = "Run";
 		}
-		else if (pMainCharacter->getVelocity().z > 5.0f)
+		else if (pMainCharacter->getVelocity().z > 1.0f || pMainCharacter->getVelocity().x > 1.0f || pMainCharacter->getVelocity().z < -1.0f || pMainCharacter->getVelocity().x < -1.0f)
 		{
 			currentAnimationName = "Walk";
 		}
@@ -228,8 +228,10 @@ void DrawSecondPass()
 			currentVelocity += 0.000001f;
 		}
 		glm::vec3 normalizedVelocity = glm::normalize(currentVelocity);
+		normalizedVelocity.z *= -1.0f;
 		glm::quat orientation = glm::quatLookAt(normalizedVelocity, glm::vec3(0.0f, 1.0f, 0.0f));
 		orientation.x = 0.0f;
+		orientation.y *= -1.0f;
 		orientation.z = 0.0f;
 		pCurrentObject->setRotationXYZ(orientation);
 

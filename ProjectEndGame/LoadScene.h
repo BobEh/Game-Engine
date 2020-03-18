@@ -317,8 +317,8 @@ int LoadObjects()
 	
 	nPhysics::sBallDef characterPhysics;
 	characterPhysics.Mass = 1.0;
-	characterPhysics.Position = glm::vec3(0.0f, 50.0f, 0.0f);
-	characterPhysics.Radius = 1.0f;
+	characterPhysics.Position = glm::vec3(30.0f, 50.0f, 0.0f);
+	characterPhysics.Radius = 5.0f;
 	characterPhysics.Rotation = glm::vec3(0.0f, 0.0f, 0.0f);
 	characterPhysics.Scale = glm::vec3(0.05f, 0.05f, 0.05f);
 	characterPhysics.Angle = 1.0f;
@@ -357,7 +357,7 @@ int LoadObjects()
 	pMainCharacter->setTexture("sandTexture_1024.bmp", 2);
 	pMainCharacter->setTextureRatio(1, 1);
 	pMainCharacter->setTransprancyValue(1.0f);
-	//g_vec_pCharacterObjects.push_back(pMainCharacter);
+	g_vec_pCharacterObjects.push_back(pMainCharacter);
 	physicsWorld->AddComponent(pMainCharacter->GetComponent());
 	if (mainCharacterMeshInfo)
 	{

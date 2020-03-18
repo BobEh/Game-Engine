@@ -45,7 +45,7 @@ int main(void)
 	LoadLights();
 
 	//set current object
-	iObject* pCurrentObject = pFindObjectByFriendlyName("sphere");
+	iObject* pCurrentObject = pFindObjectByFriendlyName("mainCharacter");
 
 	::g_pFlyCamera = new cFlyCamera();
 	::g_pFlyCamera->eye = glm::vec3(0.0f, 80.0, -80.0);

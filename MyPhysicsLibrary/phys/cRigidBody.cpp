@@ -107,7 +107,7 @@ namespace phys
 	}
 	void cRigidBody::GetScale(float& scaleOut)
 	{
-		scaleOut = mRadius;
+		scaleOut = mScale.x;
 	}
 	void cRigidBody::GetMass(float& mass)
 	{

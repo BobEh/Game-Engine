@@ -43,6 +43,7 @@ public:
 
 	virtual cSimpleAssimpSkinnedMesh* getSM();
 
+	virtual std::string getBehaviour();
 	std::string getMeshName();
 	unsigned int getFriendlyIDNumber();
 	std::string getFriendlyName();
@@ -75,6 +76,7 @@ public:
 	bool getIsTranspanrancy();
 
 	//setters
+	virtual void setBehaviour(std::string behaviour);
 	virtual void setSM(cSimpleAssimpSkinnedMesh* skinnedMesh);
 	void setMeshName(std::string name);
 	void setFriendlyIDNumber(unsigned int IDNumber);
@@ -110,6 +112,7 @@ public:
 	void setIsTranspanrancy(bool isTranspanrancy);
 
 private:
+	std::string _Behaviour;
 	cSimpleAssimpSkinnedMesh* pSM;
 	int _physicsType;
 	nPhysics::iPhysicsComponent* _component;

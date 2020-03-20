@@ -35,6 +35,11 @@ cSimpleAssimpSkinnedMesh* cClothObject::getSM()
 	return this->pSM;
 }
 
+std::string cClothObject::getBehaviour()
+{
+	return this->_Behaviour;
+}
+
 std::string cClothObject::getMeshName()
 {
 	return this->_meshName;
@@ -50,7 +55,14 @@ std::string cClothObject::getFriendlyName()
 glm::vec3 cClothObject::getPositionXYZ()
 {
 	glm::vec3 result = glm::vec3(0.0f);
-	this->_component->GetPosition(result);
+	if (this->GetComponent() != nullptr)
+	{
+		this->_component->GetPosition(result);
+	}
+	else
+	{
+		result = _positionXYZ;
+	}
 	return result;
 }
 glm::quat cClothObject::getRotationXYZ()
@@ -80,7 +92,14 @@ glm::vec4 cClothObject::getSpecularColour()
 glm::vec3 cClothObject::getVelocity()
 {
 	glm::vec3 theVelocity = glm::vec3(0.0f);
-	this->_component->GetVelocity(theVelocity);
+	if (this->_component != nullptr)
+	{
+		this->_component->GetVelocity(theVelocity);
+	}
+	else
+	{
+		theVelocity = _velocity;
+	}
 	return theVelocity;
 }
 float cClothObject::getVelocityX()
@@ -136,6 +155,10 @@ bool cClothObject::getDisableDepthBufferWrite()
 void cClothObject::addTestPoint(glm::vec3 testPoint)
 {
 	this->testPoints.push_back(testPoint);
+}
+void cClothObject::setBehaviour(std::string behaviour)
+{
+	this->_Behaviour = behaviour;
 }
 void cClothObject::setSM(cSimpleAssimpSkinnedMesh* skinnedMesh)
 {

@@ -7,6 +7,7 @@ typedef nPhysics::iPhysicsFactory* (*func_createPhysicsFactory)();
 
 int LoadPhysics()
 {
+	pPhsyics = new cPhysics();
 	//find the DLL for creating the physics factory
 	hGetDLL = LoadLibraryA("MyPhysicsWrapper.dll");
 	//hGetDLL = LoadLibraryA("BulletPhysicsWrapper.dll");
@@ -72,24 +73,6 @@ int LoadMeshes()
 
 	std::string assimpErrorString = "";
 
-	cMesh mainCharacterMesh;
-	if (!pTheModelLoader->LoadModel_Assimp("assets/modelsFBX/player.md5mesh", mainCharacterMesh, assimpErrorString))
-	{
-		std::cout << "Error: couldn't find the island ply." << std::endl;
-	}
-
-	cMesh seaFloorMesh;
-	if (!pTheModelLoader->LoadPlyModel("assets/models/SeaFloor_xyz_n_uv.ply", seaFloorMesh))
-	{
-		std::cout << "Error: couldn't find the mountain range ply." << std::endl;
-	}
-
-	cMesh waterMesh;
-	if (!pTheModelLoader->LoadPlyModel("assets/models/Water_xyz_n_uv.ply", waterMesh))
-	{
-		std::cout << "Error: couldn't find the mountain range ply." << std::endl;
-	}
-
 	cMesh floorMesh;
 	if (!pTheModelLoader->LoadPlyModel("assets/models/Floor.ply", floorMesh))
 	{
@@ -99,40 +82,62 @@ int LoadMeshes()
 	cMesh wallRightMesh;
 	if (!pTheModelLoader->LoadPlyModel("assets/models/Wall_Right.ply", wallRightMesh))
 	{
-		std::cout << "Error: couldn't find the floor ply." << std::endl;
+		std::cout << "Error: couldn't find the wall right ply." << std::endl;
 	}
 
 
 	cMesh wallLeftMesh;
 	if (!pTheModelLoader->LoadPlyModel("assets/models/Wall_Left.ply", wallLeftMesh))
 	{
-		std::cout << "Error: couldn't find the floor ply." << std::endl;
+		std::cout << "Error: couldn't find the wall left ply." << std::endl;
 	}
 
 	cMesh wallFrontMesh;
 	if (!pTheModelLoader->LoadPlyModel("assets/models/Wall_Front.ply", wallFrontMesh))
 	{
-		std::cout << "Error: couldn't find the floor ply." << std::endl;
+		std::cout << "Error: couldn't find the wall front ply." << std::endl;
 	}
 
 	cMesh wallBackMesh;
 	if (!pTheModelLoader->LoadPlyModel("assets/models/Wall_Back.ply", wallBackMesh))
 	{
-		std::cout << "Error: couldn't find the floor ply." << std::endl;
+		std::cout << "Error: couldn't find the wall back ply." << std::endl;
 	}
 
 	cMesh sharkMesh;
 	if (!pTheModelLoader->LoadPlyModel("assets/models/shark_xyz_n_uv.ply", sharkMesh))
 	{
-		std::cout << "Error: couldn't find the mountain range ply." << std::endl;
+		std::cout << "Error: couldn't find the shark ply." << std::endl;
 	}
 
 	cMesh fishMesh;
 	if (!pTheModelLoader->LoadPlyModel("assets/models/fish_xyz_n_uv.ply", fishMesh))
 	{
-		std::cout << "Error: couldn't find the mountain range ply." << std::endl;
+		std::cout << "Error: couldn't find the fish ply." << std::endl;
 	}
 
+	cMesh xWingMesh;
+	if (!pTheModelLoader->LoadPlyModel("assets/models/X-Wing_Attack_xyz_n_uv.ply", xWingMesh))
+	{
+		std::cout << "Error: couldn't find the x wing ply." << std::endl;
+	}
+	cMesh xWingRMesh;
+	if (!pTheModelLoader->LoadPlyModel("assets/models/X-Wing_Attack_Reverse_xyz_n_uv.ply", xWingRMesh))
+	{
+		std::cout << "Error: couldn't find the x wing reverse ply." << std::endl;
+	}
+
+	cMesh bigSphereMesh;
+	if (!pTheModelLoader->LoadPlyModel("assets/models/Big_Sphere_Radius_1_XYZ_n_uv.ply", bigSphereMesh))
+	{
+		std::cout << "Error: couldn't find the big sphere ply." << std::endl;
+	}
+
+	cMesh asteroidMesh;
+	if (!pTheModelLoader->LoadPlyModel("assets/models/Asteroid.ply", asteroidMesh))
+	{
+		std::cout << "Error: couldn't find the asteroid ply file." << std::endl;
+	}
 
 	cMesh cubeMesh;
 	pTheModelLoader->LoadPlyModel("assets/models/Cube_1_Unit_from_origin_XYZ_uv.ply", cubeMesh);
@@ -175,11 +180,20 @@ int LoadMeshes()
 		cubeMeshInfo,
 		shaderProgID);
 
-	sModelDrawInfo mainCharacterMeshInfo;
-	pTheVAOManager->LoadModelIntoVAO("mainCharacter", mainCharacterMesh, mainCharacterMeshInfo, shaderProgID);
+	sModelDrawInfo xWingRMeshInfo;
+	pTheVAOManager->LoadModelIntoVAO("xWingR", xWingRMesh, xWingRMeshInfo, shaderProgID);
 
-	sModelDrawInfo seaFloorMeshInfo;
-	pTheVAOManager->LoadModelIntoVAO("seaFloor", seaFloorMesh, seaFloorMeshInfo, shaderProgID);
+	sModelDrawInfo xWingMeshInfo;
+	pTheVAOManager->LoadModelIntoVAO("xWing", xWingMesh, xWingMeshInfo, shaderProgID);
+
+	sModelDrawInfo asteroidMeshInfo;
+	pTheVAOManager->LoadModelIntoVAO("asteroid", asteroidMesh, asteroidMeshInfo, shaderProgID);
+
+	sModelDrawInfo bigSphereMeshInfo;
+	pTheVAOManager->LoadModelIntoVAO("bigSphere",
+		bigSphereMesh,		// Sphere mesh info
+		bigSphereMeshInfo,
+		shaderProgID);
 
 	sModelDrawInfo floorMeshInfo;
 	pTheVAOManager->LoadModelIntoVAO("floor", floorMesh, floorMeshInfo, shaderProgID);
@@ -195,9 +209,6 @@ int LoadMeshes()
 
 	sModelDrawInfo wallFrontMeshInfo;
 	pTheVAOManager->LoadModelIntoVAO("wallFront", wallFrontMesh, wallFrontMeshInfo, shaderProgID);
-
-	sModelDrawInfo waterMeshInfo;
-	pTheVAOManager->LoadModelIntoVAO("water", waterMesh, waterMeshInfo, shaderProgID);
 
 	sModelDrawInfo eagleMeshInfo;
 	pTheVAOManager->LoadModelIntoVAO("eagle", eagleMesh, eagleMeshInfo, shaderProgID);
@@ -230,6 +241,10 @@ int LoadTextures()
 	::g_pTextureManager->Create2DTextureFromBMPFile("shark.bmp", true);
 
 	::g_pTextureManager->Create2DTextureFromBMPFile("fish.bmp", true);
+
+	g_pTextureManager->Create2DTextureFromBMPFile("mars.bmp", true);
+
+	g_pTextureManager->Create2DTextureFromBMPFile("moon.bmp", true);
 
 	::g_pTextureManager->Create2DTextureFromBMPFile("water_800.bmp", true);
 
@@ -281,7 +296,7 @@ int LoadObjects()
 
 	iObject* pCloth = pFactory->CreateObject("cloth", nPhysics::eComponentType::cloth);
 	pCloth->setMeshName("sphere");
-	pCloth->setFriendlyName("sphere");	// We use to search 
+	pCloth->setFriendlyName("cloth");	// We use to search 
 	pCloth->setPositionXYZ(glm::vec3(0.0f, 50.0f, 0.0f));
 	pCloth->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
 	pCloth->setScale(0.2f);
@@ -372,7 +387,7 @@ int LoadObjects()
 	iObject* pSphere = pFactory->CreateObject("sphere", nPhysics::eComponentType::ball);
 
 	pSphere->setMeshName("sphere");
-	pSphere->setFriendlyName("sphere");	// We use to search 
+	pSphere->setFriendlyName("physicsSphere");	// We use to search 
 	pSphere->setPositionXYZ(glm::vec3(0.0f, 50.0f, 0.0f));
 	pSphere->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
 	pSphere->setScale(1.0f);
@@ -616,6 +631,7 @@ int LoadObjects()
 	physicsCubeDebug.Mass = 0.0f;
 	physicsCubeDebug.Position = glm::vec3(0.0f, 0.0f, 0.0f);
 	physicsCubeDebug.Radius = 1.0f;
+	physicsCubeDebug.Scale = glm::vec3(30.0f, 30.0f, 30.0f);
 	nPhysics::iBallComponent* pDebugCubePhysics = physicsFactory->CreateBall(physicsCubeDebug);
 	pDebugCube->SetComponent(pDebugCubePhysics);
 
@@ -656,6 +672,203 @@ int LoadObjects()
 	//pDebugCube->setIsWireframe(true);
 	//pDebugCube->setInverseMass(0.0f);			// Sphere won't move
 	//pDebugCube->setIsVisible(false);
+
+	pMoon = pFactory->CreateObject("sphere", nPhysics::eComponentType::ball);
+	pMoon->setMeshName("bigSphere");
+	pMoon->setFriendlyName("moon");	// We use to search 
+	pMoon->setPositionXYZ(glm::vec3(-100.0f, -300.0f, -95.0f));
+	pMoon->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
+	pMoon->setScale(1.0f);
+	pMoon->setObjectColourRGBA(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+	//pSphere->setDebugColour(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+	pMoon->setTexture("moon.bmp", 1);
+	pMoon->setTextureRatio(1, 1);
+	pMoon->setTransprancyValue(1.0f);
+	pMoon->setVelocity(glm::vec3(0.0f, 0.0f, 0.0f));
+	pMoon->setAccel(glm::vec3(0.0f, 0.0f, 0.0f));
+	pMoon->set_SPHERE_radius(1.0f);
+	pMoon->setInverseMass(1.0f);
+	pMoon->setIsVisible(true);
+	pMoon->setIsWireframe(false);
+	//nPhysics::sBallDef physicsMoon;
+	//physicsMoon.Mass = 0.0f;
+	//physicsMoon.Position = glm::vec3(-100.0f, -300.0f, -95.0f);
+	//physicsMoon.Radius = 1.0f;
+	//physicsMoon.Angle = 1.0f;
+	//physicsMoon.Rotation = glm::vec3(1.0f, 1.0f, 1.0f);
+	//physicsMoon.Scale = glm::vec3(1.0f, 1.0f, 1.0f);
+	//nPhysics::iBallComponent* pMoonPhysics = physicsFactory->CreateBall(physicsMoon);
+	//g_vec_pGameComponentObjects.push_back(pMoonPhysics);
+	//pMoon->SetComponent(pMoonPhysics);
+	g_vec_pAIEnvironmentObjects.push_back(pMoon);
+	//physicsWorld->AddComponent(pMoon->GetComponent());
+
+	pMars = pFactory->CreateObject("sphere", nPhysics::eComponentType::ball);
+	pMars->setMeshName("bigSphere");
+	pMars->setFriendlyName("mars");	// We use to search 
+	pMars->setPositionXYZ(glm::vec3(200.0f, -600.0f, 300.0f));
+	pMars->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
+	pMars->setScale(1.0f);
+	pMars->setObjectColourRGBA(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+	//pSphere->setDebugColour(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+	pMars->setTexture("mars.bmp", 1);
+	pMars->setTextureRatio(1, 1);
+	pMars->setTransprancyValue(1.0f);
+	pMars->setVelocity(glm::vec3(0.0f, 0.0f, 0.0f));
+	pMars->setAccel(glm::vec3(0.0f, 0.0f, 0.0f));
+	pMars->set_SPHERE_radius(1.0f);
+	pMars->setInverseMass(1.0f);
+	pMars->setIsVisible(true);
+	pMars->setIsWireframe(false);
+	//nPhysics::sBallDef physicsMars;
+	//physicsMars.Mass = 0.0f;
+	//physicsMars.Position = glm::vec3(-100.0f, -300.0f, -95.0f);
+	//physicsMars.Radius = 1.0f;
+	//physicsMars.Angle = 1.0f;
+	//physicsMars.Rotation = glm::vec3(1.0f, 1.0f, 1.0f);
+	//physicsMars.Scale = glm::vec3(1.0f, 1.0f, 1.0f);
+	//nPhysics::iBallComponent* pMarsPhysics = physicsFactory->CreateBall(physicsMars);
+	//g_vec_pGameComponentObjects.push_back(pMarsPhysics);
+	//pMars->SetComponent(pMarsPhysics);
+	g_vec_pAIEnvironmentObjects.push_back(pMars);
+	//physicsWorld->AddComponent(pMars->GetComponent());
+
+	gPlayerBullet = pFactory->CreateObject("sphere", nPhysics::eComponentType::ball);
+	gPlayerBullet->setMeshName("sphere");
+	gPlayerBullet->setFriendlyName("bullet");	// We use to search 
+	gPlayerBullet->setPositionXYZ(glm::vec3(0.0f, 10.0f, -100.0f));
+	gPlayerBullet->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
+	gPlayerBullet->setScale(1.0f);
+	//gPlayerBullet->setObjectColourRGBA(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+	gPlayerBullet->setDebugColour(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+	gPlayerBullet->setTexture("red.bmp", 1);
+	gPlayerBullet->setTextureRatio(1, 1);
+	gPlayerBullet->setTransprancyValue(1.0f);
+	gPlayerBullet->setVelocity(glm::vec3(0.0f, 0.0f, 0.0f));
+	gPlayerBullet->setAccel(glm::vec3(0.0f, 0.0f, 0.0f));
+	gPlayerBullet->set_SPHERE_radius(1.0f);
+	gPlayerBullet->setInverseMass(1.0f);
+	gPlayerBullet->setIsVisible(false);
+	gPlayerBullet->setIsWireframe(false);
+	//nPhysics::sBallDef physicsBullet;
+	//physicsBullet.Mass = 1.0f;
+	//physicsBullet.Position = glm::vec3(0.0f, 0.0f, -100.0f);
+	//physicsBullet.Radius = 1.0f;
+	//physicsBullet.Scale = glm::vec3(1.0f, 1.0f, 1.0f);
+	//nPhysics::iBallComponent* pBulletPhyisics = physicsFactory->CreateBall(physicsBullet);
+	//g_vec_pGameComponentObjects.push_back(pBulletPhyisics);
+	//gPlayerBullet->SetComponent(pBulletPhyisics);
+	g_vec_pAIGameObjects.push_back(gPlayerBullet);
+	//physicsWorld->AddComponent(gPlayerBullet->GetComponent());
+
+	// Sphere and cube
+	pMainShip = pFactory->CreateObject("sphere", nPhysics::eComponentType::ball);
+	pMainShip->setMeshName("xWing");
+	pMainShip->setFriendlyName("mainXWing");	// We use to search 
+	pMainShip->setPositionXYZ(glm::vec3(0.0f, 10.0f, 0.0f));
+	pMainShip->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
+	pMainShip->setScale(1.0f);
+	pMainShip->setObjectColourRGBA(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+	pMainShip->setTexture("X-Wing-Texture_bit.bmp", 1);
+	pMainShip->setTextureRatio(1, 1);
+	pMainShip->setTransprancyValue(1.0f);
+	pMainShip->setVelocity(glm::vec3(0.0f, 0.0f, 0.0f));
+	pMainShip->setAccel(glm::vec3(0.0f, 0.0f, 0.0f));
+	pMainShip->set_SPHERE_radius(1.0f);
+	pMainShip->setInverseMass(1.0f);
+	pMainShip->setIsVisible(true);
+	pMainShip->setIsWireframe(false);
+	//nPhysics::sBallDef physicsMainShip;
+	//physicsMainShip.Mass = 1.0f;
+	//physicsMainShip.Position = glm::vec3(0.0f, 10.0f, 0.0f);
+	//physicsMainShip.Radius = 1.0f;
+	//physicsMainShip.Scale = glm::vec3(0.0f, 0.0f, 0.0f);
+	//nPhysics::iBallComponent* pMainShipPhysics = physicsFactory->CreateBall(physicsMainShip);
+	//g_vec_pGameComponentObjects.push_back(pMainShipPhysics);
+	//pMainShip->SetComponent(pMainShipPhysics);
+	::g_vec_pAIGameObjects.push_back(pMainShip);
+	//physicsWorld->AddComponent(pMainShipPhysics);
+
+	cPhysics* pPhsyics = new cPhysics();
+
+	for (int i = 0; i < 9; i++)
+	{
+		iObject* pEnemy = pFactory->CreateObject("sphere", nPhysics::eComponentType::ball);
+
+		//set behaviour
+		int enemyDefault = 1;
+		int numberOfBehavious = 5;
+		int enemyBehaviour = randInRange(enemyDefault, numberOfBehavious);
+		//int enemyBehaviour = 1;
+		if (enemyBehaviour >= 1)
+		{
+			pEnemy->setBehaviour("seek");
+		}
+		if (enemyBehaviour >= 2)
+		{
+			pEnemy->setBehaviour("pursue");
+		}
+		if (enemyBehaviour >= 3)
+		{
+			pEnemy->setBehaviour("approach");
+		}
+		if (enemyBehaviour >= 4)
+		{
+			pEnemy->setBehaviour("wander");
+		}
+
+		pEnemy->setMeshName("xWingR");
+		std::string friendlyName = "enemy" + i;
+		pEnemy->setFriendlyName(friendlyName);	// We use to search 
+		pEnemy->setPositionXYZ(glm::vec3(randInRange(-100.0f, 100.0f), 10.0f, randInRange(100.0f, 175.0f)));
+		pEnemy->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
+		pEnemy->setScale(1.0f);
+		if (pEnemy->getBehaviour() == "seek")
+		{
+			Seek* seekBehaviour = new Seek(pEnemy, pSphere);
+			gAIManager->SetBehaviour(pEnemy, seekBehaviour);
+			pEnemy->setTexture("red.bmp", 1);
+		}
+		if (pEnemy->getBehaviour() == "pursue")
+		{
+			Pursue* seekBehaviour = new Pursue(pEnemy, pSphere);
+			gAIManager->SetBehaviour(pEnemy, seekBehaviour);
+			pEnemy->setTexture("purple.bmp", 1);
+		}
+		if (pEnemy->getBehaviour() == "approach")
+		{
+			Approach* seekBehaviour = new Approach(pEnemy, pSphere);
+			gAIManager->SetBehaviour(pEnemy, seekBehaviour);
+			pEnemy->setTexture("white.bmp", 1);
+		}
+		if (pEnemy->getBehaviour() == "wander")
+		{
+			Wander* seekBehaviour = new Wander(pEnemy, glm::vec3(randInRange(-60.0f, 60.0f), 10.0f, randInRange(-40.0f, 40.0f)));
+			gAIManager->SetBehaviour(pEnemy, seekBehaviour);
+			pEnemy->setTexture("green.bmp", 1);
+		}
+		pEnemy->setTextureRatio(1, 1);
+		pEnemy->setTransprancyValue(1.0f);
+		pEnemy->setVelocity(glm::vec3(0.0f, 0.0f, 0.0f));
+		pEnemy->setAccel(glm::vec3(0.0f, 0.0f, 0.0f));
+		pEnemy->set_SPHERE_radius(1.0f);
+		pEnemy->setInverseMass(1.0f);
+		pEnemy->setIsVisible(true);
+		pEnemy->setIsWireframe(false);
+
+		//nPhysics::sBallDef enemyBall;
+		//enemyBall.Mass = 1.0f;
+		//enemyBall.Position = glm::vec3(randInRange(-100.0f, 100.0f), 10.0f, randInRange(100.0f, 175.0f));
+		//enemyBall.Radius = 4.0f;
+		//enemyBall.Scale = glm::vec3(1.0f, 1.0f, 1.0f);
+		//nPhysics::iBallComponent* pEnemyPhysics = physicsFactory->CreateBall(enemyBall);
+		//g_vec_pGameComponentObjects.push_back(pEnemyPhysics);
+		//pEnemy->SetComponent(pEnemyPhysics);
+
+		::g_vec_pAIEnemyObjects.push_back(pEnemy);
+		//physicsWorld->AddComponent(pEnemy->GetComponent());
+	}
+
 	return 0;
 }
 

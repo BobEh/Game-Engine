@@ -60,6 +60,12 @@
 //AI
 #include "AIManager.h"
 #include "Coordinator.h"
+#include "Seek.h"
+#include "Pursue.h"
+#include "Approach.h"
+#include "Flee.h"
+#include "Wander.h"
+#include "Evade.h"
 
 // Used to visualize the attenuation of the lights...
 #include "LightManager/cLightHelper.h"

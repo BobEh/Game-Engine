@@ -1,5 +1,10 @@
 #include "cGameObject.h"
 
+std::string cGameObject::getBehaviour()
+{
+	return this->_Behaviour;
+}
+
 std::string cGameObject::getMeshName()
 {
 	return this->_meshName;
@@ -119,6 +124,10 @@ bool cGameObject::getDisableDepthBufferWrite()
 void cGameObject::addTestPoint(glm::vec3 testPoint)
 {
 	
+}
+void cGameObject::setBehaviour(std::string behaviour)
+{
+	this->_Behaviour = behaviour;
 }
 void cGameObject::setSM(cSimpleAssimpSkinnedMesh* skinnedMesh)
 {

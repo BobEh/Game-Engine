@@ -168,25 +168,35 @@ void DrawObject(glm::mat4 m, iObject* pCurrentObject, GLint shaderProgID, cVAOMa
 		//{
 
 		//Translation (done in physics engine)
-		if (pCurrentObject->GetComponent()->GetComponentType() != nPhysics::eComponentType::cloth)
+		if (pCurrentObject->getFriendlyName() == "moon")
 		{
-			pCurrentObject->GetComponent()->GetTransform(m);
-
-			//Rotation
-			glm::mat4 rotation = glm::mat4(pCurrentObject->getRotationXYZ());
-			m *= rotation;
-
-			//Scale
-			float theScale = pCurrentObject->getScale();
-			glm::mat4 scale = glm::scale(glm::mat4(1.0f),
-				glm::vec3(theScale));
-			m = m * scale;
+			//std::cout << "the moon" << std::endl;
 		}
-		//}
-		//else
-		//{
-		//m = calculateWorldMatrix(pCurrentObject);
-		//}
+		if (pCurrentObject->GetComponent() == nullptr)
+		{
+			m = calculateWorldMatrix(pCurrentObject);
+		}
+		if (pCurrentObject->GetComponent() != nullptr)
+		{
+			if (pCurrentObject->GetComponent()->GetComponentType() != nPhysics::eComponentType::cloth)
+			{
+				pCurrentObject->GetComponent()->GetTransform(m);
+
+				//Rotation
+				glm::mat4 rotation = glm::mat4(pCurrentObject->getRotationXYZ());
+				m *= rotation;
+
+				//Scale
+				float theScale = pCurrentObject->getScale();
+				glm::mat4 scale = glm::scale(glm::mat4(1.0f),
+					glm::vec3(theScale));
+				m = m * scale;
+			}
+		}
+		else
+		{
+			m = calculateWorldMatrix(pCurrentObject);
+		}
 	}
 	else
 	{

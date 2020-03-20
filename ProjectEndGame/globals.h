@@ -81,11 +81,16 @@ std::vector<iObject*> g_vec_pGameFBOObjects;
 std::vector<nPhysics::iPhysicsComponent*> g_vec_pGameComponentObjects;
 std::vector<iObject*> g_vec_pClothObjects;
 std::vector<iObject*> g_vec_pCharacterObjects;
+std::vector<iObject*> g_vec_pAIEnvironmentObjects;
+std::vector<iObject*> g_vec_pAIEnemyObjects;
+std::vector<iObject*> g_vec_pAIGameObjects;
+std::vector<iObject*> g_vec_pExplosionObjects;
 std::map<std::string /*FriendlyName*/, iObject*> g_map_GameObjectsByFriendlyName;
 
 //AI
 Coordinator* gCoordinator;
 AIManager* gAIManager;
+cPhysics* pPhsyics;
 
 // returns NULL (0) if we didn't find it.
 iObject* pFindObjectByFriendlyName(std::string name);
@@ -105,6 +110,12 @@ double deltaTime;
 iObject* pDebugSphere;
 iObject* pDebugCube;
 iObject* pSkyBoxSphere;
+
+//global objects
+iObject* pMoon;
+iObject* pMars;
+iObject* pMainShip;
+iObject* gPlayerBullet;
 
 //random function
 template <class T>

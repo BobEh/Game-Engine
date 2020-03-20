@@ -132,7 +132,8 @@ int main(void)
 		//   |_|    |_|_|  |___/\__| |_|   \__,_|___/___/
 		//                                               
 		//                                               
-
+		g_pFlyCamera->eye = glm::vec3(0.0f, 200.0, -50.0);
+		v = glm::lookAt(::g_pFlyCamera->eye, glm::vec3(0.0f, 0.0f, 0.0f), g_pFlyCamera->getUpVector());
 		DrawFirstPass();
 
 		//     _____                          _   _____              
@@ -143,7 +144,8 @@ int main(void)
 		//   |_____/ \___|\___\___/|_| |_|\__,_| |_|   \__,_|___/___/
 		//                                                           
 		//                                                           
-
+		g_pFlyCamera->eye = glm::vec3(0.0f, 20.0, -80.0);
+		v = glm::lookAt(g_pFlyCamera->eye, pCurrentObject->getPositionXYZ(), g_pFlyCamera->getUpVector());
 		DrawSecondPass();
 
 		glfwSwapBuffers(window);

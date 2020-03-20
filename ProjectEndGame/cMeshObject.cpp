@@ -35,6 +35,11 @@ bool cMeshObject::getIsTranspanrancy()
 	return this->isTranspanrancy;
 }
 
+std::string cMeshObject::getBehaviour()
+{
+	return this->_Behaviour;
+}
+
 std::string cMeshObject::getMeshName()
 {
 	return this->_meshName;
@@ -133,6 +138,10 @@ bool cMeshObject::getDisableDepthBufferWrite()
 void cMeshObject::addTestPoint(glm::vec3 testPoint)
 {
 	
+}
+void cMeshObject::setBehaviour(std::string behaviour)
+{
+	this->_Behaviour = behaviour;
 }
 void cMeshObject::setSM(cSimpleAssimpSkinnedMesh* skinnedMesh)
 {

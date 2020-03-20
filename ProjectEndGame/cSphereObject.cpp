@@ -35,6 +35,11 @@ cSimpleAssimpSkinnedMesh* cSphereObject::getSM()
 	return this->pSM;
 }
 
+std::string cSphereObject::getBehaviour()
+{
+	return this->_Behaviour;
+}
+
 std::string cSphereObject::getMeshName()
 {
 	return this->_meshName;
@@ -50,7 +55,14 @@ std::string cSphereObject::getFriendlyName()
 glm::vec3 cSphereObject::getPositionXYZ()
 {
 	glm::vec3 result = glm::vec3(0.0f);
-	this->_component->GetPosition(result);
+	if (this->_component != nullptr)
+	{
+		this->_component->GetPosition(result);
+	}
+	else
+	{
+		result = _positionXYZ;
+	}
 	return result;
 }
 glm::quat cSphereObject::getRotationXYZ()
@@ -60,7 +72,14 @@ glm::quat cSphereObject::getRotationXYZ()
 float cSphereObject::getScale()
 {
 	float scale = 1.0f;
-	this->GetComponent()->GetScale(scale);
+	if (this->_component != nullptr)
+	{
+		this->GetComponent()->GetScale(scale);
+	}
+	else
+	{
+		scale = _scale;
+	}
 	return scale;
 }
 glm::mat4 cSphereObject::getMatWorld()
@@ -82,7 +101,14 @@ glm::vec4 cSphereObject::getSpecularColour()
 glm::vec3 cSphereObject::getVelocity()
 {
 	glm::vec3 theVelocity = glm::vec3(0.0f);
-	this->_component->GetVelocity(theVelocity);
+	if (this->_component != nullptr)
+	{
+		this->_component->GetVelocity(theVelocity);
+	}
+	else
+	{
+		theVelocity = _velocity;
+	}
 	return theVelocity;
 }
 float cSphereObject::getVelocityX()
@@ -138,6 +164,10 @@ bool cSphereObject::getDisableDepthBufferWrite()
 void cSphereObject::addTestPoint(glm::vec3 testPoint)
 {
 	this->testPoints.push_back(testPoint);
+}
+void cSphereObject::setBehaviour(std::string behaviour)
+{
+	this->_Behaviour = behaviour;
 }
 void cSphereObject::setSM(cSimpleAssimpSkinnedMesh* skinnedMesh)
 {

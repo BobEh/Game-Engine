@@ -304,6 +304,14 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 		if (key == GLFW_KEY_ENTER && action == GLFW_PRESS)
 		{
 			renderAI = !renderAI;
+			if (renderAI)
+			{
+				pCurrentObject = pFindObjectByFriendlyName("mainXWing");
+			}
+			else
+			{
+				pCurrentObject = pFindObjectByFriendlyName("mainCharacter");
+			}
 		}
 		if (key == GLFW_KEY_9)
 		{
@@ -375,66 +383,159 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 
 	if (isCtrlKeyDownByAlone(mods))
 	{
+		if (renderAI)
+		{
+			if (key == GLFW_KEY_D)
+			{
+				glm::quat rotation = glm::quat(glm::vec3(0.0f, glm::radians(-1.5f), 0.0f));
+				pCurrentObject->setRotationXYZ(pCurrentObject->getRotationXYZ() * rotation);
+			}
+			if (key == GLFW_KEY_A)
+			{
+				//if (pSphere->getPositionXYZ().x < 60.0f)
+				//{
+					//pSphere->rotationXYZ += glm::vec3(CAMERASPEED, 0.0f, 0.0f);
+					//pSphere->setVelocity(pSphere->getVelocity() + glm::vec3(MOVESPEED, 0.0f, 0.0f));		// Move the camera +0.01f units
+				glm::quat rotation = glm::quat(glm::vec3(0.0f, glm::radians(1.5f), 0.0f));
+				pCurrentObject->setRotationXYZ(pCurrentObject->getRotationXYZ() * rotation);
+				//}
+				//else
+				//{
+				//	pSphere->setVelocity(glm::vec3(0.0f, pSphere->getVelocity().y, pSphere->getVelocity().z));
+				//}
+			}
+
+			if (key == GLFW_KEY_M && action == GLFW_PRESS)
+			{
+				if (pCurrentObject->getIsWireframe())
+				{
+					pCurrentObject->setIsWireframe(false);
+				}
+				else
+				{
+					pCurrentObject->setIsWireframe(true);
+				}
+			}
+
+			// Move the camera (W & S for towards and away, along the z axis)
+			if (key == GLFW_KEY_S)
+			{
+				if (pCurrentObject->getPositionXYZ().z < -40.0f)
+				{
+					pCurrentObject->setVelocity(glm::vec3(pCurrentObject->getVelocity().x, pCurrentObject->getVelocity().y, 0.0f));
+				}
+				else
+				{
+					pCurrentObject->setVelocity(pCurrentObject->getVelocity() - glm::vec3(0.0f, 0.0f, MOVESPEED));		// Move the camera -0.01f units
+				}
+			}
+			if (key == GLFW_KEY_W)
+			{
+				if (pCurrentObject->getPositionXYZ().x > 60.0f)
+				{
+					pCurrentObject->setVelocity(glm::vec3(0.0f, pCurrentObject->getVelocity().y, pCurrentObject->getVelocity().z));
+				}
+				else if (pCurrentObject->getPositionXYZ().x < -60.0f)
+				{
+					pCurrentObject->setVelocity(glm::vec3(0.0f, pCurrentObject->getVelocity().y, pCurrentObject->getVelocity().z));
+				}
+				else if (pCurrentObject->getPositionXYZ().z > 30.0f)
+				{
+					pCurrentObject->setVelocity(glm::vec3(pCurrentObject->getVelocity().x, pCurrentObject->getVelocity().y, 0.0f));
+				}
+				else
+				{
+					pCurrentObject->setVelocity(pCurrentObject->getVelocity() + glm::vec3(0.0f, 0.0f, MOVESPEED));		// Move the camera +0.01f units
+				}
+			}
+			if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
+			{
+				glm::vec4 forwardDirObject = glm::vec4(0.0f, 0.0f, 50.0f, 1.0f);
+
+				glm::mat4 matModel = glm::mat4(1.0f);	// Identity
+
+				// Roation
+				// Constructor for the GLM mat4x4 can take a quaternion
+				glm::mat4 matRotation = glm::mat4(pCurrentObject->getRotationXYZ());
+				matModel *= matRotation;
+				// *******************
+
+				// Like in the vertex shader, I mulitly the test points
+				// by the model matrix (MUST be a VEC4 because it's a 4x4 matrix)
+				glm::vec4 forwardInWorldSpace = matModel * forwardDirObject;
+
+
+				// Add this to the position of the object
+				//this->setPositionXYZ(this->getPositionXYZ() + glm::vec3(forwardInWorldSpace));
+
+				gPlayerBullet->setPositionXYZ(pCurrentObject->getPositionXYZ());
+				gPlayerBullet->setIsVisible(true);
+				gPlayerBullet->setVelocity(glm::vec3(forwardInWorldSpace));
+			}
+		}
 		/*if (key == GLFW_KEY_LEFT)
 		{
 			pCurrentObject->setRotationXYZ(glm::quat(glm::vec3(0.0f, glm::radians(pCurrentObject->getRotationXYZ().y + 1.0f), 0.0f)));
 		}*/
-		if (key == GLFW_KEY_A)
+		else
 		{
-			//pCurrentObject->setRotationXYZ(glm::vec3(0.0f, glm::radians(90.0f), 0.0f));
-			//pCurrentObject->setVelocity(glm::vec3(pCurrentObject->getVelocity().x, 0.0f, 20.0f));
-			pCurrentObject->ApplyForce(glm::vec3(0.0f, 0.0f, 0.1f));
-		}
-		if (key == GLFW_KEY_D)
-		{
-			//pCurrentObject->setRotationXYZ(glm::vec3(0.0f, glm::radians(-90.0f), 0.0f));
-			//pCurrentObject->setVelocity(glm::vec3(pCurrentObject->getVelocity().x, 0.0f, 20.0f));
-			pCurrentObject->ApplyForce(glm::vec3(0.0f, 0.0f, -0.1f));
-		}
-		if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
-		{
-			pCurrentObject->ApplyForce(glm::vec3(0.0f, 5.0f, 0.0f));
-			//jumping = true;
-			//currentAnimationName = "Jump";
-		}
-		if (key == GLFW_KEY_S)
-		{
-			//rolling = true;
-			//currentAnimationName = "Roll";
-			pCurrentObject->ApplyForce(glm::vec3(-0.1f, 0.0f, 0.0f));
-		}
-		if (key == GLFW_KEY_W)
-		{
-			pCurrentObject->ApplyForce(glm::vec3(0.1f, 0.0f, 0.0f));
-		}
-		if (key == GLFW_KEY_ENTER)
-		{
-			//attacking = true;
-			//currentAnimationName = "Attack";
-		}
-		if (key == GLFW_KEY_1)
-		{
-			pLightsVec.at(currentLight)->setConstAtten(pLightsVec.at(currentLight)->getConstAtten() * 0.99f);			// 99% of what it was
-		}
-		if (key == GLFW_KEY_2)
-		{
-			pLightsVec.at(currentLight)->setConstAtten(pLightsVec.at(currentLight)->getConstAtten() * 1.01f);
-		}
-		if (key == GLFW_KEY_3)
-		{
-			pLightsVec.at(currentLight)->setLinearAtten(pLightsVec.at(currentLight)->getLinearAtten() * 0.99f);			// 99% of what it was
-		}
-		if (key == GLFW_KEY_4)
-		{
-			pLightsVec.at(currentLight)->setLinearAtten(pLightsVec.at(currentLight)->getLinearAtten() * 1.01f);			// 1% more of what it was
-		}
-		if (key == GLFW_KEY_5)
-		{
-			pLightsVec.at(currentLight)->setQuadraticAtten(pLightsVec.at(currentLight)->getQuadraticAtten() * 0.99f);
-		}
-		if (key == GLFW_KEY_6)
-		{
-			pLightsVec.at(currentLight)->setQuadraticAtten(pLightsVec.at(currentLight)->getQuadraticAtten() * 1.01f);
+			if (key == GLFW_KEY_A)
+			{
+				//pCurrentObject->setRotationXYZ(glm::vec3(0.0f, glm::radians(90.0f), 0.0f));
+				//pCurrentObject->setVelocity(glm::vec3(pCurrentObject->getVelocity().x, 0.0f, 20.0f));
+				pCurrentObject->ApplyForce(glm::vec3(0.0f, 0.0f, 0.1f));
+			}
+			if (key == GLFW_KEY_D)
+			{
+				//pCurrentObject->setRotationXYZ(glm::vec3(0.0f, glm::radians(-90.0f), 0.0f));
+				//pCurrentObject->setVelocity(glm::vec3(pCurrentObject->getVelocity().x, 0.0f, 20.0f));
+				pCurrentObject->ApplyForce(glm::vec3(0.0f, 0.0f, -0.1f));
+			}
+			if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
+			{
+				pCurrentObject->ApplyForce(glm::vec3(0.0f, 5.0f, 0.0f));
+				//jumping = true;
+				//currentAnimationName = "Jump";
+			}
+			if (key == GLFW_KEY_S)
+			{
+				//rolling = true;
+				//currentAnimationName = "Roll";
+				pCurrentObject->ApplyForce(glm::vec3(-0.1f, 0.0f, 0.0f));
+			}
+			if (key == GLFW_KEY_W)
+			{
+				pCurrentObject->ApplyForce(glm::vec3(0.1f, 0.0f, 0.0f));
+			}
+			if (key == GLFW_KEY_ENTER)
+			{
+				//attacking = true;
+				//currentAnimationName = "Attack";
+			}
+			if (key == GLFW_KEY_1)
+			{
+				pLightsVec.at(currentLight)->setConstAtten(pLightsVec.at(currentLight)->getConstAtten() * 0.99f);			// 99% of what it was
+			}
+			if (key == GLFW_KEY_2)
+			{
+				pLightsVec.at(currentLight)->setConstAtten(pLightsVec.at(currentLight)->getConstAtten() * 1.01f);
+			}
+			if (key == GLFW_KEY_3)
+			{
+				pLightsVec.at(currentLight)->setLinearAtten(pLightsVec.at(currentLight)->getLinearAtten() * 0.99f);			// 99% of what it was
+			}
+			if (key == GLFW_KEY_4)
+			{
+				pLightsVec.at(currentLight)->setLinearAtten(pLightsVec.at(currentLight)->getLinearAtten() * 1.01f);			// 1% more of what it was
+			}
+			if (key == GLFW_KEY_5)
+			{
+				pLightsVec.at(currentLight)->setQuadraticAtten(pLightsVec.at(currentLight)->getQuadraticAtten() * 0.99f);
+			}
+			if (key == GLFW_KEY_6)
+			{
+				pLightsVec.at(currentLight)->setQuadraticAtten(pLightsVec.at(currentLight)->getQuadraticAtten() * 1.01f);
+			}
 		}
 	}
 

@@ -682,10 +682,6 @@ void DrawFirstPass()
 		}
 	}
 
-	physicsWorld->Update(deltaTime);
-	gCoordinator->update(deltaTime);
-	gAIManager->update(deltaTime);
-
 	if (bLightDebugSheresOn)
 	{
 		DrawDebugSpheres();

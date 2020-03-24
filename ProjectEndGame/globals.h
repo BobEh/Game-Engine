@@ -4,6 +4,9 @@
 GLFWwindow* window;
 int width, height;
 
+// what should I draw??
+bool renderAI = false;
+
 // physics stuff
 nPhysics::iPhysicsFactory* physicsFactory;
 nPhysics::iPhysicsWorld* physicsWorld;

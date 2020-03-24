@@ -301,6 +301,10 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 
 	if (isShiftKeyDownByAlone(mods))
 	{
+		if (key == GLFW_KEY_ENTER && action == GLFW_PRESS)
+		{
+			renderAI = !renderAI;
+		}
 		if (key == GLFW_KEY_9)
 		{
 			bLightDebugSheresOn = false;

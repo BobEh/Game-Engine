@@ -293,7 +293,6 @@ int LoadObjects()
 	gCoordinator = new Coordinator();
 
 	//Objects
-
 	iObject* pCloth = pFactory->CreateObject("cloth", nPhysics::eComponentType::cloth);
 	pCloth->setMeshName("sphere");
 	pCloth->setFriendlyName("cloth");	// We use to search 
@@ -328,8 +327,7 @@ int LoadObjects()
 	::g_vec_pClothObjects.push_back(pCloth);
 	physicsWorld->AddComponent(pCloth->GetComponent());
 
-	iObject* pMainCharacter = pFactory->CreateObject("sphere", nPhysics::eComponentType::ball);
-	
+	iObject* pMainCharacter = pFactory->CreateObject("sphere", nPhysics::eComponentType::ball);	
 	nPhysics::sBallDef characterPhysics;
 	characterPhysics.Mass = 1.0;
 	characterPhysics.Position = glm::vec3(30.0f, 50.0f, 0.0f);

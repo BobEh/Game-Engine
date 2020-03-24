@@ -55,7 +55,7 @@ int rollCount = 0;
 int dyingCount = 0;
 int attackCount = 0;
 
-void DrawFirstPass()
+void DrawAI()
 {
 	glm::quat moonRotation = glm::quat(glm::vec3(0.0f, 0.0f, glm::radians(-0.04f)));
 	pMoon->setRotationXYZ(pMoon->getRotationXYZ() * moonRotation);
@@ -73,6 +73,40 @@ void DrawFirstPass()
 
 	// set the passNumber to 0
 	passNumber_UniLoc = glGetUniformLocation(shaderProgID, "passNumber");
+	glUniform1i(passNumber_UniLoc, 0);
+
+	// 1. Disable the FBO
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	// 2. Clear the ACTUAL screen buffer
+	glViewport(0, 0, width, height);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	// 3. Use the FBO colour texture as the texture on that quad.
+	// set the passNumber to 1
+	glUniform1i(passNumber_UniLoc, 1);
+
+	glActiveTexture(GL_TEXTURE0 + 40);
+	glBindTexture(GL_TEXTURE_2D, pTheFBO->colourTexture_0_ID);
+
+	GLuint texSampFBO_UL = glGetUniformLocation(shaderProgID, "secondPassColourTexture");
+	glUniform1i(texSampFBO_UL, 40);
+
+	// 4. Draw a single object (a triangle or quad)
+	iObject* pQuadOrIsIt = pFindObjectByFriendlyName("debug_cube");
+	pQuadOrIsIt->setScale(30.0f);
+	pQuadOrIsIt->setIsVisible(true);
+	//glm::vec3 oldLocation = glm::vec3(::g_pFlyCamera->eye.x, ::g_pFlyCamera->eye.y, ::g_pFlyCamera->eye.z);
+	pQuadOrIsIt->setPositionXYZ(glm::vec3(::g_pFlyCamera->getAtInWorldSpace().x, ::g_pFlyCamera->getAtInWorldSpace().y, ::g_pFlyCamera->getAtInWorldSpace().z + 300));
+	//pQuadOrIsIt->setPositionXYZ(glm::vec3(::g_pFlyCamera->eye.x, ::g_pFlyCamera->eye.y, ::g_pFlyCamera->eye.z + 100));
+	pQuadOrIsIt->setIsWireframe(false);
+
+	// Move the camera
+	// Maybe set it to orthographic, etc.
+	glm::mat4 matQuad = glm::mat4(1.0f);
+	DrawObject(matQuad, pQuadOrIsIt, shaderProgID, pTheVAOManager);
+
+	// set pass number back to 0 to render the rest of the scene
 	glUniform1i(passNumber_UniLoc, 0);
 
 	PlaceLights();
@@ -528,6 +562,124 @@ void DrawFirstPass()
 		::g_vec_pAIEnemyObjects.push_back(pEnemy);
 		//physicsWorld->AddComponent(pEnemy->GetComponent());
 	}
+}
+
+void DrawFirstPass()
+{
+	if (jumping)
+	{
+		jumpCount++;
+		if (jumpCount >= 150)
+		{
+			jumping = false;
+			jumpCount = 0;
+			currentAnimationName = "Idle";
+		}
+	}
+
+	if (rolling)
+	{
+		rollCount++;
+		if (rollCount >= 120)
+		{
+			rolling = false;
+			rollCount = 0;
+			currentAnimationName = "Idle";
+		}
+	}
+
+	if (attacking)
+	{
+		attackCount++;
+		if (attackCount >= 120)
+		{
+			attacking = false;
+			attackCount = 0;
+			currentAnimationName = "Idle";
+
+			for (int i = 0; i < g_vec_pGameObjects.size(); i++)
+			{
+				if (g_vec_pGameObjects.at(i)->getFriendlyName() == "mainCharacter")
+				{
+					continue;
+				}
+				else
+				{
+					g_vec_pGameObjects.at(i)->setTexture("green.bmp", 1);
+				}
+			}
+		}
+	}
+	// **************************************************
+	// **************************************************
+	// Loop to draw everything in the scene
+
+	//Draw everything to the external frame buffer
+	// (I get the frame buffer ID, and use that)
+	glBindFramebuffer(GL_FRAMEBUFFER, pTheFBO->ID);
+
+	pTheFBO->clearBuffers(true, true);
+
+	// set the passNumber to 0
+	passNumber_UniLoc = glGetUniformLocation(shaderProgID, "passNumber");
+	glUniform1i(passNumber_UniLoc, 0);
+
+	for (int index = 0; index != ::g_vec_pGameObjects.size(); index++)
+	{
+		glm::mat4 matModel = glm::mat4(1.0f);
+
+		iObject* pCurrentObject = ::g_vec_pGameObjects[index];
+
+		DrawObject(matModel, pCurrentObject,
+			shaderProgID, pTheVAOManager);
+
+	}//for (int index...
+
+	for (int index = 0; index != ::g_vec_pEnvironmentObjects.size(); index++)
+	{
+		glm::mat4 matModel = glm::mat4(1.0f);
+
+		iObject* pCurrentObject = ::g_vec_pEnvironmentObjects[index];
+
+		DrawObject(matModel, pCurrentObject,
+			shaderProgID, pTheVAOManager);
+
+	}//for (int index...
+
+	iObject* pMainCharacter = pFindObjectByFriendlyName("mainCharacter");
+
+	if (pMainCharacter != nullptr && currentAnimationName != "Jump" && currentAnimationName != "Roll" && currentAnimationName != "Dying" && currentAnimationName != "Attack")
+	{
+		if (pMainCharacter->getVelocity().z > 10.0f || pMainCharacter->getVelocity().x > 10.0f || pMainCharacter->getVelocity().z < -10.0f || pMainCharacter->getVelocity().x < -10.0f)
+		{
+			currentAnimationName = "Run";
+		}
+		else if (pMainCharacter->getVelocity().z > 1.0f || pMainCharacter->getVelocity().x > 1.0f || pMainCharacter->getVelocity().z < -1.0f || pMainCharacter->getVelocity().x < -1.0f)
+		{
+			currentAnimationName = "Walk";
+		}
+		//else if (pMainCharacter->getVelocity().y > 15.0f)
+		//{
+		//	currentAnimationName = "Jump";
+		//}
+		else if (pMainCharacter->getVelocity().y < -3.0f || pMainCharacter->getVelocity().y > 3.0f)
+		{
+			currentAnimationName = "Fall";
+		}
+		else
+		{
+			currentAnimationName = "Idle";
+		}
+	}
+
+	physicsWorld->Update(deltaTime);
+	gCoordinator->update(deltaTime);
+	gAIManager->update(deltaTime);
+
+	if (bLightDebugSheresOn)
+	{
+		DrawDebugSpheres();
+	}// if (bLightDebugSheresOn) 
 }
 
 void DrawSecondPass()

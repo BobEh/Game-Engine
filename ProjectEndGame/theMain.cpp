@@ -124,29 +124,39 @@ int main(void)
 		glUniformMatrix4fv(matView_UL, 1, GL_FALSE, glm::value_ptr(v));
 		glUniformMatrix4fv(matProj_UL, 1, GL_FALSE, glm::value_ptr(p));
 
-		//    ______ _          _     _____              
-		//   |  ____(_)        | |   |  __ \             
-		//   | |__   _ _ __ ___| |_  | |__) |_ _ ___ ___ 
-		//   |  __| | | '__/ __| __| |  ___/ _` / __/ __|
-		//   | |    | | |  \__ \ |_  | |  | (_| \__ \__ \
-		//   |_|    |_|_|  |___/\__| |_|   \__,_|___/___/
-		//                                               
-		//                                               
-		g_pFlyCamera->eye = glm::vec3(0.0f, 200.0, -50.0);
-		v = glm::lookAt(::g_pFlyCamera->eye, glm::vec3(0.0f, 0.0f, 0.0f), g_pFlyCamera->getUpVector());
-		DrawFirstPass();
+		if (renderAI)
+		{
+			v = glm::lookAt(::g_pFlyCamera->eye,
+				glm::vec3(0.0f, 0.0f, 0.0f),
+				::g_pFlyCamera->getUpVector());
+			DrawAI();
+		}
+		else
+		{
+			//    ______ _          _     _____              
+			//   |  ____(_)        | |   |  __ \             
+			//   | |__   _ _ __ ___| |_  | |__) |_ _ ___ ___ 
+			//   |  __| | | '__/ __| __| |  ___/ _` / __/ __|
+			//   | |    | | |  \__ \ |_  | |  | (_| \__ \__ \
+			//   |_|    |_|_|  |___/\__| |_|   \__,_|___/___/
+			//                                               
+			//                                               
+			g_pFlyCamera->eye = glm::vec3(0.0f, 200.0, -50.0);
+			v = glm::lookAt(::g_pFlyCamera->eye, glm::vec3(0.0f, 0.0f, 0.0f), g_pFlyCamera->getUpVector());
+			DrawFirstPass();
 
-		//     _____                          _   _____              
-		//    / ____|                        | | |  __ \             
-		//   | (___   ___  ___ ___  _ __   __| | | |__) |_ _ ___ ___ 
-		//    \___ \ / _ \/ __/ _ \| '_ \ / _` | |  ___/ _` / __/ __|
-		//    ____) |  __/ (_| (_) | | | | (_| | | |  | (_| \__ \__ \
-		//   |_____/ \___|\___\___/|_| |_|\__,_| |_|   \__,_|___/___/
-		//                                                           
-		//                                                           
-		g_pFlyCamera->eye = glm::vec3(0.0f, 20.0, -80.0);
-		v = glm::lookAt(g_pFlyCamera->eye, pCurrentObject->getPositionXYZ(), g_pFlyCamera->getUpVector());
-		DrawSecondPass();
+			//     _____                          _   _____              
+			//    / ____|                        | | |  __ \             
+			//   | (___   ___  ___ ___  _ __   __| | | |__) |_ _ ___ ___ 
+			//    \___ \ / _ \/ __/ _ \| '_ \ / _` | |  ___/ _` / __/ __|
+			//    ____) |  __/ (_| (_) | | | | (_| | | |  | (_| \__ \__ \
+			//   |_____/ \___|\___\___/|_| |_|\__,_| |_|   \__,_|___/___/
+			//                                                           
+			//                                                           
+			g_pFlyCamera->eye = glm::vec3(0.0f, 20.0, -80.0);
+			v = glm::lookAt(g_pFlyCamera->eye, pCurrentObject->getPositionXYZ(), g_pFlyCamera->getUpVector());
+			DrawSecondPass();
+		}
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();

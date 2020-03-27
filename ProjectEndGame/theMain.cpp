@@ -57,15 +57,26 @@ int main(void)
 	lastTime = glfwGetTime();
 
 	//Load the fbo stuff
-	pTheFBO = new cFBO();
-	std::string FBOError;
-	if (pTheFBO->init(1080, 1080, FBOError))
+	pAIFBO = new cFBO();
+	std::string AIFBOError;
+	if (pAIFBO->init(1080, 1080, AIFBOError))
 	{
-		std::cout << "Frame buffer is OK" << std::endl;
+		std::cout << "AI Frame buffer is OK" << std::endl;
 	}
 	else
 	{
-		std::cout << "FBO Error: " << FBOError << std::endl;
+		std::cout << "AI FBO Error: " << AIFBOError << std::endl;
+	}
+
+	pPlatformFBO = new cFBO();
+	std::string PlatformFBOError;
+	if (pPlatformFBO->init(1080, 1080, PlatformFBOError))
+	{
+		std::cout << "Platform Frame buffer is OK" << std::endl;
+	}
+	else
+	{
+		std::cout << "Platform FBO Error: " << PlatformFBOError << std::endl;
 	}
 
 
@@ -125,17 +136,40 @@ int main(void)
 		glUniformMatrix4fv(matProj_UL, 1, GL_FALSE, glm::value_ptr(p));
 
 
-		//    ______ _          _     _____              
-		//   |  ____(_)        | |   |  __ \             
-		//   | |__   _ _ __ ___| |_  | |__) |_ _ ___ ___ 
-		//   |  __| | | '__/ __| __| |  ___/ _` / __/ __|
-		//   | |    | | |  \__ \ |_  | |  | (_| \__ \__ \
-		//   |_|    |_|_|  |___/\__| |_|   \__,_|___/___/
-		//                                               
-		//                                               
+
+		//             _____   ______ _          _     _____              
+		//       /\   |_   _| |  ____(_)        | |   |  __ \             
+		//      /  \    | |   | |__   _ _ __ ___| |_  | |__) |_ _ ___ ___ 
+		//     / /\ \   | |   |  __| | | '__/ __| __| |  ___/ _` / __/ __|
+		//    / ____ \ _| |_  | |    | | |  \__ \ |_  | |  | (_| \__ \__ \
+		//   /_/    \_\_____| |_|    |_|_|  |___/\__| |_|   \__,_|___/___/
+		//                                                                
+		//                                                                
+
 		//g_pFlyCamera->eye = glm::vec3(0.0f, 200.0, -50.0);
 		v = glm::lookAt(glm::vec3(0.0f, 200.0, -50.0), glm::vec3(0.0f, 0.0f, 0.0f), g_pFlyCamera->getUpVector());
-		DrawFirstPass();
+		DrawAIFBO();
+
+
+		//    _____  _       _    __                       ______ _          _     _____              
+		//   |  __ \| |     | |  / _|                     |  ____(_)        | |   |  __ \             
+		//   | |__) | | __ _| |_| |_ ___  _ __ _ __ ___   | |__   _ _ __ ___| |_  | |__) |_ _ ___ ___ 
+		//   |  ___/| |/ _` | __|  _/ _ \| '__| '_ ` _ \  |  __| | | '__/ __| __| |  ___/ _` / __/ __|
+		//   | |    | | (_| | |_| || (_) | |  | | | | | | | |    | | |  \__ \ |_  | |  | (_| \__ \__ \
+		//   |_|    |_|\__,_|\__|_| \___/|_|  |_| |_| |_| |_|    |_|_|  |___/\__| |_|   \__,_|___/___/
+		//                                                                                            
+		//                                                                                            
+		//v = glm::lookAt(glm::vec3(0.0f, 200.0, -50.0), glm::vec3(0.0f, 0.0f, 0.0f), g_pFlyCamera->getUpVector());
+		//DrawPlatformFBO();
+
+		//     _____                          _   _____              
+		//    / ____|                        | | |  __ \             
+		//   | (___   ___  ___ ___  _ __   __| | | |__) |_ _ ___ ___ 
+		//    \___ \ / _ \/ __/ _ \| '_ \ / _` | |  ___/ _` / __/ __|
+		//    ____) |  __/ (_| (_) | | | | (_| | | |  | (_| \__ \__ \
+		//   |_____/ \___|\___\___/|_| |_|\__,_| |_|   \__,_|___/___/
+		//                                                           
+		//   
 
 		if (renderAI)
 		{
@@ -144,16 +178,15 @@ int main(void)
 				::g_pFlyCamera->getUpVector());
 			DrawAI();
 		}
+		//else if (renderPlatform)
+		//{
+		//	v = glm::lookAt(::g_pFlyCamera->eye,
+		//		glm::vec3(0.0f, 0.0f, 0.0f),
+		//		::g_pFlyCamera->getUpVector());
+		//	DrawPlatform();
+		//}
 		else
-		{
-			//     _____                          _   _____              
-			//    / ____|                        | | |  __ \             
-			//   | (___   ___  ___ ___  _ __   __| | | |__) |_ _ ___ ___ 
-			//    \___ \ / _ \/ __/ _ \| '_ \ / _` | |  ___/ _` / __/ __|
-			//    ____) |  __/ (_| (_) | | | | (_| | | |  | (_| \__ \__ \
-			//   |_____/ \___|\___\___/|_| |_|\__,_| |_|   \__,_|___/___/
-			//                                                           
-			//                                                           
+		{                                                        
 			//g_pFlyCamera->eye = glm::vec3(0.0f, 20.0, -80.0);
 			v = glm::lookAt(g_pFlyCamera->eye, pCurrentObject->getPositionXYZ(), g_pFlyCamera->getUpVector());
 			DrawSecondPass();

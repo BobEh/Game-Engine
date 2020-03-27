@@ -139,6 +139,28 @@ int LoadMeshes()
 		std::cout << "Error: couldn't find the asteroid ply file." << std::endl;
 	}
 
+	cMesh enemyMesh;
+	pTheModelLoader->LoadPlyModel("assets/models/Android_Robot_All_xyz_n_uv.ply", enemyMesh);
+
+	cMesh piece1Mesh;
+	pTheModelLoader->LoadPlyModel("assets/models/Android_Robot_Head.ply", piece1Mesh);
+
+	cMesh piece2Mesh;
+	pTheModelLoader->LoadPlyModel("assets/models/Android_Robot_Left_Arm.ply", piece2Mesh);
+
+	cMesh piece3Mesh;
+	pTheModelLoader->LoadPlyModel("assets/models/Android_Robot_Left_Leg.ply", piece3Mesh);
+
+	cMesh piece4Mesh;
+	pTheModelLoader->LoadPlyModel("assets/models/Android_Robot_Right_Arm.ply", piece4Mesh);
+
+	cMesh piece5Mesh;
+	pTheModelLoader->LoadPlyModel("assets/models/Android_Robot_Right_Leg.ply", piece5Mesh);
+
+	cMesh piece6Mesh;
+	pTheModelLoader->LoadPlyModel("assets/models/Android_Robot_Torso.ply", piece6Mesh);
+
+
 	cMesh cubeMesh;
 	pTheModelLoader->LoadPlyModel("assets/models/Cube_1_Unit_from_origin_XYZ_uv.ply", cubeMesh);
 
@@ -218,6 +240,29 @@ int LoadMeshes()
 
 	sModelDrawInfo fishMeshInfo;
 	pTheVAOManager->LoadModelIntoVAO("fish", fishMesh, fishMeshInfo, shaderProgID);
+
+
+	sModelDrawInfo enemyMeshInfo;
+	pTheVAOManager->LoadModelIntoVAO("enemy", enemyMesh, enemyMeshInfo, shaderProgID);
+
+	sModelDrawInfo piece1MeshInfo;
+	pTheVAOManager->LoadModelIntoVAO("piece1", piece1Mesh, piece1MeshInfo, shaderProgID);
+
+	sModelDrawInfo piece2MeshInfo;
+	pTheVAOManager->LoadModelIntoVAO("piece2", piece2Mesh, piece2MeshInfo, shaderProgID);
+
+	sModelDrawInfo piece3MeshInfo;
+	pTheVAOManager->LoadModelIntoVAO("piece3", piece3Mesh, piece3MeshInfo, shaderProgID);
+
+	sModelDrawInfo piece4MeshInfo;
+	pTheVAOManager->LoadModelIntoVAO("piece4", piece4Mesh, piece4MeshInfo, shaderProgID);
+
+	sModelDrawInfo piece5MeshInfo;
+	pTheVAOManager->LoadModelIntoVAO("piece5", piece5Mesh, piece5MeshInfo, shaderProgID);
+
+	sModelDrawInfo piece6MeshInfo;
+	pTheVAOManager->LoadModelIntoVAO("piece6", piece6Mesh, piece6MeshInfo, shaderProgID);
+
 }
 
 int LoadTextures()
@@ -286,6 +331,270 @@ int LoadTextures()
 	return 0;
 }
 
+void LoadLevel()
+{
+	float size = 20.0f;
+	for (int i = 0; i < 17; i++)
+	{
+		iObject* pCube = pFactory->CreateObject("mesh", nPhysics::eComponentType::ball);
+		pCube->setMeshName("cube");
+		std::string cubeName = "cube" + i;
+		pCube->setFriendlyName(cubeName);
+		pCube->setPositionXYZ(glm::vec3((i * size) * -1.0f, 0.0f, 0.0f));
+		pCube->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
+		pCube->setScale(1.0f);
+		//	pCube->objectColourRGBA = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
+		pCube->setDebugColour(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+		pCube->setIsWireframe(false);
+		pCube->setInverseMass(0.0f);			// Sphere won't move
+		pCube->setIsVisible(false);
+		pCube->setTexture("StoneTex_1024.bmp", 1);
+		pCube->setTextureRatio(1, 1);
+		pCube->setTransprancyValue(1.0f);
+		g_vec_pPlatformEnvironmentObjects.push_back(pCube);
+	}
+	float startPoint = (17 * size) + (5 * size);
+	for (int i = 0; i < 23; i++)
+	{
+		iObject* pCube = pFactory->CreateObject("mesh", nPhysics::eComponentType::ball);
+		pCube->setMeshName("cube");
+		std::string cubeName = "cube" + i;
+		pCube->setFriendlyName(cubeName);
+		pCube->setPositionXYZ(glm::vec3((startPoint + (i * size)) * -1.0f, 0.0f, 0.0f));
+		pCube->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
+		pCube->setScale(1.0f);
+		//	pCube->objectColourRGBA = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
+		pCube->setDebugColour(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+		pCube->setIsWireframe(false);
+		pCube->setInverseMass(0.0f);			// Sphere won't move
+		pCube->setIsVisible(false);
+		pCube->setTexture("StoneTex_1024.bmp", 1);
+		pCube->setTextureRatio(1, 1);
+		pCube->setTransprancyValue(1.0f);
+		g_vec_pPlatformEnvironmentObjects.push_back(pCube);
+	}
+
+	for (int i = 1; i < 18; i++)
+	{
+		iObject* pCube = pFactory->CreateObject("mesh", nPhysics::eComponentType::ball);
+		pCube->setMeshName("cube");
+		std::string cubeName = "cube" + i;
+		pCube->setFriendlyName(cubeName);
+		pCube->setPositionXYZ(glm::vec3(0.0f, (i * size), 0.0f));
+		pCube->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
+		pCube->setScale(1.0f);
+		//	pCube->objectColourRGBA = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
+		pCube->setDebugColour(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+		pCube->setIsWireframe(false);
+		pCube->setInverseMass(0.0f);			// Sphere won't move
+		pCube->setIsVisible(false);
+		pCube->setTexture("StoneTex_1024.bmp", 1);
+		pCube->setTextureRatio(1, 1);
+		pCube->setTransprancyValue(1.0f);
+		g_vec_pPlatformEnvironmentObjects.push_back(pCube);
+	}
+
+	for (int i = 25; i < 26; i++)
+	{
+		iObject* pCube = pFactory->CreateObject("mesh", nPhysics::eComponentType::ball);
+		pCube->setMeshName("cube");
+		std::string cubeName = "cube" + i;
+		pCube->setFriendlyName(cubeName);
+		pCube->setPositionXYZ(glm::vec3(0.0f, (i * size), 0.0f));
+		pCube->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
+		pCube->setScale(1.0f);
+		//	pCube->objectColourRGBA = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
+		pCube->setDebugColour(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+		pCube->setIsWireframe(false);
+		pCube->setInverseMass(0.0f);			// Sphere won't move
+		pCube->setIsVisible(false);
+		pCube->setTexture("StoneTex_1024.bmp", 1);
+		pCube->setTextureRatio(1, 1);
+		pCube->setTransprancyValue(1.0f);
+		g_vec_pPlatformEnvironmentObjects.push_back(pCube);
+	}
+
+	for (int i = 6; i < 26; i++)
+	{
+		iObject* pCube = pFactory->CreateObject("mesh", nPhysics::eComponentType::ball);
+		pCube->setMeshName("cube");
+		std::string cubeName = "cube" + i;
+		pCube->setFriendlyName(cubeName);
+		pCube->setPositionXYZ(glm::vec3(-880.0f, (i * size), 0.0f));
+		pCube->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
+		pCube->setScale(1.0f);
+		//	pCube->objectColourRGBA = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
+		pCube->setDebugColour(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+		pCube->setIsWireframe(false);
+		pCube->setInverseMass(0.0f);			// Sphere won't move
+		pCube->setIsVisible(false);
+		pCube->setTexture("StoneTex_1024.bmp", 1);
+		pCube->setTextureRatio(1, 1);
+		pCube->setTransprancyValue(1.0f);
+		g_vec_pPlatformEnvironmentObjects.push_back(pCube);
+	}
+
+	for (int i = 0; i < 22; i++)
+	{
+		iObject* pCube = pFactory->CreateObject("mesh", nPhysics::eComponentType::ball);
+		pCube->setMeshName("cube");
+		std::string cubeName = "cube" + i;
+		pCube->setFriendlyName(cubeName);
+		pCube->setPositionXYZ(glm::vec3((i * size) * -1.0f, 100.0f, 0.0f));
+		pCube->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
+		pCube->setScale(1.0f);
+		//	pCube->objectColourRGBA = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
+		pCube->setDebugColour(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+		pCube->setIsWireframe(false);
+		pCube->setInverseMass(0.0f);			// Sphere won't move
+		pCube->setIsVisible(false);
+		pCube->setTexture("StoneTex_1024.bmp", 1);
+		pCube->setTextureRatio(1, 1);
+		pCube->setTransprancyValue(1.0f);
+		g_vec_pPlatformEnvironmentObjects.push_back(pCube);
+	}
+
+	for (int i = 0; i < 17; i++)
+	{
+		iObject* pCube = pFactory->CreateObject("mesh", nPhysics::eComponentType::ball);
+		pCube->setMeshName("cube");
+		std::string cubeName = "cube" + i;
+		pCube->setFriendlyName(cubeName);
+		pCube->setPositionXYZ(glm::vec3((i * size) * -1.0f, 360.0f, 0.0f));
+		pCube->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
+		pCube->setScale(1.0f);
+		//	pCube->objectColourRGBA = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
+		pCube->setDebugColour(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+		pCube->setIsWireframe(false);
+		pCube->setInverseMass(0.0f);			// Sphere won't move
+		pCube->setIsVisible(false);
+		pCube->setTexture("StoneTex_1024.bmp", 1);
+		pCube->setTextureRatio(1, 1);
+		pCube->setTransprancyValue(1.0f);
+		g_vec_pPlatformEnvironmentObjects.push_back(pCube);
+	}
+
+	for (int i = 7; i < 10; i++)
+	{
+		iObject* pCube = pFactory->CreateObject("mesh", nPhysics::eComponentType::ball);
+		pCube->setMeshName("cube");
+		std::string cubeName = "cube" + i;
+		pCube->setFriendlyName(cubeName);
+		pCube->setPositionXYZ(glm::vec3((i * size) * -1.0f, 180.0f, 0.0f));
+		pCube->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
+		pCube->setScale(1.0f);
+		//	pCube->objectColourRGBA = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
+		pCube->setDebugColour(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+		pCube->setIsWireframe(false);
+		pCube->setInverseMass(0.0f);			// Sphere won't move
+		pCube->setIsVisible(false);
+		pCube->setTexture("StoneTex_1024.bmp", 1);
+		pCube->setTextureRatio(1, 1);
+		pCube->setTransprancyValue(1.0f);
+		g_vec_pPlatformEnvironmentObjects.push_back(pCube);
+	}
+
+	for (int i = 21; i < 22; i++)
+	{
+		iObject* pCube = pFactory->CreateObject("mesh", nPhysics::eComponentType::ball);
+		pCube->setMeshName("cube");
+		std::string cubeName = "cube" + i;
+		pCube->setFriendlyName(cubeName);
+		pCube->setPositionXYZ(glm::vec3((i * size) * -1.0f, 360.0f, 0.0f));
+		pCube->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
+		pCube->setScale(1.0f);
+		//	pCube->objectColourRGBA = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
+		pCube->setDebugColour(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+		pCube->setIsWireframe(false);
+		pCube->setInverseMass(0.0f);			// Sphere won't move
+		pCube->setIsVisible(false);
+		pCube->setTexture("StoneTex_1024.bmp", 1);
+		pCube->setTextureRatio(1, 1);
+		pCube->setTransprancyValue(1.0f);
+		g_vec_pPlatformEnvironmentObjects.push_back(pCube);
+	}
+
+	for (int i = 26; i < 44; i++)
+	{
+		iObject* pCube = pFactory->CreateObject("mesh", nPhysics::eComponentType::ball);
+		pCube->setMeshName("cube");
+		std::string cubeName = "cube" + i;
+		pCube->setFriendlyName(cubeName);
+		pCube->setPositionXYZ(glm::vec3((i * size) * -1.0f, 360.0f, 0.0f));
+		pCube->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
+		pCube->setScale(1.0f);
+		//	pCube->objectColourRGBA = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
+		pCube->setDebugColour(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+		pCube->setIsWireframe(false);
+		pCube->setInverseMass(0.0f);			// Sphere won't move
+		pCube->setIsVisible(false);
+		pCube->setTexture("StoneTex_1024.bmp", 1);
+		pCube->setTextureRatio(1, 1);
+		pCube->setTransprancyValue(1.0f);
+		g_vec_pPlatformEnvironmentObjects.push_back(pCube);
+	}
+
+	for (int i = 21; i < 22; i++)
+	{
+		iObject* pCube = pFactory->CreateObject("mesh", nPhysics::eComponentType::ball);
+		pCube->setMeshName("cube");
+		std::string cubeName = "cube" + i;
+		pCube->setFriendlyName(cubeName);
+		pCube->setPositionXYZ(glm::vec3((i * size) * -1.0f, 210.0f, 0.0f));
+		pCube->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
+		pCube->setScale(1.0f);
+		//	pCube->objectColourRGBA = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
+		pCube->setDebugColour(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+		pCube->setIsWireframe(false);
+		pCube->setInverseMass(0.0f);			// Sphere won't move
+		pCube->setIsVisible(false);
+		pCube->setTexture("StoneTex_1024.bmp", 1);
+		pCube->setTextureRatio(1, 1);
+		pCube->setTransprancyValue(1.0f);
+		g_vec_pPlatformEnvironmentObjects.push_back(pCube);
+	}
+
+	for (int i = 26; i < 44; i++)
+	{
+		iObject* pCube = pFactory->CreateObject("mesh", nPhysics::eComponentType::ball);
+		pCube->setMeshName("cube");
+		std::string cubeName = "cube" + i;
+		pCube->setFriendlyName(cubeName);
+		pCube->setPositionXYZ(glm::vec3((i * size) * -1.0f, 210.0f, 0.0f));
+		pCube->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
+		pCube->setScale(1.0f);
+		//	pCube->objectColourRGBA = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
+		pCube->setDebugColour(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+		pCube->setIsWireframe(false);
+		pCube->setInverseMass(0.0f);			// Sphere won't move
+		pCube->setIsVisible(false);
+		pCube->setTexture("StoneTex_1024.bmp", 1);
+		pCube->setTextureRatio(1, 1);
+		pCube->setTransprancyValue(1.0f);
+		g_vec_pPlatformEnvironmentObjects.push_back(pCube);
+	}
+
+	for (int i = 32; i < 36; i++)
+	{
+		iObject* pCube = pFactory->CreateObject("mesh", nPhysics::eComponentType::ball);
+		pCube->setMeshName("cube");
+		std::string cubeName = "cube" + i;
+		pCube->setFriendlyName(cubeName);
+		pCube->setPositionXYZ(glm::vec3((i * size) * -1.0f, 110.0f, 0.0f));
+		pCube->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
+		pCube->setScale(1.0f);
+		//	pCube->objectColourRGBA = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
+		pCube->setDebugColour(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+		pCube->setIsWireframe(false);
+		pCube->setInverseMass(0.0f);			// Sphere won't move
+		pCube->setIsVisible(false);
+		pCube->setTexture("StoneTex_1024.bmp", 1);
+		pCube->setTextureRatio(1, 1);
+		pCube->setTransprancyValue(1.0f);
+		g_vec_pPlatformEnvironmentObjects.push_back(pCube);
+	}
+}
+
 int LoadObjects()
 {
 	//AI
@@ -324,6 +633,21 @@ int LoadObjects()
 	nPhysics::iClothComponent* pClothPhysics = physicsFactory->CreateCloth(physicsCloth);
 	g_vec_pGameComponentObjects.push_back(pClothPhysics);
 	pCloth->SetComponent(pClothPhysics);
+	cMesh clothMesh;
+	size_t numNodes = pClothPhysics->NumNodes();
+	sPlyVertexXYZ_N_UV vertex;
+	for (size_t idx = 0; idx < numNodes; idx++)
+	{		
+		glm::vec3 triPosition = glm::vec3(0.0f);
+		pClothPhysics->GetNodePosition(idx, triPosition);
+		vertex.x = triPosition.x;
+		vertex.y = triPosition.y;
+		vertex.z = triPosition.z;
+		clothMesh.vecVertices.push_back(vertex);
+	}
+	sModelDrawInfo clothMeshInfo;
+	pTheVAOManager->LoadModelIntoVAO("clothMesh", clothMesh, clothMeshInfo, shaderProgID);
+	//pCloth->setMeshName("clothMesh");
 	::g_vec_pClothObjects.push_back(pCloth);
 	physicsWorld->AddComponent(pCloth->GetComponent());
 
@@ -867,6 +1191,134 @@ int LoadObjects()
 		::g_vec_pAIEnemyObjects.push_back(pEnemy);
 		//physicsWorld->AddComponent(pEnemy->GetComponent());
 	}
+
+	//iObject* pPlatformCharacter = pFactory->CreateObject("sphere", nPhysics::eComponentType::ball);
+	//nPhysics::sBallDef platformCharacterPhysics;
+	//platformCharacterPhysics.Mass = 1.0;
+	//platformCharacterPhysics.Position = glm::vec3(30.0f, 50.0f, 0.0f);
+	//platformCharacterPhysics.Radius = 5.0f;
+	//platformCharacterPhysics.Rotation = glm::vec3(0.0f, 0.0f, 0.0f);
+	//platformCharacterPhysics.Scale = glm::vec3(0.05f, 0.05f, 0.05f);
+	//platformCharacterPhysics.Angle = 1.0f;
+	//nPhysics::iBallComponent* pPlatformCharacterPhysics = physicsFactory->CreateBall(platformCharacterPhysics);
+	//g_vec_pGameComponentObjects.push_back(pPlatformCharacterPhysics);
+	//pPlatformCharacter->SetComponent(pPlatformCharacterPhysics);
+	//cSimpleAssimpSkinnedMesh* platformSkinnedMesh = new cSimpleAssimpSkinnedMesh();
+	//pPlatformCharacter->setSM(platformSkinnedMesh);
+	//pPlatformCharacter->getSM()->LoadMeshFromFile("mainCharacter", "assets/modelsFBX/RPG-Character(FBX2013).FBX");
+
+	//sModelDrawInfo* platformCharacterMeshInfo = pMainCharacter->getSM()->CreateMeshObjectFromCurrentModel();
+
+	//pPlatformCharacter->getSM()->LoadMeshAnimation("Run", "assets/modelsFBX/Run.fbx");
+	//pPlatformCharacter->getSM()->LoadMeshAnimation("Walk-Slow", "assets/modelsFBX/RPG-Character_Unarmed-Walk-Slow(FBX2013).FBX");
+	//pPlatformCharacter->getSM()->LoadMeshAnimation("Walk", "assets/modelsFBX/Walking.fbx");
+	//pPlatformCharacter->getSM()->LoadMeshAnimation("Jump", "assets/modelsFBX/Jumping.fbx");
+	//pPlatformCharacter->getSM()->LoadMeshAnimation("Fall", "assets/modelsFBX/RPG-Character_Unarmed-Fall(FBX2013).FBX");
+	//pPlatformCharacter->getSM()->LoadMeshAnimation("Attack", "assets/modelsFBX/RPG-Character_Unarmed-Attack-R3(FBX2013).FBX");
+	//pPlatformCharacter->getSM()->LoadMeshAnimation("Idle", "assets/modelsFBX/RPG-Character_Unarmed-Idle(FBX2013).FBX");
+	//pPlatformCharacter->getSM()->LoadMeshAnimation("Dying", "assets/modelsFBX/RPG-Character_Unarmed-Death1(FBX2013).FBX");
+	//pPlatformCharacter->getSM()->LoadMeshAnimation("Roll", "assets/modelsFBX/Sprinting Forward Roll.fbx");
+	//currentAnimationName = "Idle";
+	//pPlatformCharacter->setMeshName("mainCharacter");
+	//pPlatformCharacter->setFriendlyName("mainCharacter");	// We use to search
+	//pPlatformCharacter->setRotationXYZ(glm::vec3(0.0f, glm::radians(-90.0f), 0.0f));
+	//pPlatformCharacter->setScale(0.2f);
+	////pMainCharacter->setObjectColourRGBA(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+	//pPlatformCharacter->setDebugColour(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+	//pPlatformCharacter->setVelocity(glm::vec3(0.0f, 0.0f, 0.0f));
+	//pPlatformCharacter->setAccel(glm::vec3(0.0f, 0.0f, 0.0f));
+	//pPlatformCharacter->setInverseMass(1.0f);
+	//pPlatformCharacter->setIsVisible(true);
+	//pPlatformCharacter->setIsWireframe(false);
+	//pPlatformCharacter->setTexture("StoneTex_1024.bmp", 0);
+	//pPlatformCharacter->setTexture("grassTexture_512.bmp", 1);
+	//pPlatformCharacter->setTexture("sandTexture_1024.bmp", 2);
+	//pPlatformCharacter->setTextureRatio(1, 1);
+	//pPlatformCharacter->setTransprancyValue(1.0f);
+	//g_vec_pPlatformCharacterObjects.push_back(pPlatformCharacter);
+	//physicsWorld->AddComponent(pPlatformCharacter->GetComponent());
+	//if (mainCharacterMeshInfo)
+	//{
+	//	std::cout << mainCharacterMeshInfo->numberOfVertices << " vertices" << std::endl;
+	//	std::cout << mainCharacterMeshInfo->numberOfTriangles << " triangles" << std::endl;
+	//	std::cout << mainCharacterMeshInfo->numberOfIndices << " indices" << std::endl;
+
+	//	pTheVAOManager->LoadModelDrawInfoIntoVAO(*mainCharacterMeshInfo, shaderProgID);
+	//}
+
+	iObject* pEnemy1 = pFactory->CreateObject("sphere", nPhysics::eComponentType::ball);
+	pEnemy1->setMeshName("enemy");
+	pEnemy1->setFriendlyName("enemy1");	// We use to search 
+	pEnemy1->setPositionXYZ(glm::vec3(-30.0, 10.0f, 0.0f));
+	pEnemy1->setRotationXYZ(glm::vec3(0.0f, glm::radians(-90.0f), 0.0f));
+	pEnemy1->setScale(1.0f);
+	//pEnemy1->setObjectColourRGBA(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+	pEnemy1->setDebugColour(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+	pEnemy1->setVelocity(glm::vec3(0.0f, 0.0f, 20.0f));
+	pEnemy1->setAccel(glm::vec3(0.0f, 0.0f, 0.0f));
+	pEnemy1->setInverseMass(1.0f);
+	pEnemy1->setIsVisible(true);
+	pEnemy1->setIsWireframe(false);
+	pEnemy1->setTexture("green.bmp", 1);
+	pEnemy1->setTextureRatio(1, 1);
+	pEnemy1->setTransprancyValue(1.0f);
+	::g_vec_pPlatformEnemyObjects.push_back(pEnemy1);
+
+	iObject* pEnemy2 = pFactory->CreateObject("sphere", nPhysics::eComponentType::ball);
+	pEnemy2->setMeshName("enemy");
+	pEnemy2->setFriendlyName("enemy2");	// We use to search 
+	pEnemy2->setPositionXYZ(glm::vec3(-60.0, 110.0f, 0.0f));
+	pEnemy2->setRotationXYZ(glm::vec3(0.0f, glm::radians(-90.0f), 0.0f));
+	pEnemy2->setScale(1.0f);
+	//pEnemy2->setObjectColourRGBA(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+	pEnemy2->setDebugColour(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+	pEnemy2->setVelocity(glm::vec3(0.0f, 0.0f, 20.0f));
+	pEnemy2->setAccel(glm::vec3(0.0f, 0.0f, 0.0f));
+	pEnemy2->setInverseMass(1.0f);
+	pEnemy2->setIsVisible(true);
+	pEnemy2->setIsWireframe(false);
+	pEnemy2->setTexture("green.bmp", 1);
+	pEnemy2->setTextureRatio(1, 1);
+	pEnemy2->setTransprancyValue(1.0f);
+	::g_vec_pPlatformEnemyObjects.push_back(pEnemy2);
+
+	iObject* pEnemy3 = pFactory->CreateObject("sphere", nPhysics::eComponentType::ball);
+	pEnemy3->setMeshName("enemy");
+	pEnemy3->setFriendlyName("enemy3");	// We use to search 
+	pEnemy3->setPositionXYZ(glm::vec3(-540.0, 220.0f, 0.0f));
+	pEnemy3->setRotationXYZ(glm::vec3(0.0f, glm::radians(-90.0f), 0.0f));
+	pEnemy3->setScale(1.0f);
+	//pEnemy3->setObjectColourRGBA(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+	pEnemy3->setDebugColour(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+	pEnemy3->setVelocity(glm::vec3(0.0f, 0.0f, 20.0f));
+	pEnemy3->setAccel(glm::vec3(0.0f, 0.0f, 0.0f));
+	pEnemy3->setInverseMass(1.0f);
+	pEnemy3->setIsVisible(true);
+	pEnemy3->setIsWireframe(false);
+	pEnemy3->setTexture("green.bmp", 1);
+	pEnemy3->setTextureRatio(1, 1);
+	pEnemy3->setTransprancyValue(1.0f);
+	::g_vec_pPlatformEnemyObjects.push_back(pEnemy3);
+
+	iObject* pEnemy4 = pFactory->CreateObject("sphere", nPhysics::eComponentType::ball);
+	pEnemy4->setMeshName("enemy");
+	pEnemy4->setFriendlyName("enemy4");	// We use to search 
+	pEnemy4->setPositionXYZ(glm::vec3(-540.0, 370.0f, 0.0f));
+	pEnemy4->setRotationXYZ(glm::vec3(0.0f, glm::radians(-90.0f), 0.0f));
+	pEnemy4->setScale(1.0f);
+	//pEnemy4->setObjectColourRGBA(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+	pEnemy4->setDebugColour(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+	pEnemy4->setVelocity(glm::vec3(0.0f, 0.0f, 20.0f));
+	pEnemy4->setAccel(glm::vec3(0.0f, 0.0f, 0.0f));
+	pEnemy4->setInverseMass(1.0f);
+	pEnemy4->setIsVisible(true);
+	pEnemy4->setIsWireframe(false);
+	pEnemy4->setTexture("green.bmp", 1);
+	pEnemy4->setTextureRatio(1, 1);
+	pEnemy4->setTransprancyValue(1.0f);
+	::g_vec_pPlatformEnemyObjects.push_back(pEnemy4);
+
+	LoadLevel();
 
 	return 0;
 }

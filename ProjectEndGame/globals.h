@@ -6,6 +6,7 @@ int width, height;
 
 // what should I draw??
 bool renderAI = false;
+bool renderPlatform = false;
 
 // physics stuff
 nPhysics::iPhysicsFactory* physicsFactory;
@@ -48,7 +49,8 @@ cAABB* pCurrentAABBFront;
 cAABB* pCurrentAABBBack;
 
 // off screen rendering
-cFBO* pTheFBO = NULL;
+cFBO* pAIFBO = NULL;
+cFBO* pPlatformFBO = NULL;
 GLint passNumber_UniLoc;
 
 std::string currentAnimationName;
@@ -87,6 +89,10 @@ std::vector<iObject*> g_vec_pCharacterObjects;
 std::vector<iObject*> g_vec_pAIEnvironmentObjects;
 std::vector<iObject*> g_vec_pAIEnemyObjects;
 std::vector<iObject*> g_vec_pAIGameObjects;
+std::vector<iObject*> g_vec_pPlatformEnvironmentObjects;
+std::vector<iObject*> g_vec_pPlatformEnemyObjects;
+std::vector<iObject*> g_vec_pPlatformGameObjects;
+std::vector<iObject*> g_vec_pPlatformCharacterObjects;
 std::vector<iObject*> g_vec_pExplosionObjects;
 std::map<std::string /*FriendlyName*/, iObject*> g_map_GameObjectsByFriendlyName;
 

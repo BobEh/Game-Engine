@@ -259,20 +259,20 @@ int LoadTextures()
 	//{
 
 	//first cube map
-	/*if (::g_pTextureManager->CreateCubeTextureFromBMPFiles("space",
-		"up-the-creek_rt.bmp", "up-the-creek_lf.bmp",
-		"up-the-creek_up.bmp", "up-the-creek_dn.bmp",
-		"up-the-creek_ft.bmp", "up-the-creek_bk.bmp", true, errorString))
+	if (::g_pTextureManager->CreateCubeTextureFromBMPFiles("space",
+		"SpaceBox_left2_negX.bmp", "SpaceBox_right1_posX.bmp",
+		"SpaceBox_bottom4_negY.bmp", "SpaceBox_top3_posY.bmp",
+		"SpaceBox_front5_posZ.bmp", "SpaceBox_back6_negZ.bmp", true, errorString))
 	{
-		std::cout << "Space skybox loaded" << std::endl;
+		std::cout << "space skybox loaded" << std::endl;
 	}
 	else
 	{
-		std::cout << "OH NO! " << errorString << std::endl;
-	}*/
+		std::cout << "oh no! " << errorString << std::endl;
+	}
 
 	//Second cube map
-	if (::g_pTextureManager->CreateCubeTextureFromBMPFiles("space",
+	if (::g_pTextureManager->CreateCubeTextureFromBMPFiles("sunny",
 		"TropicalSunnyDayLeft2048.bmp", "TropicalSunnyDayRight2048.bmp",
 		"TropicalSunnyDayDown2048.bmp", "TropicalSunnyDayUp2048.bmp",
 		"TropicalSunnyDayFront2048.bmp", "TropicalSunnyDayBack2048.bmp", true, errorString))
@@ -657,6 +657,7 @@ int LoadObjects()
 	g_vec_pGameComponentObjects.push_back(pSkyPhysics);
 	pSkyBoxSphere->SetComponent(pSkyPhysics);
 	g_vec_pGameObjects.push_back(pSkyBoxSphere);
+	g_vec_pAIEnvironmentObjects.push_back(pSkyBoxSphere);
 
 	//physicsWorld->SetGravity(glm::vec3(0.0f,10.0f,0.0f));
 

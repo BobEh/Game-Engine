@@ -210,9 +210,18 @@ void DrawObject(glm::mat4 m, iObject* pCurrentObject, GLint shaderProgID, cVAOMa
 
 		glUniform1f(bIsSkyBox_UL, (float)GL_TRUE);
 
-		GLuint skyBoxTextureID = ::g_pTextureManager->getTextureIDFromName("space");
-		glActiveTexture(GL_TEXTURE10);				// Texture Unit 26
-		glBindTexture(GL_TEXTURE_CUBE_MAP, skyBoxTextureID);	// Texture now assoc with texture unit 0
+		if (renderAI)
+		{
+			GLuint skyBoxTextureID = ::g_pTextureManager->getTextureIDFromName("space");
+			glActiveTexture(GL_TEXTURE10);				// Texture Unit 26
+			glBindTexture(GL_TEXTURE_CUBE_MAP, skyBoxTextureID);	// Texture now assoc with texture unit 0
+		}
+		else
+		{
+			GLuint skyBoxTextureID = ::g_pTextureManager->getTextureIDFromName("sunny");
+			glActiveTexture(GL_TEXTURE10);				// Texture Unit 26
+			glBindTexture(GL_TEXTURE_CUBE_MAP, skyBoxTextureID);	// Texture now assoc with texture unit 0
+		}
 
 		// Tie the texture units to the samplers in the shader
 		GLint skyBoxSampler_UL = glGetUniformLocation(shaderProgID, "skyBox");

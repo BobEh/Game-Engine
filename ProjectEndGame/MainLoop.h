@@ -57,50 +57,6 @@ int attackCount = 0;
 
 void DrawFirstPass()
 {
-	if (jumping)
-	{
-		jumpCount++;
-		if (jumpCount >= 150)
-		{
-			jumping = false;
-			jumpCount = 0;
-			currentAnimationName = "Idle";
-		}
-	}
-
-	if (rolling)
-	{
-		rollCount++;
-		if (rollCount >= 120)
-		{
-			rolling = false;
-			rollCount = 0;
-			currentAnimationName = "Idle";
-		}
-	}
-
-	if (attacking)
-	{
-		attackCount++;
-		if (attackCount >= 120)
-		{
-			attacking = false;
-			attackCount = 0;
-			currentAnimationName = "Idle";
-
-			for (int i = 0; i < g_vec_pGameObjects.size(); i++)
-			{
-				if (g_vec_pGameObjects.at(i)->getFriendlyName() == "mainCharacter")
-				{
-					continue;
-				}
-				else
-				{
-					g_vec_pGameObjects.at(i)->setTexture("green.bmp", 1);
-				}
-			}
-		}
-	}
 	// **************************************************
 	// **************************************************
 	// Loop to draw everything in the scene
@@ -115,51 +71,131 @@ void DrawFirstPass()
 	passNumber_UniLoc = glGetUniformLocation(shaderProgID, "passNumber");
 	glUniform1i(passNumber_UniLoc, 0);
 
-	for (int index = 0; index != ::g_vec_pGameObjects.size(); index++)
+	if (!renderAI)
 	{
-		glm::mat4 matModel = glm::mat4(1.0f);
+		for (int index = 0; index != ::g_vec_pAIGameObjects.size(); index++)
+		{
 
-		iObject* pCurrentObject = ::g_vec_pGameObjects[index];
+			glm::mat4 matModel = glm::mat4(1.0f);
 
-		DrawObject(matModel, pCurrentObject,
-			shaderProgID, pTheVAOManager);
+			iObject* pCurrentObject = ::g_vec_pAIGameObjects[index];
+			pCurrentObject->setIsWireframe(true);
 
-	}//for (int index...
+			DrawObject(matModel, pCurrentObject, shaderProgID, pTheVAOManager);
 
-	for (int index = 0; index != ::g_vec_pEnvironmentObjects.size(); index++)
+		}//for (int index...
+
+		for (int index = 0; index != ::g_vec_pAIEnvironmentObjects.size(); index++)
+		{
+			glm::mat4 matModel = glm::mat4(1.0f);
+
+			iObject* pCurrentObject = ::g_vec_pAIEnvironmentObjects[index];
+
+			if (pCurrentObject->getFriendlyName() == "skybox")
+			{
+				renderAI = true;
+			}
+			//pCurrentObject->setIsWireframe(true);
+			DrawObject(matModel, pCurrentObject,
+				shaderProgID, pTheVAOManager);
+
+			if (pCurrentObject->getFriendlyName() == "skybox")
+			{
+				renderAI = false;
+			}
+
+		}//for (int index...
+
+		for (int index = 0; index != ::g_vec_pAIEnemyObjects.size(); index++)
+		{
+			glm::mat4 matModel = glm::mat4(1.0f);
+
+			iObject* pCurrentObject = ::g_vec_pAIEnemyObjects[index];
+
+			//pCurrentObject->setIsWireframe(true);
+
+			DrawObject(matModel, pCurrentObject,
+				shaderProgID, pTheVAOManager);
+
+		}//for (int index...
+	}
+	else if (renderAI)
 	{
-		glm::mat4 matModel = glm::mat4(1.0f);
-
-		iObject* pCurrentObject = ::g_vec_pEnvironmentObjects[index];
-
-		DrawObject(matModel, pCurrentObject,
-			shaderProgID, pTheVAOManager);
-
-	}//for (int index...
-
-	iObject* pMainCharacter = pFindObjectByFriendlyName("mainCharacter");
-
-	if (pMainCharacter != nullptr && currentAnimationName != "Jump" && currentAnimationName != "Roll" && currentAnimationName != "Dying" && currentAnimationName != "Attack")
-	{
-		if (pMainCharacter->getVelocity().z > 10.0f || pMainCharacter->getVelocity().x > 10.0f || pMainCharacter->getVelocity().z < -10.0f || pMainCharacter->getVelocity().x < -10.0f)
+		for (int index = 0; index != ::g_vec_pGameObjects.size(); index++)
 		{
-			currentAnimationName = "Run";
-		}
-		else if (pMainCharacter->getVelocity().z > 1.0f || pMainCharacter->getVelocity().x > 1.0f || pMainCharacter->getVelocity().z < -1.0f || pMainCharacter->getVelocity().x < -1.0f)
+			glm::mat4 matModel = glm::mat4(1.0f);
+
+			iObject* pCurrentObject = ::g_vec_pGameObjects[index];
+
+			if (pCurrentObject->getFriendlyName() == "skybox")
+			{
+				renderAI = false;
+			}
+
+			DrawObject(matModel, pCurrentObject,
+				shaderProgID, pTheVAOManager);
+
+			if (pCurrentObject->getFriendlyName() == "skybox")
+			{
+				renderAI = true;
+			}
+		}//for (int index...
+
+		for (int index = 0; index != ::g_vec_pEnvironmentObjects.size(); index++)
 		{
-			currentAnimationName = "Walk";
-		}
-		//else if (pMainCharacter->getVelocity().y > 15.0f)
-		//{
-		//	currentAnimationName = "Jump";
-		//}
-		else if (pMainCharacter->getVelocity().y < -3.0f || pMainCharacter->getVelocity().y > 3.0f)
+			glm::mat4 matModel = glm::mat4(1.0f);
+
+			iObject* pCurrentObject = ::g_vec_pEnvironmentObjects[index];
+
+			DrawObject(matModel, pCurrentObject,
+				shaderProgID, pTheVAOManager);
+
+		}//for (int index...
+		for (int index = 0; index != ::g_vec_pCharacterObjects.size(); index++)
 		{
-			currentAnimationName = "Fall";
-		}
-		else
+			glm::mat4 matModel = glm::mat4(1.0f);
+
+			iObject* pCurrentObject = ::g_vec_pCharacterObjects[index];
+
+			//glm::vec3 resetThePosition = glm::vec3(0.0f, 0.0f, 0.0f);
+			//pCurrentObject->GetComponent()->GetPosition(resetThePosition);
+
+			//pCurrentObject->setPositionXYZ(resetThePosition);
+			glm::vec3 currentVelocity;
+			pCurrentObject->GetVelocity(currentVelocity);
+			if (currentVelocity.x == 0.0f && currentVelocity.y == 0.0f)
+			{
+				currentVelocity += 0.000001f;
+			}
+			glm::vec3 normalizedVelocity = glm::normalize(currentVelocity);
+			normalizedVelocity.z *= -1.0f;
+			glm::quat orientation = glm::quatLookAt(normalizedVelocity, glm::vec3(0.0f, 1.0f, 0.0f));
+			orientation.x = 0.0f;
+			orientation.y *= -1.0f;
+			orientation.z = 0.0f;
+			pCurrentObject->setRotationXYZ(orientation);
+
+			DrawObject(matModel, pCurrentObject,
+				shaderProgID, pTheVAOManager);
+
+		}//for (int index...
+		for (int index = 0; index != g_vec_pClothObjects.size(); index++)
 		{
-			currentAnimationName = "Idle";
+			iObject* pCurrentObject = ::g_vec_pClothObjects[index];
+
+			size_t numNodes = pCurrentObject->GetComponent()->NumNodes();
+
+			for (int i = 0; i < numNodes; i++)
+			{
+				glm::mat4 matModel = glm::mat4(1.0f);
+				float scale = 1.0f;
+				glm::vec3 position = glm::vec3(1.0f);
+				pCurrentObject->GetComponent()->GetNodeRadius(i, scale);
+				pCurrentObject->GetComponent()->GetNodePosition(i, position);
+				matModel = glm::scale(matModel, glm::vec3(scale));
+				matModel = glm::translate(matModel, position);
+				DrawObject(matModel, pCurrentObject, shaderProgID, pTheVAOManager);
+			}
 		}
 	}
 }

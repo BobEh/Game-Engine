@@ -147,7 +147,7 @@ int main(void)
 		//                                                                
 
 		//g_pFlyCamera->eye = glm::vec3(0.0f, 200.0, -50.0);
-		v = glm::lookAt(glm::vec3(0.0f, 200.0, -50.0), glm::vec3(0.0f, 0.0f, 0.0f), g_pFlyCamera->getUpVector());
+		//v = glm::lookAt(glm::vec3(0.0f, 200.0, -50.0), glm::vec3(0.0f, 0.0f, 0.0f), g_pFlyCamera->getUpVector());
 		DrawAIFBO();
 
 
@@ -160,7 +160,7 @@ int main(void)
 		//                                                                                            
 		//                                                                                            
 		//v = glm::lookAt(glm::vec3(0.0f, 200.0, -50.0), glm::vec3(0.0f, 0.0f, 0.0f), g_pFlyCamera->getUpVector());
-		//DrawPlatformFBO();
+		DrawPlatformFBO();
 
 		//     _____                          _   _____              
 		//    / ____|                        | | |  __ \             
@@ -173,18 +173,16 @@ int main(void)
 
 		if (renderAI)
 		{
+			v = glm::lookAt(g_pFlyCamera->eye, glm::vec3(0.0f, 10.0f, 0.0f), g_pFlyCamera->getUpVector());
+			DrawAI();
+		}
+		if (renderPlatform)
+		{
 			v = glm::lookAt(::g_pFlyCamera->eye,
 				glm::vec3(0.0f, 0.0f, 0.0f),
 				::g_pFlyCamera->getUpVector());
-			DrawAI();
+			DrawPlatform();
 		}
-		//else if (renderPlatform)
-		//{
-		//	v = glm::lookAt(::g_pFlyCamera->eye,
-		//		glm::vec3(0.0f, 0.0f, 0.0f),
-		//		::g_pFlyCamera->getUpVector());
-		//	DrawPlatform();
-		//}
 		else
 		{                                                        
 			//g_pFlyCamera->eye = glm::vec3(0.0f, 20.0, -80.0);

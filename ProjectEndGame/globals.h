@@ -11,6 +11,8 @@ bool renderPlatform = false;
 // physics stuff
 nPhysics::iPhysicsFactory* physicsFactory;
 nPhysics::iPhysicsWorld* physicsWorld;
+cPhysics* pAIPhsyics;
+cPhysics* pPlatformPhysics;
 
 cBasicTextureManager* g_pTextureManager = NULL;
 
@@ -20,6 +22,8 @@ bool g_MouseLeftButtonIsDown = false;
 bool jumping = false;
 bool rolling = false;
 bool attacking = false;
+
+iObject* pCurrentObject;
 
 //xml stuff
 using namespace pugi;
@@ -93,13 +97,31 @@ std::vector<iObject*> g_vec_pPlatformEnvironmentObjects;
 std::vector<iObject*> g_vec_pPlatformEnemyObjects;
 std::vector<iObject*> g_vec_pPlatformGameObjects;
 std::vector<iObject*> g_vec_pPlatformCharacterObjects;
+std::vector<iObject*> g_vec_pPlatformExplosionObjects;
 std::vector<iObject*> g_vec_pExplosionObjects;
 std::map<std::string /*FriendlyName*/, iObject*> g_map_GameObjectsByFriendlyName;
 
 //AI
 Coordinator* gCoordinator;
 AIManager* gAIManager;
-cPhysics* pPhsyics;
+
+//Platformer Game Stuff
+int platformJumpCount = 0;
+int platformRollCount = 0;
+int platformDyingCount = 0;
+int platformAttackCount = 0;
+
+int enemyCount1 = 0;
+int enemyCount2 = 0;
+int enemyCount3 = 0;
+int enemyCount4 = 0;
+
+int enemy1Health = 3;
+int enemy2Health = 3;
+int enemy3Health = 3;
+int enemy4Health = 3;
+
+bool gotHit = false;
 
 // returns NULL (0) if we didn't find it.
 iObject* pFindObjectByFriendlyName(std::string name);

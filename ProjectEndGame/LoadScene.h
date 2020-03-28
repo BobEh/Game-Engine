@@ -7,7 +7,8 @@ typedef nPhysics::iPhysicsFactory* (*func_createPhysicsFactory)();
 
 int LoadPhysics()
 {
-	pPhsyics = new cPhysics();
+	pAIPhsyics = new cPhysics();
+	pPlatformPhysics = new cPhysics();
 	//find the DLL for creating the physics factory
 	hGetDLL = LoadLibraryA("MyPhysicsWrapper.dll");
 	//hGetDLL = LoadLibraryA("BulletPhysicsWrapper.dll");
@@ -292,6 +293,13 @@ int LoadTextures()
 	g_pTextureManager->Create2DTextureFromBMPFile("moon.bmp", true);
 
 	::g_pTextureManager->Create2DTextureFromBMPFile("water_800.bmp", true);
+
+	::g_pTextureManager->Create2DTextureFromBMPFile("purple.bmp", true);
+	::g_pTextureManager->Create2DTextureFromBMPFile("red.bmp", true);
+	::g_pTextureManager->Create2DTextureFromBMPFile("white.bmp", true);
+	::g_pTextureManager->Create2DTextureFromBMPFile("blue.bmp", true);
+	::g_pTextureManager->Create2DTextureFromBMPFile("green.bmp", true);
+	g_pTextureManager->Create2DTextureFromBMPFile("X-Wing-Texture_bit.bmp", true);
 
 	//Cube Maps loaded here
 	::g_pTextureManager->SetBasePath("assets/textures/cubemaps/");
@@ -982,6 +990,7 @@ int LoadObjects()
 	pSkyBoxSphere->SetComponent(pSkyPhysics);
 	g_vec_pGameObjects.push_back(pSkyBoxSphere);
 	g_vec_pAIEnvironmentObjects.push_back(pSkyBoxSphere);
+	g_vec_pPlatformEnvironmentObjects.push_back(pSkyBoxSphere);
 
 	//physicsWorld->SetGravity(glm::vec3(0.0f,10.0f,0.0f));
 
@@ -1101,16 +1110,7 @@ int LoadObjects()
 	pMainShip->setInverseMass(1.0f);
 	pMainShip->setIsVisible(true);
 	pMainShip->setIsWireframe(false);
-	//nPhysics::sBallDef physicsMainShip;
-	//physicsMainShip.Mass = 1.0f;
-	//physicsMainShip.Position = glm::vec3(0.0f, 10.0f, 0.0f);
-	//physicsMainShip.Radius = 1.0f;
-	//physicsMainShip.Scale = glm::vec3(0.0f, 0.0f, 0.0f);
-	//nPhysics::iBallComponent* pMainShipPhysics = physicsFactory->CreateBall(physicsMainShip);
-	//g_vec_pGameComponentObjects.push_back(pMainShipPhysics);
-	//pMainShip->SetComponent(pMainShipPhysics);
 	::g_vec_pAIGameObjects.push_back(pMainShip);
-	//physicsWorld->AddComponent(pMainShipPhysics);
 
 	cPhysics* pPhsyics = new cPhysics();
 
@@ -1192,59 +1192,58 @@ int LoadObjects()
 		//physicsWorld->AddComponent(pEnemy->GetComponent());
 	}
 
-	//iObject* pPlatformCharacter = pFactory->CreateObject("sphere", nPhysics::eComponentType::ball);
+	iObject* pPlatformCharacter = pFactory->CreateObject("sphere", nPhysics::eComponentType::ball);
 	//nPhysics::sBallDef platformCharacterPhysics;
 	//platformCharacterPhysics.Mass = 1.0;
-	//platformCharacterPhysics.Position = glm::vec3(30.0f, 50.0f, 0.0f);
+	//platformCharacterPhysics.Position = glm::vec3(-680.0, 120.0f, 0.0f);
 	//platformCharacterPhysics.Radius = 5.0f;
-	//platformCharacterPhysics.Rotation = glm::vec3(0.0f, 0.0f, 0.0f);
-	//platformCharacterPhysics.Scale = glm::vec3(0.05f, 0.05f, 0.05f);
+	//platformCharacterPhysics.Rotation = glm::vec3(0.0f, glm::radians(-90.0f), 0.0f);
+	//platformCharacterPhysics.Scale = glm::vec3(0.2f, 0.2f, 0.2f);
 	//platformCharacterPhysics.Angle = 1.0f;
 	//nPhysics::iBallComponent* pPlatformCharacterPhysics = physicsFactory->CreateBall(platformCharacterPhysics);
 	//g_vec_pGameComponentObjects.push_back(pPlatformCharacterPhysics);
 	//pPlatformCharacter->SetComponent(pPlatformCharacterPhysics);
-	//cSimpleAssimpSkinnedMesh* platformSkinnedMesh = new cSimpleAssimpSkinnedMesh();
-	//pPlatformCharacter->setSM(platformSkinnedMesh);
-	//pPlatformCharacter->getSM()->LoadMeshFromFile("mainCharacter", "assets/modelsFBX/RPG-Character(FBX2013).FBX");
+	cSimpleAssimpSkinnedMesh* platformSkinnedMesh = new cSimpleAssimpSkinnedMesh();
+	pPlatformCharacter->setSM(platformSkinnedMesh);
+	pPlatformCharacter->getSM()->LoadMeshFromFile("platformCharacter", "assets/modelsFBX/RPG-Character(FBX2013).FBX");
 
-	//sModelDrawInfo* platformCharacterMeshInfo = pMainCharacter->getSM()->CreateMeshObjectFromCurrentModel();
+	sModelDrawInfo* platformCharacterMeshInfo = pPlatformCharacter->getSM()->CreateMeshObjectFromCurrentModel();
 
-	//pPlatformCharacter->getSM()->LoadMeshAnimation("Run", "assets/modelsFBX/Run.fbx");
-	//pPlatformCharacter->getSM()->LoadMeshAnimation("Walk-Slow", "assets/modelsFBX/RPG-Character_Unarmed-Walk-Slow(FBX2013).FBX");
-	//pPlatformCharacter->getSM()->LoadMeshAnimation("Walk", "assets/modelsFBX/Walking.fbx");
-	//pPlatformCharacter->getSM()->LoadMeshAnimation("Jump", "assets/modelsFBX/Jumping.fbx");
-	//pPlatformCharacter->getSM()->LoadMeshAnimation("Fall", "assets/modelsFBX/RPG-Character_Unarmed-Fall(FBX2013).FBX");
-	//pPlatformCharacter->getSM()->LoadMeshAnimation("Attack", "assets/modelsFBX/RPG-Character_Unarmed-Attack-R3(FBX2013).FBX");
-	//pPlatformCharacter->getSM()->LoadMeshAnimation("Idle", "assets/modelsFBX/RPG-Character_Unarmed-Idle(FBX2013).FBX");
-	//pPlatformCharacter->getSM()->LoadMeshAnimation("Dying", "assets/modelsFBX/RPG-Character_Unarmed-Death1(FBX2013).FBX");
-	//pPlatformCharacter->getSM()->LoadMeshAnimation("Roll", "assets/modelsFBX/Sprinting Forward Roll.fbx");
-	//currentAnimationName = "Idle";
-	//pPlatformCharacter->setMeshName("mainCharacter");
-	//pPlatformCharacter->setFriendlyName("mainCharacter");	// We use to search
-	//pPlatformCharacter->setRotationXYZ(glm::vec3(0.0f, glm::radians(-90.0f), 0.0f));
-	//pPlatformCharacter->setScale(0.2f);
-	////pMainCharacter->setObjectColourRGBA(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
-	//pPlatformCharacter->setDebugColour(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
-	//pPlatformCharacter->setVelocity(glm::vec3(0.0f, 0.0f, 0.0f));
-	//pPlatformCharacter->setAccel(glm::vec3(0.0f, 0.0f, 0.0f));
-	//pPlatformCharacter->setInverseMass(1.0f);
-	//pPlatformCharacter->setIsVisible(true);
-	//pPlatformCharacter->setIsWireframe(false);
-	//pPlatformCharacter->setTexture("StoneTex_1024.bmp", 0);
-	//pPlatformCharacter->setTexture("grassTexture_512.bmp", 1);
-	//pPlatformCharacter->setTexture("sandTexture_1024.bmp", 2);
-	//pPlatformCharacter->setTextureRatio(1, 1);
-	//pPlatformCharacter->setTransprancyValue(1.0f);
-	//g_vec_pPlatformCharacterObjects.push_back(pPlatformCharacter);
+	pPlatformCharacter->getSM()->LoadMeshAnimation("Run", "assets/modelsFBX/Run.fbx");
+	pPlatformCharacter->getSM()->LoadMeshAnimation("Walk-Slow", "assets/modelsFBX/RPG-Character_Unarmed-Walk-Slow(FBX2013).FBX");
+	pPlatformCharacter->getSM()->LoadMeshAnimation("Walk", "assets/modelsFBX/Walking.fbx");
+	pPlatformCharacter->getSM()->LoadMeshAnimation("Jump", "assets/modelsFBX/Jumping.fbx");
+	pPlatformCharacter->getSM()->LoadMeshAnimation("Fall", "assets/modelsFBX/RPG-Character_Unarmed-Fall(FBX2013).FBX");
+	pPlatformCharacter->getSM()->LoadMeshAnimation("Attack", "assets/modelsFBX/RPG-Character_Unarmed-Attack-R3(FBX2013).FBX");
+	pPlatformCharacter->getSM()->LoadMeshAnimation("Idle", "assets/modelsFBX/RPG-Character_Unarmed-Idle(FBX2013).FBX");
+	pPlatformCharacter->getSM()->LoadMeshAnimation("Dying", "assets/modelsFBX/RPG-Character_Unarmed-Death1(FBX2013).FBX");
+	pPlatformCharacter->getSM()->LoadMeshAnimation("Roll", "assets/modelsFBX/Sprinting Forward Roll.fbx");
+	currentAnimationName = "Idle";
+	pPlatformCharacter->setMeshName("platformCharacter");
+	pPlatformCharacter->setFriendlyName("platformCharacter");	// We use to search
+	pPlatformCharacter->setRotationXYZ(glm::vec3(0.0f, glm::radians(-90.0f), 0.0f));
+	pPlatformCharacter->setScale(0.2f);
+	pPlatformCharacter->setDebugColour(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+	pPlatformCharacter->setVelocity(glm::vec3(0.0f, 0.0f, 0.0f));
+	pPlatformCharacter->setAccel(glm::vec3(0.0f, 0.0f, 0.0f));
+	pPlatformCharacter->setInverseMass(1.0f);
+	pPlatformCharacter->setIsVisible(true);
+	pPlatformCharacter->setIsWireframe(false);
+	pPlatformCharacter->setTexture("StoneTex_1024.bmp", 0);
+	pPlatformCharacter->setTexture("grassTexture_512.bmp", 1);
+	pPlatformCharacter->setTexture("sandTexture_1024.bmp", 2);
+	pPlatformCharacter->setTextureRatio(1, 1);
+	pPlatformCharacter->setTransprancyValue(1.0f);
+	g_vec_pPlatformCharacterObjects.push_back(pPlatformCharacter);
 	//physicsWorld->AddComponent(pPlatformCharacter->GetComponent());
-	//if (mainCharacterMeshInfo)
-	//{
-	//	std::cout << mainCharacterMeshInfo->numberOfVertices << " vertices" << std::endl;
-	//	std::cout << mainCharacterMeshInfo->numberOfTriangles << " triangles" << std::endl;
-	//	std::cout << mainCharacterMeshInfo->numberOfIndices << " indices" << std::endl;
+	if (platformCharacterMeshInfo)
+	{
+		std::cout << platformCharacterMeshInfo->numberOfVertices << " vertices" << std::endl;
+		std::cout << platformCharacterMeshInfo->numberOfTriangles << " triangles" << std::endl;
+		std::cout << platformCharacterMeshInfo->numberOfIndices << " indices" << std::endl;
 
-	//	pTheVAOManager->LoadModelDrawInfoIntoVAO(*mainCharacterMeshInfo, shaderProgID);
-	//}
+		pTheVAOManager->LoadModelDrawInfoIntoVAO(*platformCharacterMeshInfo, shaderProgID);
+	}
 
 	iObject* pEnemy1 = pFactory->CreateObject("sphere", nPhysics::eComponentType::ball);
 	pEnemy1->setMeshName("enemy");
@@ -1319,6 +1318,8 @@ int LoadObjects()
 	::g_vec_pPlatformEnemyObjects.push_back(pEnemy4);
 
 	LoadLevel();
+
+	pCurrentObject = pFindObjectByFriendlyName("mainCharacter");
 
 	return 0;
 }

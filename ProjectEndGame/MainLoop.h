@@ -79,7 +79,7 @@ void DrawAIFBO()
 			glm::mat4 matModel = glm::mat4(1.0f);
 
 			iObject* pCurrentObject = ::g_vec_pAIGameObjects[index];
-			pCurrentObject->setIsWireframe(true);
+			pCurrentObject->setIsWireframe(false);
 
 			DrawObject(matModel, pCurrentObject, shaderProgID, pTheVAOManager);
 
@@ -224,7 +224,7 @@ void DrawAI()
 	glActiveTexture(GL_TEXTURE0 + 40);
 	glBindTexture(GL_TEXTURE_2D, pAIFBO->colourTexture_0_ID);
 
-	GLuint texSampFBO_UL = glGetUniformLocation(shaderProgID, "secondPassColourTexture");
+	GLuint texSampFBO_UL = glGetUniformLocation(shaderProgID, "AIPassColourTexture");
 	glUniform1i(texSampFBO_UL, 40);
 
 	// 4. Draw a single object (a triangle or quad)
@@ -250,7 +250,7 @@ void DrawAI()
 		glm::mat4 matModel = glm::mat4(1.0f);
 
 		iObject* pCurrentObject = ::g_vec_pAIGameObjects[index];
-		pCurrentObject->setIsWireframe(true);
+		//pCurrentObject->setIsWireframe(true);
 
 		DrawObject(matModel, pCurrentObject, shaderProgID, pTheVAOManager);
 
@@ -362,7 +362,7 @@ void DrawAI()
 
 		iObject* pCurrentObject = g_vec_pExplosionObjects.at(index);
 
-		pCurrentObject->setIsWireframe(true);
+		//pCurrentObject->setIsWireframe(true);
 
 		DrawObject(matModel, pCurrentObject, shaderProgID, pTheVAOManager);
 
@@ -458,16 +458,16 @@ void DrawAI()
 
 		iObject* pCurrentObject = ::g_vec_pAIEnemyObjects[index];
 
-		pCurrentObject->setIsWireframe(true);
+		//pCurrentObject->setIsWireframe(true);
 
 		DrawObject(matModel, pCurrentObject,
 			shaderProgID, pTheVAOManager);
 
 	}//for (int index...
 
-	pPhsyics->IntegrationStep(g_vec_pAIGameObjects, 0.03f);
-	pPhsyics->IntegrationStep(g_vec_pAIEnemyObjects, 0.03f);
-	pPhsyics->IntegrationStep(g_vec_pExplosionObjects, 0.03f);
+	pAIPhsyics->IntegrationStep(g_vec_pAIGameObjects, 0.03f);
+	pAIPhsyics->IntegrationStep(g_vec_pAIEnemyObjects, 0.03f);
+	pAIPhsyics->IntegrationStep(g_vec_pExplosionObjects, 0.03f);
 
 	if (pMainShip->getVelocity().x < 0)
 	{
@@ -702,83 +702,153 @@ void DrawAI()
 	}
 }
 
-void DrawPlatform()
+void DrawPlatformFBO()
 {
-	if (jumping)
-	{
-		jumpCount++;
-		if (jumpCount >= 150)
-		{
-			jumping = false;
-			jumpCount = 0;
-			currentAnimationName = "Idle";
-		}
-	}
+	// **************************************************
+	// **************************************************
+	// Loop to draw everything in the scene
 
-	if (rolling)
-	{
-		rollCount++;
-		if (rollCount >= 120)
-		{
-			rolling = false;
-			rollCount = 0;
-			currentAnimationName = "Idle";
-		}
-	}
+	//Draw everything to the external frame buffer
+	// (I get the frame buffer ID, and use that)
+	glBindFramebuffer(GL_FRAMEBUFFER, pPlatformFBO->ID);
 
-	if (attacking)
-	{
-		attackCount++;
-		if (attackCount >= 120)
-		{
-			attacking = false;
-			attackCount = 0;
-			currentAnimationName = "Idle";
+	pPlatformFBO->clearBuffers(true, true);
 
-			for (int i = 0; i < g_vec_pGameObjects.size(); i++)
+	// set the passNumber to 0
+	passNumber_UniLoc = glGetUniformLocation(shaderProgID, "passNumber");
+	glUniform1i(passNumber_UniLoc, 0);
+
+	if (!renderPlatform)
+	{
+		for (int index = 0; index != ::g_vec_pPlatformGameObjects.size(); index++)
+		{
+
+			glm::mat4 matModel = glm::mat4(1.0f);
+
+			iObject* pCurrentObject = ::g_vec_pPlatformGameObjects[index];
+			pCurrentObject->setIsWireframe(true);
+
+			DrawObject(matModel, pCurrentObject, shaderProgID, pTheVAOManager);
+
+		}//for (int index...
+
+		for (int index = 0; index != ::g_vec_pPlatformEnvironmentObjects.size(); index++)
+		{
+			glm::mat4 matModel = glm::mat4(1.0f);
+
+			iObject* pCurrentObject = ::g_vec_pPlatformEnvironmentObjects[index];
+
+			if (pCurrentObject->getFriendlyName() == "skybox")
 			{
-				if (g_vec_pGameObjects.at(i)->getFriendlyName() == "mainCharacter")
-				{
-					continue;
-				}
-				else
-				{
-					g_vec_pGameObjects.at(i)->setTexture("green.bmp", 1);
-				}
+				renderPlatform = true;
+			}
+			//pCurrentObject->setIsWireframe(true);
+			DrawObject(matModel, pCurrentObject,
+				shaderProgID, pTheVAOManager);
+
+			if (pCurrentObject->getFriendlyName() == "skybox")
+			{
+				renderPlatform = false;
+			}
+
+		}//for (int index...
+
+		for (int index = 0; index != ::g_vec_pPlatformEnemyObjects.size(); index++)
+		{
+			glm::mat4 matModel = glm::mat4(1.0f);
+
+			iObject* pCurrentObject = ::g_vec_pPlatformEnemyObjects[index];
+
+			//pCurrentObject->setIsWireframe(true);
+
+			DrawObject(matModel, pCurrentObject,
+				shaderProgID, pTheVAOManager);
+
+		}//for (int index...
+	}
+	else if (renderPlatform)
+	{
+		for (int index = 0; index != ::g_vec_pGameObjects.size(); index++)
+		{
+			glm::mat4 matModel = glm::mat4(1.0f);
+
+			iObject* pCurrentObject = ::g_vec_pGameObjects[index];
+
+			if (pCurrentObject->getFriendlyName() == "skybox")
+			{
+				renderAI = false;
+			}
+
+			DrawObject(matModel, pCurrentObject,
+				shaderProgID, pTheVAOManager);
+
+			if (pCurrentObject->getFriendlyName() == "skybox")
+			{
+				renderAI = true;
+			}
+		}//for (int index...
+
+		for (int index = 0; index != ::g_vec_pEnvironmentObjects.size(); index++)
+		{
+			glm::mat4 matModel = glm::mat4(1.0f);
+
+			iObject* pCurrentObject = ::g_vec_pEnvironmentObjects[index];
+
+			DrawObject(matModel, pCurrentObject,
+				shaderProgID, pTheVAOManager);
+
+		}//for (int index...
+		for (int index = 0; index != ::g_vec_pCharacterObjects.size(); index++)
+		{
+			glm::mat4 matModel = glm::mat4(1.0f);
+
+			iObject* pCurrentObject = ::g_vec_pCharacterObjects[index];
+
+			//glm::vec3 resetThePosition = glm::vec3(0.0f, 0.0f, 0.0f);
+			//pCurrentObject->GetComponent()->GetPosition(resetThePosition);
+
+			//pCurrentObject->setPositionXYZ(resetThePosition);
+			glm::vec3 currentVelocity;
+			pCurrentObject->GetVelocity(currentVelocity);
+			if (currentVelocity.x == 0.0f && currentVelocity.y == 0.0f)
+			{
+				currentVelocity += 0.000001f;
+			}
+			glm::vec3 normalizedVelocity = glm::normalize(currentVelocity);
+			normalizedVelocity.z *= -1.0f;
+			glm::quat orientation = glm::quatLookAt(normalizedVelocity, glm::vec3(0.0f, 1.0f, 0.0f));
+			orientation.x = 0.0f;
+			orientation.y *= -1.0f;
+			orientation.z = 0.0f;
+			pCurrentObject->setRotationXYZ(orientation);
+
+			DrawObject(matModel, pCurrentObject,
+				shaderProgID, pTheVAOManager);
+
+		}//for (int index...
+		for (int index = 0; index != g_vec_pClothObjects.size(); index++)
+		{
+			iObject* pCurrentObject = ::g_vec_pClothObjects[index];
+
+			size_t numNodes = pCurrentObject->GetComponent()->NumNodes();
+
+			for (int i = 0; i < numNodes; i++)
+			{
+				glm::mat4 matModel = glm::mat4(1.0f);
+				float scale = 1.0f;
+				glm::vec3 position = glm::vec3(1.0f);
+				pCurrentObject->GetComponent()->GetNodeRadius(i, scale);
+				pCurrentObject->GetComponent()->GetNodePosition(i, position);
+				matModel = glm::scale(matModel, glm::vec3(scale));
+				matModel = glm::translate(matModel, position);
+				DrawObject(matModel, pCurrentObject, shaderProgID, pTheVAOManager);
 			}
 		}
 	}
-	// The whole scene is now drawn (to the FBO)
-	iObject* pMainCharacter = pFindObjectByFriendlyName("mainCharacter");
+}
 
-	if (pMainCharacter != nullptr && currentAnimationName != "Jump" && currentAnimationName != "Roll" && currentAnimationName != "Dying" && currentAnimationName != "Attack")
-	{
-		if (pMainCharacter->getVelocity().z > 10.0f || pMainCharacter->getVelocity().x > 10.0f || pMainCharacter->getVelocity().z < -10.0f || pMainCharacter->getVelocity().x < -10.0f)
-		{
-			currentAnimationName = "Run";
-		}
-		else if (pMainCharacter->getVelocity().z > 1.0f || pMainCharacter->getVelocity().x > 1.0f || pMainCharacter->getVelocity().z < -1.0f || pMainCharacter->getVelocity().x < -1.0f)
-		{
-			currentAnimationName = "Walk";
-		}
-		//else if (pMainCharacter->getVelocity().y > 15.0f)
-		//{
-		//	currentAnimationName = "Jump";
-		//}
-		else if (pMainCharacter->getVelocity().y < -3.0f || pMainCharacter->getVelocity().y > 3.0f)
-		{
-			currentAnimationName = "Fall";
-		}
-		else
-		{
-			currentAnimationName = "Idle";
-		}
-	}
-
-	physicsWorld->Update(deltaTime);
-	gCoordinator->update(deltaTime);
-	gAIManager->update(deltaTime);
-
+void DrawPlatform()
+{
 	// 1. Disable the FBO
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -793,7 +863,7 @@ void DrawPlatform()
 	glActiveTexture(GL_TEXTURE0 + 40);
 	glBindTexture(GL_TEXTURE_2D, pAIFBO->colourTexture_0_ID);
 
-	GLuint texSampFBO_UL = glGetUniformLocation(shaderProgID, "secondPassColourTexture");
+	GLuint texSampFBO_UL = glGetUniformLocation(shaderProgID, "AIPassColourTexture");
 	glUniform1i(texSampFBO_UL, 40);
 
 	// 4. Draw a single object (a triangle or quad)
@@ -813,84 +883,259 @@ void DrawPlatform()
 	// set pass number back to 0 to render the rest of the scene
 	glUniform1i(passNumber_UniLoc, 0);
 
-	for (int index = 0; index != ::g_vec_pCharacterObjects.size(); index++)
+	iObject* pMainCharacter = pFindObjectByFriendlyName("platformCharacter");
+	for (int index = 0; index != ::g_vec_pPlatformGameObjects.size(); index++)
 	{
 		glm::mat4 matModel = glm::mat4(1.0f);
 
-		iObject* pCurrentObject = ::g_vec_pCharacterObjects[index];
+		iObject* pCurrentObject = ::g_vec_pPlatformGameObjects[index];
 
-		//glm::vec3 resetThePosition = glm::vec3(0.0f, 0.0f, 0.0f);
-		//pCurrentObject->GetComponent()->GetPosition(resetThePosition);
+		DrawObject(matModel, pCurrentObject,
+			shaderProgID, pTheVAOManager);
 
-		//pCurrentObject->setPositionXYZ(resetThePosition);
-		glm::vec3 currentVelocity;
-		pCurrentObject->GetVelocity(currentVelocity);
-		if (currentVelocity.x == 0.0f && currentVelocity.y == 0.0f)
+	}//for (int index...
+
+	for (int index = 0; index != ::g_vec_pPlatformEnvironmentObjects.size(); index++)
+	{
+		glm::mat4 matModel = glm::mat4(1.0f);
+
+		iObject* pCurrentObject = ::g_vec_pPlatformEnvironmentObjects[index];
+
+		DrawObject(matModel, pCurrentObject,
+			shaderProgID, pTheVAOManager);
+
+	}//for (int index...
+
+	for (int index = 0; index != ::g_vec_pPlatformEnemyObjects.size(); index++)
+	{
+		glm::mat4 matModel = glm::mat4(1.0f);
+
+		iObject* pCurrentObject = ::g_vec_pPlatformEnemyObjects[index];
+
+		DrawObject(matModel, pCurrentObject,
+			shaderProgID, pTheVAOManager);
+
+	}//for (int index...
+
+	for (int index = 0; index != ::g_vec_pPlatformCharacterObjects.size(); index++)
+	{
+		glm::mat4 matModel = glm::mat4(1.0f);
+
+		iObject* pCurrentObject = ::g_vec_pPlatformCharacterObjects[index];
+
+		DrawObject(matModel, pCurrentObject,
+			shaderProgID, pTheVAOManager);
+
+	}//for (int index...
+
+	for (int index = 0; index != ::g_vec_pPlatformExplosionObjects.size(); index++)
+	{
+		glm::mat4 matModel = glm::mat4(1.0f);
+
+		iObject* pCurrentObject = ::g_vec_pPlatformExplosionObjects[index];
+
+		DrawObject(matModel, pCurrentObject,
+			shaderProgID, pTheVAOManager);
+
+	}//for (int index...
+
+	if (currentAnimationName != "Jump" && currentAnimationName != "Roll" && currentAnimationName != "Dying" && currentAnimationName != "Attack")
+	{
+		if (pMainCharacter->getVelocity().z > 21.0f)
 		{
-			currentVelocity += 0.000001f;
+			currentAnimationName = "Run";
 		}
-		glm::vec3 normalizedVelocity = glm::normalize(currentVelocity);
-		normalizedVelocity.z *= -1.0f;
-		glm::quat orientation = glm::quatLookAt(normalizedVelocity, glm::vec3(0.0f, 1.0f, 0.0f));
-		orientation.x = 0.0f;
-		orientation.y *= -1.0f;
-		orientation.z = 0.0f;
-		pCurrentObject->setRotationXYZ(orientation);
-
-		DrawObject(matModel, pCurrentObject,
-			shaderProgID, pTheVAOManager);
-
-	}//for (int index...
-
-	for (int index = 0; index != ::g_vec_pGameObjects.size(); index++)
-	{
-		glm::mat4 matModel = glm::mat4(1.0f);
-
-		iObject* pCurrentObject = ::g_vec_pGameObjects[index];
-
-		DrawObject(matModel, pCurrentObject,
-			shaderProgID, pTheVAOManager);
-
-	}//for (int index...
-
-	for (int index = 0; index != ::g_vec_pEnvironmentObjects.size(); index++)
-	{
-		glm::mat4 matModel = glm::mat4(1.0f);
-
-		iObject* pCurrentObject = ::g_vec_pEnvironmentObjects[index];
-
-		DrawObject(matModel, pCurrentObject,
-			shaderProgID, pTheVAOManager);
-
-	}//for (int index...
-
-	for (int index = 0; index != g_vec_pClothObjects.size(); index++)
-	{
-		iObject* pCurrentObject = ::g_vec_pClothObjects[index];
-
-		size_t numNodes = pCurrentObject->GetComponent()->NumNodes();
-
-		for (int i = 0; i < numNodes; i++)
+		else if (pMainCharacter->getVelocity().z > 5.0f)
 		{
-			glm::mat4 matModel = glm::mat4(1.0f);
-			float scale = 1.0f;
-			glm::vec3 position = glm::vec3(1.0f);
-			pCurrentObject->GetComponent()->GetNodeRadius(i, scale);
-			pCurrentObject->GetComponent()->GetNodePosition(i, position);
-			matModel = glm::scale(matModel, glm::vec3(scale));
-			matModel = glm::translate(matModel, position);
-			DrawObject(matModel, pCurrentObject, shaderProgID, pTheVAOManager);
+			currentAnimationName = "Walk";
+		}
+		//else if (pMainCharacter->getVelocity().y > 15.0f)
+		//{
+		//	currentAnimationName = "Jump";
+		//}
+		else if (pMainCharacter->getVelocity().y < -3.0f || pMainCharacter->getVelocity().y > 3.0f)
+		{
+			currentAnimationName = "Fall";
+		}
+		else
+		{
+			currentAnimationName = "Idle";
 		}
 	}
 
-	glm::mat4 skyMatModel2 = glm::mat4(1.0f);
+	pPlatformPhysics->IntegrationStep(g_vec_pPlatformEnemyObjects, 0.03f);
+	pPlatformPhysics->IntegrationStep(g_vec_pPlatformCharacterObjects, 0.03f);
+	pPlatformPhysics->IntegrationStep(g_vec_pPlatformExplosionObjects, 0.03f);
+	pPlatformPhysics->IntegrationStep(g_vec_pPlatformCharacterObjects, 0.03f);
 
-	DrawObject(skyMatModel2, pSkyBoxSphere, shaderProgID, pTheVAOManager);
-
-	if (bLightDebugSheresOn)
+	// collisions for floors
+	if (pMainCharacter->getVelocity().y < 1.0f)
 	{
-		DrawDebugSpheres();
-	}// if (bLightDebugSheresOn) 
+		for (int i = 0; i < g_vec_pPlatformEnvironmentObjects.size(); i++)
+		{
+			float collisionDistance = glm::distance(pMainCharacter->getPositionXYZ(), g_vec_pPlatformEnvironmentObjects.at(i)->getPositionXYZ());
+
+			if (collisionDistance < 10.0f)
+			{
+				CollideWithFloor(pMainCharacter, g_vec_pPlatformEnvironmentObjects.at(i));
+			}
+		}
+	}
+
+	//robot collisions
+	for (int i = 0; i < g_vec_pGameObjects.size(); i++)
+	{
+		if (g_vec_pGameObjects.at(i)->getFriendlyName() == "mainCharacter")
+		{
+			continue;
+		}
+		float collisionDistance = glm::distance(pMainCharacter->getPositionXYZ(), g_vec_pGameObjects.at(i)->getPositionXYZ());
+
+		if (collisionDistance < 20.0f)
+		{
+			if (g_vec_pExplosionObjects.size() > 0)
+			{
+				break;
+			}
+			for (int j = 0; j < g_vec_pGameObjects.size(); j++)
+			{
+				if (g_vec_pGameObjects.at(j)->getFriendlyName() == "mainCharacter")
+				{
+					continue;
+				}
+				else
+				{
+					if (currentAnimationName != "Attack")
+					{
+						g_vec_pGameObjects.at(j)->setInverseMass(0.0f);
+						currentAnimationName = "Dying";
+						gotHit = true;
+					}
+					else
+					{
+						glm::vec3 pointOfImpact = g_vec_pGameObjects.at(i)->getPositionXYZ();
+
+						iObject* pPiece1 = pFactory->CreateObject("sphere", nPhysics::eComponentType::ball);
+						pPiece1->setMeshName("piece1");
+						pPiece1->setFriendlyName("piece1");	// We use to search 
+						pPiece1->setPositionXYZ(pointOfImpact);
+						pPiece1->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
+						pPiece1->setScale(1.0f);
+						pPiece1->setVelocity(glm::vec3(randInRange(10.0f, 30.0f), randInRange(10.0f, 30.0f), randInRange(10.0f, 30.0f)));
+						pPiece1->setInverseMass(1.0f);
+						pPiece1->setIsVisible(true);
+						pPiece1->setIsWireframe(false);
+						pPiece1->setTexture("green.bmp", 1);
+						pPiece1->setTextureRatio(1, 1);
+						pPiece1->setTransprancyValue(1.0f);
+						::g_vec_pPlatformExplosionObjects.push_back(pPiece1);
+
+						iObject* pPiece2 = pFactory->CreateObject("sphere", nPhysics::eComponentType::ball);
+						pPiece2->setMeshName("piece2");
+						pPiece2->setFriendlyName("piece1");	// We use to search 
+						pPiece2->setPositionXYZ(pointOfImpact);
+						pPiece2->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
+						pPiece2->setScale(1.0f);
+						pPiece2->setVelocity(glm::vec3(randInRange(10.0f, 30.0f), randInRange(10.0f, 30.0f), randInRange(10.0f, 30.0f)));
+						pPiece2->setInverseMass(1.0f);
+						pPiece2->setIsVisible(true);
+						pPiece2->setIsWireframe(false);
+						pPiece2->setTexture("green.bmp", 1);
+						pPiece2->setTextureRatio(1, 1);
+						pPiece2->setTransprancyValue(1.0f);
+						::g_vec_pPlatformExplosionObjects.push_back(pPiece2);
+
+						iObject* pPiece3 = pFactory->CreateObject("sphere", nPhysics::eComponentType::ball);
+						pPiece3->setMeshName("piece3");
+						pPiece3->setFriendlyName("piece1");	// We use to search 
+						pPiece3->setPositionXYZ(pointOfImpact);
+						pPiece3->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
+						pPiece3->setScale(1.0f);
+						pPiece3->setVelocity(glm::vec3(randInRange(10.0f, 30.0f), randInRange(10.0f, 30.0f), randInRange(10.0f, 30.0f)));
+						pPiece3->setInverseMass(1.0f);
+						pPiece3->setIsVisible(true);
+						pPiece3->setIsWireframe(false);
+						pPiece3->setTexture("green.bmp", 1);
+						pPiece3->setTextureRatio(1, 1);
+						pPiece3->setTransprancyValue(1.0f);
+						::g_vec_pPlatformExplosionObjects.push_back(pPiece3);
+
+						iObject* pPiece4 = pFactory->CreateObject("sphere", nPhysics::eComponentType::ball);
+						pPiece4->setMeshName("piece4");
+						pPiece4->setFriendlyName("piece1");	// We use to search 
+						pPiece4->setPositionXYZ(pointOfImpact);
+						pPiece4->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
+						pPiece4->setScale(1.0f);
+						pPiece4->setVelocity(glm::vec3(randInRange(10.0f, 30.0f), randInRange(10.0f, 30.0f), randInRange(10.0f, 30.0f)));
+						pPiece4->setInverseMass(1.0f);
+						pPiece4->setIsVisible(true);
+						pPiece4->setIsWireframe(false);
+						pPiece4->setTexture("green.bmp", 1);
+						pPiece4->setTextureRatio(1, 1);
+						pPiece4->setTransprancyValue(1.0f);
+						::g_vec_pPlatformExplosionObjects.push_back(pPiece4);
+
+						iObject* pPiece5 = pFactory->CreateObject("sphere", nPhysics::eComponentType::ball);
+						pPiece5->setMeshName("piece5");
+						pPiece5->setFriendlyName("piece1");	// We use to search 
+						pPiece5->setPositionXYZ(pointOfImpact);
+						pPiece5->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
+						pPiece5->setScale(1.0f);
+						pPiece5->setVelocity(glm::vec3(randInRange(10.0f, 30.0f), randInRange(10.0f, 30.0f), randInRange(10.0f, 30.0f)));
+						pPiece5->setInverseMass(1.0f);
+						pPiece5->setIsVisible(true);
+						pPiece5->setIsWireframe(false);
+						pPiece5->setTexture("green.bmp", 1);
+						pPiece5->setTextureRatio(1, 1);
+						pPiece5->setTransprancyValue(1.0f);
+						::g_vec_pPlatformExplosionObjects.push_back(pPiece5);
+
+						iObject* pPiece6 = pFactory->CreateObject("sphere", nPhysics::eComponentType::ball);
+						pPiece6->setMeshName("piece6");
+						pPiece6->setFriendlyName("piece1");	// We use to search 
+						pPiece6->setPositionXYZ(pointOfImpact);
+						pPiece6->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
+						pPiece6->setScale(1.0f);
+						pPiece6->setVelocity(glm::vec3(randInRange(10.0f, 30.0f), randInRange(10.0f, 30.0f), randInRange(10.0f, 30.0f)));
+						pPiece6->setInverseMass(1.0f);
+						pPiece6->setIsVisible(true);
+						pPiece6->setIsWireframe(false);
+						pPiece6->setTexture("green.bmp", 1);
+						pPiece6->setTextureRatio(1, 1);
+						pPiece6->setTransprancyValue(1.0f);
+						::g_vec_pPlatformExplosionObjects.push_back(pPiece6);
+
+						g_vec_pPlatformEnemyObjects.at(i)->setInverseMass(0.0f);
+						g_vec_pPlatformEnemyObjects.at(i)->setIsVisible(false);
+						g_vec_pPlatformEnemyObjects.at(i)->setPositionXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
+						//g_vec_pGameObjects.erase(g_vec_pGameObjects.begin() + j);
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	// collisions for walls
+	if (pMainCharacter->getPositionXYZ().x > -10.0f)
+	{
+		pMainCharacter->setVelocity(glm::reflect(pMainCharacter->getVelocity(), glm::vec3(-1.0f, 0.0f, 0.0f)));
+		// lose some energy
+		glm::vec3 nComponent = glm::proj(pMainCharacter->getVelocity(), glm::vec3(0.0f, 1.0f, 0.0f));
+		// rewind
+		glm::vec3 setVelocity = pMainCharacter->getVelocity() - nComponent * 0.2f;
+		pMainCharacter->setVelocity(setVelocity);
+	}
+
+	if (pMainCharacter->getPositionXYZ().x < -870.0f)
+	{
+		pMainCharacter->setVelocity(glm::reflect(pMainCharacter->getVelocity(), glm::vec3(1.0f, 0.0f, 0.0f)));
+		// lose some energy
+		glm::vec3 nComponent = glm::proj(pMainCharacter->getVelocity(), glm::vec3(0.0f, 1.0f, 0.0f));
+		// rewind
+		glm::vec3 setVelocity = pMainCharacter->getVelocity() - nComponent * 0.2f;
+		pMainCharacter->setVelocity(setVelocity);
+	}
 }
 
 void DrawSecondPass()
@@ -984,22 +1229,46 @@ void DrawSecondPass()
 	glActiveTexture(GL_TEXTURE0 + 40);
 	glBindTexture(GL_TEXTURE_2D, pAIFBO->colourTexture_0_ID);
 
-	GLuint texSampFBO_UL = glGetUniformLocation(shaderProgID, "secondPassColourTexture");
-	glUniform1i(texSampFBO_UL, 40);
+	GLuint texSampAIFBO_UL = glGetUniformLocation(shaderProgID, "AIPassColourTexture");
+	glUniform1i(texSampAIFBO_UL, 40);
 
 	// 4. Draw a single object (a triangle or quad)
-	iObject* pQuadOrIsIt = pFindObjectByFriendlyName("debug_cube");
-	pQuadOrIsIt->setScale(30.0f);
-	pQuadOrIsIt->setIsVisible(true);
+	iObject* pAIQuad = pFindObjectByFriendlyName("debug_cube");
+	pAIQuad->setScale(30.0f);
+	pAIQuad->setIsVisible(true);
 	//glm::vec3 oldLocation = glm::vec3(::g_pFlyCamera->eye.x, ::g_pFlyCamera->eye.y, ::g_pFlyCamera->eye.z);
-	pQuadOrIsIt->setPositionXYZ(glm::vec3(::g_pFlyCamera->getAtInWorldSpace().x, ::g_pFlyCamera->getAtInWorldSpace().y, ::g_pFlyCamera->getAtInWorldSpace().z + 300));
+	pAIQuad->setPositionXYZ(glm::vec3(::g_pFlyCamera->getAtInWorldSpace().x, ::g_pFlyCamera->getAtInWorldSpace().y, ::g_pFlyCamera->getAtInWorldSpace().z + 300));
 	//pQuadOrIsIt->setPositionXYZ(glm::vec3(::g_pFlyCamera->eye.x, ::g_pFlyCamera->eye.y, ::g_pFlyCamera->eye.z + 100));
-	pQuadOrIsIt->setIsWireframe(false);
+	pAIQuad->setIsWireframe(false);
 
 	// Move the camera
 	// Maybe set it to orthographic, etc.
-	glm::mat4 matQuad = glm::mat4(1.0f);
-	DrawObject(matQuad, pQuadOrIsIt, shaderProgID, pTheVAOManager);
+	glm::mat4 matAIQuad = glm::mat4(1.0f);
+	DrawObject(matAIQuad, pAIQuad, shaderProgID, pTheVAOManager);
+
+	// 3. Use the FBO colour texture as the texture on that quad.
+	// set the passNumber to 1
+	glUniform1i(passNumber_UniLoc, 2);
+
+	glActiveTexture(GL_TEXTURE0 + 40);
+	glBindTexture(GL_TEXTURE_2D, pAIFBO->colourTexture_0_ID);
+
+	GLuint texSampPlatformFBO_UL = glGetUniformLocation(shaderProgID, "PlatformPassColourTexture");
+	glUniform1i(texSampAIFBO_UL, 40);
+
+	// 4. Draw a single object (a triangle or quad)
+	iObject* pPlatformQuad = pFindObjectByFriendlyName("debug_cube");
+	pPlatformQuad->setScale(30.0f);
+	pPlatformQuad->setIsVisible(true);
+	//glm::vec3 oldLocation = glm::vec3(::g_pFlyCamera->eye.x, ::g_pFlyCamera->eye.y, ::g_pFlyCamera->eye.z);
+	pPlatformQuad->setPositionXYZ(glm::vec3(::g_pFlyCamera->getAtInWorldSpace().x - 100.0f, ::g_pFlyCamera->getAtInWorldSpace().y, ::g_pFlyCamera->getAtInWorldSpace().z + 300));
+	//pQuadOrIsIt->setPositionXYZ(glm::vec3(::g_pFlyCamera->eye.x, ::g_pFlyCamera->eye.y, ::g_pFlyCamera->eye.z + 100));
+	pPlatformQuad->setIsWireframe(false);
+
+	// Move the camera
+	// Maybe set it to orthographic, etc.
+	glm::mat4 matPlatformQuad = glm::mat4(1.0f);
+	DrawObject(matPlatformQuad, pPlatformQuad, shaderProgID, pTheVAOManager);
 
 	// set pass number back to 0 to render the rest of the scene
 	glUniform1i(passNumber_UniLoc, 0);

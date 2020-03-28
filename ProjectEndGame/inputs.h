@@ -251,7 +251,7 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 	const float CAMERASPEED = 1.0f;
 	const float MOVESPEED = 2.0f;
 
-	iObject* pCurrentObject = pFindObjectByFriendlyName("mainCharacter");
+	//iObject* pCurrentObject = pFindObjectByFriendlyName("mainCharacter");
 	//iObject* pCurrentObject = g_vec_pGameObjects.at(0);
 
 	if (!isShiftKeyDownByAlone(mods) && !isCtrlKeyDownByAlone(mods))
@@ -301,15 +301,33 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 
 	if (isShiftKeyDownByAlone(mods))
 	{
-		if (key == GLFW_KEY_ENTER && action == GLFW_PRESS)
+		if (key == GLFW_KEY_1 && action == GLFW_PRESS)
 		{
 			renderAI = !renderAI;
+			renderPlatform = false;
 			if (renderAI)
 			{
+				g_pFlyCamera->eye = glm::vec3(0.0f, 200.0, -50.0);
 				pCurrentObject = pFindObjectByFriendlyName("mainXWing");
 			}
 			else
 			{
+				g_pFlyCamera->eye = glm::vec3(0.0f, 20.0, -80.0);
+				pCurrentObject = pFindObjectByFriendlyName("mainCharacter");
+			}
+		}
+		if (key == GLFW_KEY_2 && action == GLFW_PRESS)
+		{
+			renderPlatform = !renderPlatform;
+			renderAI = false;
+			if (renderPlatform)
+			{
+				g_pFlyCamera->eye = glm::vec3(-460.0f, 250.0f, -960.0f);
+				pCurrentObject = pFindObjectByFriendlyName("platformCharacter");
+			}
+			else
+			{
+				g_pFlyCamera->eye = glm::vec3(0.0f, 20.0, -80.0);
 				pCurrentObject = pFindObjectByFriendlyName("mainCharacter");
 			}
 		}

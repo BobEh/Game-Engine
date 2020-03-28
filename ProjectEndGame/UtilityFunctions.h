@@ -216,6 +216,12 @@ void DrawObject(glm::mat4 m, iObject* pCurrentObject, GLint shaderProgID, cVAOMa
 			glActiveTexture(GL_TEXTURE10);				// Texture Unit 26
 			glBindTexture(GL_TEXTURE_CUBE_MAP, skyBoxTextureID);	// Texture now assoc with texture unit 0
 		}
+		if (renderPlatform)
+		{
+			GLuint skyBoxTextureID = ::g_pTextureManager->getTextureIDFromName("sunny");
+			glActiveTexture(GL_TEXTURE10);				// Texture Unit 26
+			glBindTexture(GL_TEXTURE_CUBE_MAP, skyBoxTextureID);	// Texture now assoc with texture unit 0
+		}
 		else
 		{
 			GLuint skyBoxTextureID = ::g_pTextureManager->getTextureIDFromName("sunny");
@@ -462,8 +468,184 @@ iObject* pFindObjectByFriendlyName(std::string name)
 			return ::g_vec_pCharacterObjects[index];
 		}
 	}
+	for (unsigned int index = 0; index != g_vec_pClothObjects.size(); index++)
+	{
+		if (::g_vec_pClothObjects[index]->getFriendlyName() == name)
+		{
+			// Found it!!
+			return ::g_vec_pClothObjects[index];
+		}
+	}
+	for (unsigned int index = 0; index != g_vec_pAIEnvironmentObjects.size(); index++)
+	{
+		if (::g_vec_pAIEnvironmentObjects[index]->getFriendlyName() == name)
+		{
+			// Found it!!
+			return ::g_vec_pAIEnvironmentObjects[index];
+		}
+	}
+	for (unsigned int index = 0; index != g_vec_pAIEnemyObjects.size(); index++)
+	{
+		if (::g_vec_pAIEnemyObjects[index]->getFriendlyName() == name)
+		{
+			// Found it!!
+			return ::g_vec_pAIEnemyObjects[index];
+		}
+	}
+	for (unsigned int index = 0; index != g_vec_pAIGameObjects.size(); index++)
+	{
+		if (::g_vec_pAIGameObjects[index]->getFriendlyName() == name)
+		{
+			// Found it!!
+			return ::g_vec_pAIGameObjects[index];
+		}
+	}
+	for (unsigned int index = 0; index != g_vec_pPlatformEnvironmentObjects.size(); index++)
+	{
+		if (::g_vec_pPlatformEnvironmentObjects[index]->getFriendlyName() == name)
+		{
+			// Found it!!
+			return ::g_vec_pPlatformEnvironmentObjects[index];
+		}
+	}
+	for (unsigned int index = 0; index != g_vec_pPlatformEnemyObjects.size(); index++)
+	{
+		if (::g_vec_pPlatformEnemyObjects[index]->getFriendlyName() == name)
+		{
+			// Found it!!
+			return ::g_vec_pPlatformEnemyObjects[index];
+		}
+	}
+	for (unsigned int index = 0; index != g_vec_pPlatformGameObjects.size(); index++)
+	{
+		if (::g_vec_pPlatformGameObjects[index]->getFriendlyName() == name)
+		{
+			// Found it!!
+			return ::g_vec_pPlatformGameObjects[index];
+		}
+	}
+	for (unsigned int index = 0; index != g_vec_pPlatformCharacterObjects.size(); index++)
+	{
+		if (::g_vec_pPlatformCharacterObjects[index]->getFriendlyName() == name)
+		{
+			// Found it!!
+			return ::g_vec_pPlatformCharacterObjects[index];
+		}
+	}
+	for (unsigned int index = 0; index != g_vec_pExplosionObjects.size(); index++)
+	{
+		if (::g_vec_pExplosionObjects[index]->getFriendlyName() == name)
+		{
+			// Found it!!
+			return ::g_vec_pExplosionObjects[index];
+		}
+	}
+	for (unsigned int index = 0; index != g_vec_pPlatformExplosionObjects.size(); index++)
+	{
+		if (::g_vec_pPlatformExplosionObjects[index]->getFriendlyName() == name)
+		{
+			// Found it!!
+			return ::g_vec_pPlatformExplosionObjects[index];
+		}
+	}
 	// Didn't find it
 	return NULL;
+}
+
+void CollideWithFloor(iObject* character, iObject* floor)
+{
+	// TODO:
+	// 
+	// From our textbook, REAL-TIME COLLISION DETECTION, ERICSON
+	// Use intersect_moving_sphere_plane(...inputs...outputs...)
+	// to determine if:
+	// case A: The sphere did not collide during the timestep.
+	// case B: The sphere was already colliding at the beginning of the timestep.
+	// case C: The sphere collided during the timestep.
+	//
+	// case A: Return false to indicate no collision happened.
+	//
+	// case B: Do the timestep again for this sphere after applying an
+	//         impulse that should separate it from the plane.
+	// 
+	// 1) From our textbook, use closest_point_on_plane(..inputs..) to determine the 
+	//    penetration-depth of the sphere at the beginning of the timestep.
+	//    (This penetration-depth is the distance the sphere must travel during
+	//    the timestep in order to escape the plane.)
+	// 2) Use the sphere's center and the closest point on the plane to define
+	//    the direction of our impulse vector.
+	// 3) Use (penetration-depth / DT) to define the magnitude of our impulse vector.
+	//    (The impulse vector is now distance/time ...a velocity!)
+	// 4) Apply the impulse vector to sphere velocity.
+	// 5) Reset the sphere position.
+	// 6) Re-do the integration for the timestep.
+	// 7) Return true to indicate a collision has happened.
+	// 
+	// 
+	// case C: Rewind to the point of impact, reflect, then replay.
+	//
+	// 1) Use the outputs from the Ericson function to determine
+	//    and set the sphere position to the point of impact.
+	// 2) Reflect the sphere's velocity about the plane's normal vector.
+	// 3) Apply some energy loss (to the velocity) in the direction
+	//    of the plane's normal vector.
+	// 4) Re-integrate the sphere with its new velocity over the remaining
+	//    portion of the timestep.
+	// 5) Return true to indicate a collision has happened.
+
+	//glm::vec3 c = character->getPositionXYZ();
+	//float r = 1.0f;
+	//glm::vec3 v = glm::vec3(character->getPositionXYZ().x, (character->getPositionXYZ().y - 2.0f), character->getPositionXYZ().z);
+	//glm::vec3 n = floor->GetNormal();
+	//float d = floor->GetConstant();
+	//float t(0.0f);
+	//glm::vec3 q;
+
+	//int result = intersect_moving_sphere_plane(c, r, v, n, d, t, q);
+	//std::cout << "I hit the ground!!!! :O" << std::endl;
+	//if (result == 0)
+	//{
+	//	// no collision
+	//	return false;
+	//}
+	//if (result == -1)
+	//{
+		// already colliding at the beginning of the timestep
+
+	//glm::vec3 pointOnPlane = nCollide::closest_point_on_plane(character->mPreviousPosition, planeShape->GetNormal(), planeShape->GetConstant());
+	// figure out an impulse that should have the sphere escape the plane
+	float distance = glm::distance(character->getPositionXYZ(), floor->getPositionXYZ());
+	if (distance < 9.0f)
+	{
+		float targetDistance = 10.0f;
+		glm::vec3 impulse = glm::vec3(0.0f, 1.0f, 0.0f) * (targetDistance - distance) / 0.03f;
+		//reset
+		character->setPositionXYZ(glm::vec3(character->getPositionXYZ().x, floor->getPositionXYZ().y + 10.0f, character->getPositionXYZ().z));
+		//apply impulse
+		//character->setVelocity(character->getVelocity() + impulse);
+
+		return;
+	}
+	////re-do the timestep
+	//IntegrateRigidBody(character, mDeltaTime);
+
+	//return true;
+	//}
+	// it collided
+
+	// reflect
+	character->setVelocity(glm::reflect(character->getVelocity(), glm::vec3(0.0f, 1.0f, 0.0f)));
+	// lose some energy
+	glm::vec3 nComponent = glm::proj(character->getVelocity(), glm::vec3(0.0f, 1.0f, 0.0f));
+	// rewind
+	glm::vec3 setVelocity = character->getVelocity() - nComponent * 0.2f;
+	character->setVelocity(setVelocity);
+
+	//character->mPosition = (c + v * t);
+	//integrate
+	//IntegrateRigidBody(character, mDeltaTime * (1.0f - t));
+	//finished
+	//return true;
 }
 
 // returns NULL (0) if we didn't find it.

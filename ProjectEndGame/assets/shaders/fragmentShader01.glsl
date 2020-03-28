@@ -29,7 +29,8 @@ uniform sampler2D textSamp01;
 uniform sampler2D textSamp02;
 uniform sampler2D textSamp03;
 
-uniform sampler2D secondPassColourTexture;
+uniform sampler2D AIPassColourTexture;
+uniform sampler2D PlatformColourTexture;
 
 uniform float textRatio0;
 uniform float textRatio1;
@@ -117,12 +118,12 @@ void main()
 		// * * * * *          *
 		// * * * * *          *
 		
-		vec3 texRGB1 = texture( secondPassColourTexture, vec2(fUVx2.s + 0.0f, fUVx2.t + 0.0f) ).rgb;
+		vec3 texRGB1 = texture( AIPassColourTexture, vec2(fUVx2.s + 0.0f, fUVx2.t + 0.0f) ).rgb;
 		
-		vec3 texRGB2 = texture( secondPassColourTexture, vec2(fUVx2.s - bo, fUVx2.t + 0.0f) ).rgb;
-		vec3 texRGB3 = texture( secondPassColourTexture, vec2(fUVx2.s + bo, fUVx2.t + 0.0f) ).rgb;
-		vec3 texRGB4 = texture( secondPassColourTexture, vec2(fUVx2.s + 0.0f, fUVx2.t - bo) ).rgb;
-		vec3 texRGB5 = texture( secondPassColourTexture, vec2(fUVx2.s + 0.0f, fUVx2.t + bo) ).rgb;
+		vec3 texRGB2 = texture( AIPassColourTexture, vec2(fUVx2.s - bo, fUVx2.t + 0.0f) ).rgb;
+		vec3 texRGB3 = texture( AIPassColourTexture, vec2(fUVx2.s + bo, fUVx2.t + 0.0f) ).rgb;
+		vec3 texRGB4 = texture( AIPassColourTexture, vec2(fUVx2.s + 0.0f, fUVx2.t - bo) ).rgb;
+		vec3 texRGB5 = texture( AIPassColourTexture, vec2(fUVx2.s + 0.0f, fUVx2.t + bo) ).rgb;
 		
 		vec3 RGB = 0.5f * texRGB1 +
 		           0.125f * texRGB2 +
@@ -130,7 +131,46 @@ void main()
 				   0.125f * texRGB4 +
 				   0.125f * texRGB5;
 
-		vec3 texFBO_RGB = texture( secondPassColourTexture, fUVx2.st ).rgb;
+		vec3 texFBO_RGB = texture( AIPassColourTexture, fUVx2.st ).rgb;
+		//pixelColour.rgb = texFBO_RGB;
+		pixelColour.rgb = RGB;
+		pixelColour.a = 1.0f;
+
+		return;
+	}
+
+		// What pass is this?
+	// Is it the 2nd pass?
+	if ( passNumber == 2)
+	{
+		//pixelColour = vec4(0.0f, 1.0f, 0.0f, 1.0f);
+		float bo = 0.01f;		// For "blurr offset"
+		
+		// *  *  *
+		// *  O  *
+		// *  *  *
+		
+		// This is a Gaussian Kernel (Goo
+		// * * * * *          *
+		// * * * * *          *
+		// * * O * *		**O**
+		// * * * * *          *
+		// * * * * *          *
+		
+		vec3 texRGB1 = texture( PlatformColourTexture, vec2(fUVx2.s + 0.0f, fUVx2.t + 0.0f) ).rgb;
+		
+		vec3 texRGB2 = texture( PlatformColourTexture, vec2(fUVx2.s - bo, fUVx2.t + 0.0f) ).rgb;
+		vec3 texRGB3 = texture( PlatformColourTexture, vec2(fUVx2.s + bo, fUVx2.t + 0.0f) ).rgb;
+		vec3 texRGB4 = texture( PlatformColourTexture, vec2(fUVx2.s + 0.0f, fUVx2.t - bo) ).rgb;
+		vec3 texRGB5 = texture( PlatformColourTexture, vec2(fUVx2.s + 0.0f, fUVx2.t + bo) ).rgb;
+		
+		vec3 RGB = 0.5f * texRGB1 +
+		           0.125f * texRGB2 +
+				   0.125f * texRGB3 +
+				   0.125f * texRGB4 +
+				   0.125f * texRGB5;
+
+		vec3 texFBO_RGB = texture( PlatformColourTexture, fUVx2.st ).rgb;
 		//pixelColour.rgb = texFBO_RGB;
 		pixelColour.rgb = RGB;
 		pixelColour.a = 1.0f;

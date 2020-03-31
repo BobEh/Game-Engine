@@ -5,8 +5,13 @@ GLFWwindow* window;
 int width, height;
 
 // what should I draw??
-bool renderAI = false;
-bool renderPlatform = false;
+enum class renderTag
+{
+	AI,
+	Platform,
+	none
+};
+renderTag currentRender;
 
 // physics stuff
 nPhysics::iPhysicsFactory* physicsFactory;
@@ -99,6 +104,7 @@ std::vector<iObject*> g_vec_pPlatformGameObjects;
 std::vector<iObject*> g_vec_pPlatformCharacterObjects;
 std::vector<iObject*> g_vec_pPlatformExplosionObjects;
 std::vector<iObject*> g_vec_pExplosionObjects;
+std::vector<iObject*> g_vec_pPlaceHolderObjects;
 std::map<std::string /*FriendlyName*/, iObject*> g_map_GameObjectsByFriendlyName;
 
 //AI
@@ -147,6 +153,10 @@ iObject* pMoon;
 iObject* pMars;
 iObject* pMainShip;
 iObject* gPlayerBullet;
+
+#define NUM_OF_THREADS 1
+
+CRITICAL_SECTION output_lock;
 
 //random function
 template <class T>

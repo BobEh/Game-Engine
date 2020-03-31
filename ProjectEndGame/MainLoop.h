@@ -71,7 +71,7 @@ void DrawAIFBO()
 	passNumber_UniLoc = glGetUniformLocation(shaderProgID, "passNumber");
 	glUniform1i(passNumber_UniLoc, 0);
 
-	if (!renderAI)
+	if (currentRender != renderTag::AI)
 	{
 		for (int index = 0; index != ::g_vec_pAIGameObjects.size(); index++)
 		{
@@ -93,7 +93,7 @@ void DrawAIFBO()
 
 			if (pCurrentObject->getFriendlyName() == "skybox")
 			{
-				renderAI = true;
+				currentRender = renderTag::AI;
 			}
 			//pCurrentObject->setIsWireframe(true);
 			DrawObject(matModel, pCurrentObject,
@@ -101,7 +101,7 @@ void DrawAIFBO()
 
 			if (pCurrentObject->getFriendlyName() == "skybox")
 			{
-				renderAI = false;
+				currentRender = renderTag::none;
 			}
 
 		}//for (int index...
@@ -119,7 +119,7 @@ void DrawAIFBO()
 
 		}//for (int index...
 	}
-	else if (renderAI)
+	else if (currentRender == renderTag::AI)
 	{
 		for (int index = 0; index != ::g_vec_pGameObjects.size(); index++)
 		{
@@ -129,7 +129,7 @@ void DrawAIFBO()
 
 			if (pCurrentObject->getFriendlyName() == "skybox")
 			{
-				renderAI = false;
+				currentRender = renderTag::none;
 			}
 
 			DrawObject(matModel, pCurrentObject,
@@ -137,7 +137,7 @@ void DrawAIFBO()
 
 			if (pCurrentObject->getFriendlyName() == "skybox")
 			{
-				renderAI = true;
+				currentRender = renderTag::AI;
 			}
 		}//for (int index...
 
@@ -203,9 +203,15 @@ void DrawAIFBO()
 void DrawAI()
 {
 	glm::quat moonRotation = glm::quat(glm::vec3(0.0f, 0.0f, glm::radians(-0.04f)));
-	pMoon->setRotationXYZ(pMoon->getRotationXYZ() * moonRotation);
+	if (pMoon)
+	{
+		pMoon->setRotationXYZ(pMoon->getRotationXYZ() * moonRotation);
+	}
 	glm::quat marsRotation = glm::quat(glm::vec3(0.0f, 0.0f, glm::radians(0.04f)));
-	pMars->setRotationXYZ(pMars->getRotationXYZ() * marsRotation);
+	if (pMars)
+	{
+		pMars->setRotationXYZ(pMars->getRotationXYZ() * marsRotation);
+	}
 	// **************************************************
 	// **************************************************
 	// Loop to draw everything in the scene
@@ -229,17 +235,20 @@ void DrawAI()
 
 	// 4. Draw a single object (a triangle or quad)
 	iObject* pQuadOrIsIt = pFindObjectByFriendlyName("debug_cube");
-	pQuadOrIsIt->setScale(30.0f);
-	pQuadOrIsIt->setIsVisible(true);
-	//glm::vec3 oldLocation = glm::vec3(::g_pFlyCamera->eye.x, ::g_pFlyCamera->eye.y, ::g_pFlyCamera->eye.z);
-	pQuadOrIsIt->setPositionXYZ(glm::vec3(::g_pFlyCamera->getAtInWorldSpace().x, ::g_pFlyCamera->getAtInWorldSpace().y, ::g_pFlyCamera->getAtInWorldSpace().z + 300));
-	//pQuadOrIsIt->setPositionXYZ(glm::vec3(::g_pFlyCamera->eye.x, ::g_pFlyCamera->eye.y, ::g_pFlyCamera->eye.z + 100));
-	pQuadOrIsIt->setIsWireframe(false);
+	if (pQuadOrIsIt)
+	{
+		pQuadOrIsIt->setScale(30.0f);
+		pQuadOrIsIt->setIsVisible(true);
+		//glm::vec3 oldLocation = glm::vec3(::g_pFlyCamera->eye.x, ::g_pFlyCamera->eye.y, ::g_pFlyCamera->eye.z);
+		pQuadOrIsIt->setPositionXYZ(glm::vec3(::g_pFlyCamera->getAtInWorldSpace().x, ::g_pFlyCamera->getAtInWorldSpace().y, ::g_pFlyCamera->getAtInWorldSpace().z + 300));
+		//pQuadOrIsIt->setPositionXYZ(glm::vec3(::g_pFlyCamera->eye.x, ::g_pFlyCamera->eye.y, ::g_pFlyCamera->eye.z + 100));
+		pQuadOrIsIt->setIsWireframe(false);
 
-	// Move the camera
-	// Maybe set it to orthographic, etc.
-	glm::mat4 matQuad = glm::mat4(1.0f);
-	DrawObject(matQuad, pQuadOrIsIt, shaderProgID, pTheVAOManager);
+		// Move the camera
+		// Maybe set it to orthographic, etc.
+		glm::mat4 matQuad = glm::mat4(1.0f);
+		DrawObject(matQuad, pQuadOrIsIt, shaderProgID, pTheVAOManager);
+	}
 
 	// set pass number back to 0 to render the rest of the scene
 	glUniform1i(passNumber_UniLoc, 0);
@@ -271,7 +280,11 @@ void DrawAI()
 	for (int index = 0; index != ::g_vec_pAIEnemyObjects.size(); index++)
 	{
 		glm::vec3 enemyPositionRotation = g_vec_pAIEnemyObjects.at(index)->getPositionXYZ() * glm::vec3(-1.0f);
-		glm::vec3 playerPositionRotation = pMainShip->getPositionXYZ() * glm::vec3(-1.0f);
+		glm::vec3 playerPositionRotation = glm::vec3(0.0f, 0.0f, 0.0f);
+		if (pMainShip)
+		{
+			playerPositionRotation = pMainShip->getPositionXYZ() * glm::vec3(-1.0f);
+		}
 		glm::vec3 forwardRotation = glm::normalize(enemyPositionRotation - playerPositionRotation);
 		glm::vec3 yRotation = glm::vec3(0.0f, (forwardRotation.x - forwardRotation.z), 0.0f);
 		//g_vec_pEnemyObjects.at(index)->setRotationXYZ(yRotation);
@@ -284,7 +297,11 @@ void DrawAI()
 
 			// Roation
 			// Constructor for the GLM mat4x4 can take a quaternion
-			glm::mat4 matRotation = glm::mat4(pMainShip->getRotationXYZ());
+			glm::mat4 matRotation = glm::mat4(1.0f);
+			if (pMainShip)
+			{
+				glm::mat4 matRotation = glm::mat4(pMainShip->getRotationXYZ());
+			}
 			matModelLooking *= matRotation;
 			// *******************
 
@@ -292,7 +309,12 @@ void DrawAI()
 			// by the model matrix (MUST be a VEC4 because it's a 4x4 matrix)
 			glm::vec4 forwardInWorldSpace = matModelLooking * forwardDirObject;
 
-			glm::vec3 enemyLooking = g_vec_pAIEnemyObjects.at(index)->getPositionXYZ() - pMainShip->getPositionXYZ();
+			glm::vec3 enemyLooking = glm::vec3(0.0f);
+
+			if (pMainShip)
+			{
+				glm::vec3 enemyLooking = g_vec_pAIEnemyObjects.at(index)->getPositionXYZ() - pMainShip->getPositionXYZ();
+			}
 			//glm::vec3 playerLooking = glm::vec3(forwardInWorldSpace);
 			glm::vec3 normalEnemy = glm::normalize(enemyLooking);
 			//glm::vec3 normalPlayer = glm::normalize(playerLooking);
@@ -300,8 +322,11 @@ void DrawAI()
 			if (angle >= 0.99f)
 			{
 				g_vec_pAIEnemyObjects.at(index)->setBehaviour("flee");
-				Flee* fleeBehaviour = new Flee(g_vec_pAIEnemyObjects.at(index), pMainShip);
-				gAIManager->SetBehaviour(g_vec_pAIEnemyObjects.at(index), fleeBehaviour);
+				if (pMainShip)
+				{
+					Flee* fleeBehaviour = new Flee(g_vec_pAIEnemyObjects.at(index), pMainShip);
+					gAIManager->SetBehaviour(g_vec_pAIEnemyObjects.at(index), fleeBehaviour);
+				}				
 				g_vec_pAIEnemyObjects.at(index)->setTexture("blue.bmp", 1);
 			}
 		}
@@ -417,41 +442,49 @@ void DrawAI()
 
 			// Roation
 			// Constructor for the GLM mat4x4 can take a quaternion
-			glm::mat4 matRotation = glm::mat4(pMainShip->getRotationXYZ());
-			matModelLooking *= matRotation;
-			// *******************
-
-			// Like in the vertex shader, I mulitly the test points
-			// by the model matrix (MUST be a VEC4 because it's a 4x4 matrix)
-			glm::vec4 forwardInWorldSpace = matModelLooking * forwardDirObject;
-
-			glm::vec3 enemyLooking = g_vec_pAIEnemyObjects.at(index)->getPositionXYZ() - pMainShip->getPositionXYZ();
-			//glm::vec3 playerLooking = glm::vec3(forwardInWorldSpace);
-			glm::vec3 normalEnemy = glm::normalize(enemyLooking);
-			//glm::vec3 normalPlayer = glm::normalize(playerLooking);
-			float angle = glm::dot(normalEnemy, glm::vec3(forwardInWorldSpace));
-			if (angle >= 0.98f)
+			glm::mat4 matRotation = glm::mat4(1.0f);
+			if (pMainShip)
 			{
-				g_vec_pAIEnemyObjects.at(index)->setBehaviour("flee");
-				Flee* fleeBehaviour = new Flee(g_vec_pAIEnemyObjects.at(index), pMainShip);
-				gAIManager->SetBehaviour(g_vec_pAIEnemyObjects.at(index), fleeBehaviour);
-				g_vec_pAIEnemyObjects.at(index)->setTexture("blue.bmp", 1);
+				matRotation = glm::mat4(pMainShip->getRotationXYZ());
+
+				matModelLooking *= matRotation;
+				// *******************
+
+				// Like in the vertex shader, I mulitly the test points
+				// by the model matrix (MUST be a VEC4 because it's a 4x4 matrix)
+				glm::vec4 forwardInWorldSpace = matModelLooking * forwardDirObject;
+
+				glm::vec3 enemyLooking = g_vec_pAIEnemyObjects.at(index)->getPositionXYZ() - pMainShip->getPositionXYZ();
+				//glm::vec3 playerLooking = glm::vec3(forwardInWorldSpace);
+				glm::vec3 normalEnemy = glm::normalize(enemyLooking);
+				//glm::vec3 normalPlayer = glm::normalize(playerLooking);
+				float angle = glm::dot(normalEnemy, glm::vec3(forwardInWorldSpace));
+				if (angle >= 0.98f)
+				{
+					g_vec_pAIEnemyObjects.at(index)->setBehaviour("flee");
+					Flee* fleeBehaviour = new Flee(g_vec_pAIEnemyObjects.at(index), pMainShip);
+					gAIManager->SetBehaviour(g_vec_pAIEnemyObjects.at(index), fleeBehaviour);
+					g_vec_pAIEnemyObjects.at(index)->setTexture("blue.bmp", 1);
+				}
 			}
 		}
 		if (g_vec_pAIEnemyObjects.at(index)->getBehaviour() == "flee")
 		{
-			glm::vec3 enemyLooking = g_vec_pAIEnemyObjects.at(index)->getPositionXYZ() - pMainShip->getPositionXYZ();
-			glm::vec3 playerLooking = glm::vec3(0.0f, 0.0f, 1.0f);
-			glm::vec3 normalEnemy = glm::normalize(enemyLooking);
-			glm::vec3 normalPlayer = glm::normalize(playerLooking);
-			float angle = glm::dot(normalEnemy, normalPlayer);
-			if (angle <= 0.99f/* || glm::distance(g_vec_pGameObjects.at(index)->getPositionXYZ(), pSphere->getPositionXYZ()) > 100.0f*/)
-				//if (angle <= 0.8f /*|| angle >= 0.3f*/)
+			if (pMainShip)
 			{
-				g_vec_pAIEnemyObjects.at(index)->setBehaviour("seek");
-				Seek* seekBehaviour = new Seek(g_vec_pAIEnemyObjects.at(index), pMainShip);
-				gAIManager->SetBehaviour(g_vec_pAIEnemyObjects.at(index), seekBehaviour);
-				g_vec_pAIEnemyObjects.at(index)->setTexture("red.bmp", 1);
+				glm::vec3 enemyLooking = g_vec_pAIEnemyObjects.at(index)->getPositionXYZ() - pMainShip->getPositionXYZ();
+				glm::vec3 playerLooking = glm::vec3(0.0f, 0.0f, 1.0f);
+				glm::vec3 normalEnemy = glm::normalize(enemyLooking);
+				glm::vec3 normalPlayer = glm::normalize(playerLooking);
+				float angle = glm::dot(normalEnemy, normalPlayer);
+				if (angle <= 0.99f/* || glm::distance(g_vec_pGameObjects.at(index)->getPositionXYZ(), pSphere->getPositionXYZ()) > 100.0f*/)
+					//if (angle <= 0.8f /*|| angle >= 0.3f*/)
+				{
+					g_vec_pAIEnemyObjects.at(index)->setBehaviour("seek");
+					Seek* seekBehaviour = new Seek(g_vec_pAIEnemyObjects.at(index), pMainShip);
+					gAIManager->SetBehaviour(g_vec_pAIEnemyObjects.at(index), seekBehaviour);
+					g_vec_pAIEnemyObjects.at(index)->setTexture("red.bmp", 1);
+				}
 			}
 		}
 		glm::mat4 matModel = glm::mat4(1.0f);
@@ -469,158 +502,124 @@ void DrawAI()
 	pAIPhsyics->IntegrationStep(g_vec_pAIEnemyObjects, 0.03f);
 	pAIPhsyics->IntegrationStep(g_vec_pExplosionObjects, 0.03f);
 
-	if (pMainShip->getVelocity().x < 0)
+	if (pMainShip)
 	{
-		pMainShip->setVelocity(pMainShip->getVelocity() * glm::vec3(-1.0f, -1.0f, -1.0f));
-		pMainShip->setVelocity(pMainShip->getVelocity() * glm::vec3(0.95f, 1.0f, 1.0f));
-		pMainShip->setVelocity(pMainShip->getVelocity() * glm::vec3(-1.0f, -1.0f, -1.0f));
-	}
-	if (pMainShip->getVelocity().z < 0)
-	{
-		pMainShip->setVelocity(pMainShip->getVelocity() * glm::vec3(-1.0f, -1.0f, -1.0f));
-		pMainShip->setVelocity(pMainShip->getVelocity() * glm::vec3(1.0f, 1.0f, 0.95f));
-		pMainShip->setVelocity(pMainShip->getVelocity() * glm::vec3(-1.0f, -1.0f, -1.0f));
-	}
-	glm::vec3 slowX = glm::vec3(0.95, 1.0f, 1.0f);
-	glm::vec3 slowZ = glm::vec3(1.0f, 1.0f, 0.95);
-	if (pMainShip->getVelocity().x > 0)
-	{
-		pMainShip->setVelocity(pMainShip->getVelocity() * slowX);
-	}
-	if (pMainShip->getVelocity().z > 0)
-	{
-		pMainShip->setVelocity(pMainShip->getVelocity() * slowZ);
+		if (pMainShip->getVelocity().x < 0)
+		{
+			pMainShip->setVelocity(pMainShip->getVelocity() * glm::vec3(-1.0f, -1.0f, -1.0f));
+			pMainShip->setVelocity(pMainShip->getVelocity() * glm::vec3(0.95f, 1.0f, 1.0f));
+			pMainShip->setVelocity(pMainShip->getVelocity() * glm::vec3(-1.0f, -1.0f, -1.0f));
+		}
+		if (pMainShip->getVelocity().z < 0)
+		{
+			pMainShip->setVelocity(pMainShip->getVelocity() * glm::vec3(-1.0f, -1.0f, -1.0f));
+			pMainShip->setVelocity(pMainShip->getVelocity() * glm::vec3(1.0f, 1.0f, 0.95f));
+			pMainShip->setVelocity(pMainShip->getVelocity() * glm::vec3(-1.0f, -1.0f, -1.0f));
+		}
+		glm::vec3 slowX = glm::vec3(0.95, 1.0f, 1.0f);
+		glm::vec3 slowZ = glm::vec3(1.0f, 1.0f, 0.95);
+		if (pMainShip->getVelocity().x > 0)
+		{
+			pMainShip->setVelocity(pMainShip->getVelocity() * slowX);
+		}
+		if (pMainShip->getVelocity().z > 0)
+		{
+			pMainShip->setVelocity(pMainShip->getVelocity() * slowZ);
+		}
 	}
 
 	for (int k = 0; k < ::g_vec_pAIEnemyObjects.size(); k++)
 	{
-		glm::vec3 hitPosition = gPlayerBullet->getPositionXYZ();
-		//player with enemy
-		float playerDistance = glm::distance(g_vec_pAIEnemyObjects.at(k)->getPositionXYZ(), pMainShip->getPositionXYZ());
-		if (playerDistance < 4.2f)
+		if (gPlayerBullet && pMainShip)
 		{
-			if (g_vec_pAIEnemyObjects.at(k)->getFriendlyName() != "bullet")
+			glm::vec3 hitPosition = gPlayerBullet->getPositionXYZ();
+			//player with enemy
+			float playerDistance = glm::distance(g_vec_pAIEnemyObjects.at(k)->getPositionXYZ(), pMainShip->getPositionXYZ());
+			if (playerDistance < 4.2f)
 			{
-				glm::vec3 hitPosition = g_vec_pAIEnemyObjects.at(k)->getPositionXYZ();
-				//g_vec_pEnemyObjects.erase(g_vec_pEnemyObjects.begin() + k);
-				//pSphere->setPositionXYZ(glm::vec3(0.0f, 10.0f, 0.0f));
-				for (int i = 0; i < 3; i++)
+				if (g_vec_pAIEnemyObjects.at(k)->getFriendlyName() != "bullet")
 				{
-					iObject* pCrashAsteroid = pFactory->CreateObject("sphere", nPhysics::eComponentType::ball);
-					pCrashAsteroid->setMeshName("asteroid");
-					pCrashAsteroid->setFriendlyName("asteroid");	// We use to search 
-					pCrashAsteroid->setPositionXYZ(g_vec_pAIEnemyObjects.at(k)->getPositionXYZ());
-					pCrashAsteroid->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
-					pCrashAsteroid->setScale(randInRange(0.005f, 0.02f));
-					pCrashAsteroid->setTexture("moon.bmp", 1);
-					pCrashAsteroid->setTextureRatio(1, 1);
-					pCrashAsteroid->setTransprancyValue(1.0f);
-					pCrashAsteroid->setVelocity(glm::vec3(randInRange(-10.0f, 10.0f), randInRange(-10.0f, 10.0f), randInRange(-10.0f, 10.0f)));
-					pCrashAsteroid->set_SPHERE_radius(1.0f);
-					pCrashAsteroid->setInverseMass(1.0f);
-					pCrashAsteroid->setIsVisible(true);
-					pCrashAsteroid->setIsWireframe(false);
-					//nPhysics::sBallDef physicsAsteroid;
-					//physicsAsteroid.Mass = 1.0f;
-					//physicsAsteroid.Position = g_vec_pAIEnemyObjects.at(k)->getPositionXYZ();
-					//physicsAsteroid.Radius = 1.0f;
-					//float asteroidScale = randInRange(0.005f, 0.02f);
-					//physicsAsteroid.Scale = glm::vec3(asteroidScale);
-					//nPhysics::iBallComponent* pAsteroidPhysics = physicsFactory->CreateBall(physicsAsteroid);
-					//g_vec_pGameComponentObjects.push_back(pAsteroidPhysics);
-					//pCrashAsteroid->SetComponent(pAsteroidPhysics);
-					g_vec_pExplosionObjects.push_back(pCrashAsteroid);
-					//physicsWorld->AddComponent(pAsteroidPhysics);
+					glm::vec3 hitPosition = g_vec_pAIEnemyObjects.at(k)->getPositionXYZ();
+					for (int i = 0; i < 3; i++)
+					{
+						iObject* pCrashAsteroid = pFactory->CreateObject("sphere", nPhysics::eComponentType::ball);
+						pCrashAsteroid->setMeshName("asteroid");
+						pCrashAsteroid->setFriendlyName("asteroid");	// We use to search 
+						pCrashAsteroid->setPositionXYZ(g_vec_pAIEnemyObjects.at(k)->getPositionXYZ());
+						pCrashAsteroid->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
+						pCrashAsteroid->setScale(randInRange(0.005f, 0.02f));
+						pCrashAsteroid->setTexture("moon.bmp", 1);
+						pCrashAsteroid->setTextureRatio(1, 1);
+						pCrashAsteroid->setTransprancyValue(1.0f);
+						pCrashAsteroid->setVelocity(glm::vec3(randInRange(-10.0f, 10.0f), randInRange(-10.0f, 10.0f), randInRange(-10.0f, 10.0f)));
+						pCrashAsteroid->set_SPHERE_radius(1.0f);
+						pCrashAsteroid->setInverseMass(1.0f);
+						pCrashAsteroid->setIsVisible(true);
+						pCrashAsteroid->setIsWireframe(false);
+						g_vec_pExplosionObjects.push_back(pCrashAsteroid);
+					}
+					glfwSetWindowShouldClose(window, GLFW_TRUE);
+					break;
 				}
-				glfwSetWindowShouldClose(window, GLFW_TRUE);
-				break;
 			}
-		}
-		//bullet with enemy
-		float bulletDistance = glm::distance(g_vec_pAIEnemyObjects.at(k)->getPositionXYZ(), gPlayerBullet->getPositionXYZ());
-		if (bulletDistance < 4.2f)
-		{
-			if (g_vec_pAIEnemyObjects.at(k)->getFriendlyName() != "bullet")
+			//bullet with enemy
+			float bulletDistance = glm::distance(g_vec_pAIEnemyObjects.at(k)->getPositionXYZ(), gPlayerBullet->getPositionXYZ());
+			if (bulletDistance < 4.2f)
 			{
-
-				for (int i = 0; i < 3; i++)
+				if (g_vec_pAIEnemyObjects.at(k)->getFriendlyName() != "bullet")
 				{
-					iObject* pHitAsteroid = pFactory->CreateObject("sphere", nPhysics::eComponentType::ball);
-					pHitAsteroid->setMeshName("asteroid");
-					pHitAsteroid->setFriendlyName("asteroid");	// We use to search 
-					pHitAsteroid->setPositionXYZ(g_vec_pAIEnemyObjects.at(k)->getPositionXYZ());
-					pHitAsteroid->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
-					pHitAsteroid->setScale(randInRange(0.005f, 0.02f));
-					pHitAsteroid->setTexture("moon.bmp", 1);
-					pHitAsteroid->setTextureRatio(1, 1);
-					pHitAsteroid->setTransprancyValue(1.0f);
-					pHitAsteroid->setVelocity(glm::vec3(randInRange(-10.0f, 10.0f), randInRange(-10.0f, 10.0f), randInRange(-10.0f, 10.0f)));
-					pHitAsteroid->setAccel(glm::vec3(0.0f, 0.0f, 0.0f));
-					pHitAsteroid->set_SPHERE_radius(1.0f);
-					pHitAsteroid->setInverseMass(1.0f);
-					pHitAsteroid->setIsVisible(true);
-					pHitAsteroid->setIsWireframe(false);
-					//nPhysics::sBallDef physicsAsteroid;
-					//physicsAsteroid.Mass = 1.0f;
-					//physicsAsteroid.Position = g_vec_pAIEnemyObjects.at(k)->getPositionXYZ();
-					//physicsAsteroid.Radius = 1.0f;
-					//float asteroidScale = randInRange(0.005f, 0.02f);
-					//physicsAsteroid.Scale = glm::vec3(asteroidScale);
-					//nPhysics::iBallComponent* pAsteroidPhysics = physicsFactory->CreateBall(physicsAsteroid);
-					//g_vec_pGameComponentObjects.push_back(pAsteroidPhysics);
-					//pHitAsteroid->SetComponent(pAsteroidPhysics);
-					g_vec_pExplosionObjects.push_back(pHitAsteroid);
-					//physicsWorld->AddComponent(pAsteroidPhysics);
-				}
-				g_vec_pAIEnemyObjects.erase(g_vec_pAIEnemyObjects.begin() + k);
-				gPlayerBullet->setVelocity(glm::vec3(0.0f));
-				gPlayerBullet->setPositionXYZ(glm::vec3(0.0f, 0.0f, -100.0f));
 
-				break;
+					for (int i = 0; i < 3; i++)
+					{
+						iObject* pHitAsteroid = pFactory->CreateObject("sphere", nPhysics::eComponentType::ball);
+						pHitAsteroid->setMeshName("asteroid");
+						pHitAsteroid->setFriendlyName("asteroid");	// We use to search 
+						pHitAsteroid->setPositionXYZ(g_vec_pAIEnemyObjects.at(k)->getPositionXYZ());
+						pHitAsteroid->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
+						pHitAsteroid->setScale(randInRange(0.005f, 0.02f));
+						pHitAsteroid->setTexture("moon.bmp", 1);
+						pHitAsteroid->setTextureRatio(1, 1);
+						pHitAsteroid->setTransprancyValue(1.0f);
+						pHitAsteroid->setVelocity(glm::vec3(randInRange(-10.0f, 10.0f), randInRange(-10.0f, 10.0f), randInRange(-10.0f, 10.0f)));
+						pHitAsteroid->setAccel(glm::vec3(0.0f, 0.0f, 0.0f));
+						pHitAsteroid->set_SPHERE_radius(1.0f);
+						pHitAsteroid->setInverseMass(1.0f);
+						pHitAsteroid->setIsVisible(true);
+						pHitAsteroid->setIsWireframe(false);
+						g_vec_pExplosionObjects.push_back(pHitAsteroid);
+					}
+					g_vec_pAIEnemyObjects.erase(g_vec_pAIEnemyObjects.begin() + k);
+					gPlayerBullet->setVelocity(glm::vec3(0.0f));
+					gPlayerBullet->setPositionXYZ(glm::vec3(0.0f, 0.0f, -100.0f));
+
+					break;
+				}
 			}
-		}
-		//Fire on approach
-		if (g_vec_pAIEnemyObjects.at(k)->getBehaviour() == "approach");
-		{
-			float approachDistance = glm::distance(g_vec_pAIEnemyObjects.at(k)->getPositionXYZ(), pMainShip->getPositionXYZ());
-			int justOne = 1;
-			if (approachDistance < 16.0f && justOne < 2)
+			//Fire on approach
+			if (g_vec_pAIEnemyObjects.at(k)->getBehaviour() == "approach");
 			{
-				//justOne++;
-				//iObject* newEnemyBullet = pFactory->CreateObject("sphere");
-				//newEnemyBullet->setMeshName("sphere");
-				//newEnemyBullet->setFriendlyName("tempbullet");	// We use to search 
-				//newEnemyBullet->setPositionXYZ(g_vec_pEnemyObjects.at(k)->getPositionXYZ());
-				//newEnemyBullet->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
-				//newEnemyBullet->setScale(1.0f);
-				////gPlayerBullet->setObjectColourRGBA(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
-				//newEnemyBullet->setDebugColour(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
-				//newEnemyBullet->setTexture("red.bmp", 1);
-				//newEnemyBullet->setTextureRatio(1, 1);
-				//newEnemyBullet->setTransprancyValue(1.0f);
-				//newEnemyBullet->setVelocity(g_vec_pEnemyObjects.at(k)->getPositionXYZ() - pSphere->getPositionXYZ());
-				//newEnemyBullet->setAccel(glm::vec3(0.0f, 0.0f, 0.0f));
-				//newEnemyBullet->set_SPHERE_radius(1.0f);
-				//newEnemyBullet->setInverseMass(1.0f);
-				//newEnemyBullet->setIsVisible(true);
-				//newEnemyBullet->setIsWireframe(false);
-				//g_vec_pEnemyObjects.push_back(newEnemyBullet);
+				float approachDistance = glm::distance(g_vec_pAIEnemyObjects.at(k)->getPositionXYZ(), pMainShip->getPositionXYZ());
+				int justOne = 1;
+				if (approachDistance < 16.0f && justOne < 2)
+				{
+
+				}
 			}
-		}
-		if (g_vec_pAIEnemyObjects.at(k)->getFriendlyName() == "tempbullet")
-		{
-			float offScreenDistance = glm::distance(g_vec_pAIEnemyObjects.at(k)->getPositionXYZ(), pMainShip->getPositionXYZ());
-			if (offScreenDistance > 200.0f)
+			if (g_vec_pAIEnemyObjects.at(k)->getFriendlyName() == "tempbullet")
 			{
-				g_vec_pAIEnemyObjects.erase(g_vec_pAIEnemyObjects.begin() + k);
+				float offScreenDistance = glm::distance(g_vec_pAIEnemyObjects.at(k)->getPositionXYZ(), pMainShip->getPositionXYZ());
+				if (offScreenDistance > 200.0f)
+				{
+					g_vec_pAIEnemyObjects.erase(g_vec_pAIEnemyObjects.begin() + k);
+				}
 			}
-		}
-		if (g_vec_pAIEnemyObjects.at(k)->getBehaviour() == "wander")
-		{
-			if (g_vec_pAIEnemyObjects.at(k)->getVelocity().x < 0.05f && g_vec_pAIEnemyObjects.at(k)->getVelocity().z < 0.05f)
+			if (g_vec_pAIEnemyObjects.at(k)->getBehaviour() == "wander")
 			{
-				Wander* newWander = new Wander(g_vec_pAIEnemyObjects.at(k), glm::vec3(randInRange(-60.0f, 60.0f), 10.0f, randInRange(-40.0f, 40.0f)));
-				gAIManager->SetBehaviour(g_vec_pAIEnemyObjects.at(k), newWander);
+				if (g_vec_pAIEnemyObjects.at(k)->getVelocity().x < 0.05f && g_vec_pAIEnemyObjects.at(k)->getVelocity().z < 0.05f)
+				{
+					Wander* newWander = new Wander(g_vec_pAIEnemyObjects.at(k), glm::vec3(randInRange(-60.0f, 60.0f), 10.0f, randInRange(-40.0f, 40.0f)));
+					gAIManager->SetBehaviour(g_vec_pAIEnemyObjects.at(k), newWander);
+				}
 			}
 		}
 	}// end for	
@@ -718,7 +717,7 @@ void DrawPlatformFBO()
 	passNumber_UniLoc = glGetUniformLocation(shaderProgID, "passNumber");
 	glUniform1i(passNumber_UniLoc, 0);
 
-	if (!renderPlatform)
+	if (currentRender != renderTag::Platform)
 	{
 		for (int index = 0; index != ::g_vec_pPlatformGameObjects.size(); index++)
 		{
@@ -740,7 +739,7 @@ void DrawPlatformFBO()
 
 			if (pCurrentObject->getFriendlyName() == "skybox")
 			{
-				renderPlatform = true;
+				currentRender = renderTag::Platform;
 			}
 			//pCurrentObject->setIsWireframe(true);
 			DrawObject(matModel, pCurrentObject,
@@ -748,7 +747,7 @@ void DrawPlatformFBO()
 
 			if (pCurrentObject->getFriendlyName() == "skybox")
 			{
-				renderPlatform = false;
+				currentRender = renderTag::none;
 			}
 
 		}//for (int index...
@@ -766,7 +765,7 @@ void DrawPlatformFBO()
 
 		}//for (int index...
 	}
-	else if (renderPlatform)
+	else if (currentRender == renderTag::Platform)
 	{
 		for (int index = 0; index != ::g_vec_pGameObjects.size(); index++)
 		{
@@ -776,7 +775,7 @@ void DrawPlatformFBO()
 
 			if (pCurrentObject->getFriendlyName() == "skybox")
 			{
-				renderAI = false;
+				currentRender = renderTag::none;
 			}
 
 			DrawObject(matModel, pCurrentObject,
@@ -784,7 +783,7 @@ void DrawPlatformFBO()
 
 			if (pCurrentObject->getFriendlyName() == "skybox")
 			{
-				renderAI = true;
+				currentRender = renderTag::Platform;
 			}
 		}//for (int index...
 
@@ -1279,23 +1278,23 @@ void DrawSecondPass()
 
 		iObject* pCurrentObject = ::g_vec_pCharacterObjects[index];
 
-		//glm::vec3 resetThePosition = glm::vec3(0.0f, 0.0f, 0.0f);
-		//pCurrentObject->GetComponent()->GetPosition(resetThePosition);
+		//*******************************
+		//	FACE FORWARD
 
-		//pCurrentObject->setPositionXYZ(resetThePosition);
-		glm::vec3 currentVelocity;
-		pCurrentObject->GetVelocity(currentVelocity);
-		if (currentVelocity.x == 0.0f && currentVelocity.y == 0.0f)
-		{
-			currentVelocity += 0.000001f;
-		}
-		glm::vec3 normalizedVelocity = glm::normalize(currentVelocity);
-		normalizedVelocity.z *= -1.0f;
-		glm::quat orientation = glm::quatLookAt(normalizedVelocity, glm::vec3(0.0f, 1.0f, 0.0f));
-		orientation.x = 0.0f;
-		orientation.y *= -1.0f;
-		orientation.z = 0.0f;
-		pCurrentObject->setRotationXYZ(orientation);
+		//glm::vec3 currentVelocity;
+		//pCurrentObject->GetVelocity(currentVelocity);
+		//if (currentVelocity.x > 0.0f && currentVelocity.y > 0.0f && currentVelocity.z > 0.0f)
+		//{
+		//	glm::vec3 normalizedVelocity = glm::normalize(currentVelocity);
+		//	//normalizedVelocity.z *= -1.0f;
+		//	glm::quat orientation = glm::quatLookAt(normalizedVelocity, glm::vec3(0.0f, 1.0f, 0.0f));
+		//	orientation.x = 0.0f;
+		//	orientation.y *= -1.0f;
+		//	orientation.z = 0.0f;
+		//	pCurrentObject->setRotationXYZ(orientation);
+		//}
+
+		//*********************************
 
 		DrawObject(matModel, pCurrentObject,
 			shaderProgID, pTheVAOManager);

@@ -301,11 +301,22 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 
 	if (isShiftKeyDownByAlone(mods))
 	{
+		if (key == GLFW_KEY_0 && action == GLFW_PRESS)
+		{
+			currentRender = renderTag::none;
+		}
 		if (key == GLFW_KEY_1 && action == GLFW_PRESS)
 		{
-			renderAI = !renderAI;
-			renderPlatform = false;
-			if (renderAI)
+			if (currentRender == renderTag::AI)
+			{
+				currentRender = renderTag::none;
+			}
+			else
+			{
+				currentRender = renderTag::AI;
+			}
+
+			if (currentRender == renderTag::AI)
 			{
 				g_pFlyCamera->eye = glm::vec3(0.0f, 200.0, -50.0);
 				pCurrentObject = pFindObjectByFriendlyName("mainXWing");
@@ -318,9 +329,15 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 		}
 		if (key == GLFW_KEY_2 && action == GLFW_PRESS)
 		{
-			renderPlatform = !renderPlatform;
-			renderAI = false;
-			if (renderPlatform)
+			if (currentRender == renderTag::Platform)
+			{
+				currentRender = renderTag::none;
+			}
+			else
+			{
+				currentRender = renderTag::Platform;
+			}
+			if (currentRender == renderTag::Platform)
 			{
 				g_pFlyCamera->eye = glm::vec3(-460.0f, 250.0f, -960.0f);
 				pCurrentObject = pFindObjectByFriendlyName("platformCharacter");
@@ -401,7 +418,7 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 
 	if (isCtrlKeyDownByAlone(mods))
 	{
-		if (renderAI)
+		if (currentRender == renderTag::AI)
 		{
 			if (key == GLFW_KEY_D)
 			{

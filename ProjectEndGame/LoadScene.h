@@ -603,8 +603,9 @@ void LoadLevel()
 	}
 }
 
-int LoadObjects()
+DWORD WINAPI LoadObjects(LPVOID params)
 {
+	EnterCriticalSection(&output_lock);
 	//AI
 	gAIManager = new AIManager();
 	gCoordinator = new Coordinator();
@@ -688,7 +689,7 @@ int LoadObjects()
 	currentAnimationName = "Idle";
 	pMainCharacter->setMeshName("mainCharacter");
 	pMainCharacter->setFriendlyName("mainCharacter");	// We use to search
-	pMainCharacter->setRotationXYZ(glm::vec3(0.0f, glm::radians(-90.0f), 0.0f));
+	pMainCharacter->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
 	pMainCharacter->setScale(0.2f);
 	//pMainCharacter->setObjectColourRGBA(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 	pMainCharacter->setDebugColour(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
@@ -1320,6 +1321,8 @@ int LoadObjects()
 	LoadLevel();
 
 	pCurrentObject = pFindObjectByFriendlyName("mainCharacter");
+
+	LeaveCriticalSection(&output_lock);
 
 	return 0;
 }

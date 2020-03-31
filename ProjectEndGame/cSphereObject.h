@@ -11,6 +11,8 @@
 
 class cSphereObject : public iObject
 {
+private:
+	CRITICAL_SECTION object_lock;
 public:
 	inline const nPhysics::eComponentType& GetComponentType() { return mComponentType; }
 
@@ -37,6 +39,7 @@ public:
 	nPhysics::eComponentType mComponentType;
 
 	cSphereObject(nPhysics::eComponentType componentType);
+	~cSphereObject();
 	cSphereObject() = delete;
 
 	unsigned int getUniqueID(void);

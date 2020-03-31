@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 #include <physics\interfaces\iPhysicsComponent.h>
+#include <Windows.h>
 
 // Forward declaration
 class cSimpleAssimpSkinnedMesh;

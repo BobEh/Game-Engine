@@ -40,7 +40,12 @@ int main(void)
 
 	LoadTextures();
 
-	LoadObjects();
+	InitializeCriticalSection(&output_lock);
+	HANDLE thread_handles[NUM_OF_THREADS];
+	DWORD thread_ids[NUM_OF_THREADS];
+
+	thread_handles[0] = CreateThread(NULL, 0, LoadObjects, 0, 0, &thread_ids[0]);
+	//LoadObjects();
 
 	LoadLights();
 
@@ -114,10 +119,16 @@ int main(void)
 			10000000.0f);		// Far clipping plane
 
 		// View matrix
-		v = glm::mat4(1.0f);\
+		v = glm::mat4(1.0f);
 
-		v = glm::lookAt(g_pFlyCamera->eye, pCurrentObject->getPositionXYZ(), g_pFlyCamera->getUpVector());
-
+		if (pCurrentObject)
+		{
+			v = glm::lookAt(g_pFlyCamera->eye, pCurrentObject->getPositionXYZ(), g_pFlyCamera->getUpVector());
+		}
+		else
+		{
+			v = glm::lookAt(g_pFlyCamera->eye, glm::vec3(0.0f,0.0f,0.0f), g_pFlyCamera->getUpVector());
+		}
 		glViewport(0, 0, width, height);
 
 		PlaceLights();
@@ -171,22 +182,38 @@ int main(void)
 		//                                                           
 		//   
 
-		if (renderAI)
+		if (currentRender == renderTag::AI)
 		{
-			v = glm::lookAt(g_pFlyCamera->eye, glm::vec3(0.0f, 10.0f, 0.0f), g_pFlyCamera->getUpVector());
+			pCurrentObject = pFindObjectByFriendlyName("mainXWing");
+			if (pCurrentObject)
+			{
+				v = glm::lookAt(g_pFlyCamera->eye, pCurrentObject->getPositionXYZ(), g_pFlyCamera->getUpVector());
+			}
+			else
+			{
+				v = glm::lookAt(g_pFlyCamera->eye, glm::vec3(0.0f), g_pFlyCamera->getUpVector());
+			}
 			DrawAI();
 		}
-		if (renderPlatform)
+		else if (currentRender == renderTag::Platform)
 		{
 			v = glm::lookAt(::g_pFlyCamera->eye,
 				glm::vec3(0.0f, 0.0f, 0.0f),
 				::g_pFlyCamera->getUpVector());
 			DrawPlatform();
 		}
-		else
+		else if (currentRender == renderTag::none)
 		{                                                        
 			//g_pFlyCamera->eye = glm::vec3(0.0f, 20.0, -80.0);
-			v = glm::lookAt(g_pFlyCamera->eye, pCurrentObject->getPositionXYZ(), g_pFlyCamera->getUpVector());
+			pCurrentObject = pFindObjectByFriendlyName("mainCharacter");
+			if (pCurrentObject)
+			{
+				v = glm::lookAt(g_pFlyCamera->eye, pCurrentObject->getPositionXYZ(), g_pFlyCamera->getUpVector());
+			}
+			else
+			{
+				v = glm::lookAt(g_pFlyCamera->eye, glm::vec3(0.0f), g_pFlyCamera->getUpVector());
+			}
 			DrawSecondPass();
 		}
 

@@ -188,6 +188,7 @@ void DrawObject(glm::mat4 m, iObject* pCurrentObject, GLint shaderProgID, cVAOMa
 
 				//Scale
 				float theScale = pCurrentObject->getScale();
+				glm::vec3 scaleVec = glm::vec3(theScale);
 				glm::mat4 scale = glm::scale(glm::mat4(1.0f),
 					glm::vec3(theScale));
 				m = m * scale;
@@ -210,13 +211,13 @@ void DrawObject(glm::mat4 m, iObject* pCurrentObject, GLint shaderProgID, cVAOMa
 
 		glUniform1f(bIsSkyBox_UL, (float)GL_TRUE);
 
-		if (renderAI)
+		if (currentRender == renderTag::AI)
 		{
 			GLuint skyBoxTextureID = ::g_pTextureManager->getTextureIDFromName("space");
 			glActiveTexture(GL_TEXTURE10);				// Texture Unit 26
 			glBindTexture(GL_TEXTURE_CUBE_MAP, skyBoxTextureID);	// Texture now assoc with texture unit 0
 		}
-		if (renderPlatform)
+		if (currentRender == renderTag::Platform)
 		{
 			GLuint skyBoxTextureID = ::g_pTextureManager->getTextureIDFromName("sunny");
 			glActiveTexture(GL_TEXTURE10);				// Texture Unit 26

@@ -69,6 +69,10 @@ float HACK_FrameTime = 0.0f;
 
 void DrawObject(glm::mat4 m, iObject* pCurrentObject, GLint shaderProgID, cVAOManager* pVAOManager)
 {
+	if (!pCurrentObject)
+	{
+		return;
+	}
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -211,15 +215,9 @@ void DrawObject(glm::mat4 m, iObject* pCurrentObject, GLint shaderProgID, cVAOMa
 
 		glUniform1f(bIsSkyBox_UL, (float)GL_TRUE);
 
-		if (currentRender == renderTag::AI)
+		if (drawSpace)
 		{
 			GLuint skyBoxTextureID = ::g_pTextureManager->getTextureIDFromName("space");
-			glActiveTexture(GL_TEXTURE10);				// Texture Unit 26
-			glBindTexture(GL_TEXTURE_CUBE_MAP, skyBoxTextureID);	// Texture now assoc with texture unit 0
-		}
-		if (currentRender == renderTag::Platform)
-		{
-			GLuint skyBoxTextureID = ::g_pTextureManager->getTextureIDFromName("sunny");
 			glActiveTexture(GL_TEXTURE10);				// Texture Unit 26
 			glBindTexture(GL_TEXTURE_CUBE_MAP, skyBoxTextureID);	// Texture now assoc with texture unit 0
 		}

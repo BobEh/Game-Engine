@@ -54,6 +54,10 @@ int main(void)
 
 	::g_pFlyCamera = new cFlyCamera();
 	::g_pFlyCamera->eye = glm::vec3(0.0f, 80.0, -80.0);
+	theAICamera = new cFlyCamera();
+	theAICamera->eye = glm::vec3(0.0f, 200.0, -50.0);
+	thePlatformCamera = new cFlyCamera();
+	thePlatformCamera->eye = glm::vec3(-460.0f, 250.0f, -960.0f);
 
 	glEnable(GL_DEPTH);			// Write to the depth buffer
 	glEnable(GL_DEPTH_TEST);	// Test with buffer when drawing
@@ -96,7 +100,7 @@ int main(void)
 	//  | |              | || |              | || |              | || |              | | | |              | || |              | || |              | || |              | |
 	//  | '--------------' || '--------------' || '--------------' || '--------------' | | '--------------' || '--------------' || '--------------' || '--------------' |
 	//   '----------------'  '----------------'  '----------------'  '----------------'   '----------------'  '----------------'  '----------------'  '----------------' 
-
+	currentRender = renderTag::none;
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -107,7 +111,7 @@ int main(void)
 
 		float ratio;
 		
-		glm::mat4 p, v;
+		glm::mat4 p, v, AIv, Pv;
 
 		glfwGetFramebufferSize(window, &width, &height);
 		ratio = width / (float)height;
@@ -120,14 +124,20 @@ int main(void)
 
 		// View matrix
 		v = glm::mat4(1.0f);
+		AIv = glm::mat4(1.0f);
+		Pv = glm::mat4(1.0f);
 
 		if (pCurrentObject)
 		{
 			v = glm::lookAt(g_pFlyCamera->eye, pCurrentObject->getPositionXYZ(), g_pFlyCamera->getUpVector());
+			AIv = glm::lookAt(theAICamera->eye, glm::vec3(0.0f, 0.0f, 0.0f), theAICamera->getUpVector());
+			Pv = v = glm::lookAt(thePlatformCamera->eye, glm::vec3(thePlatformCamera->eye.x, thePlatformCamera->eye.y, 0.0f), thePlatformCamera->getUpVector());
 		}
 		else
 		{
 			v = glm::lookAt(g_pFlyCamera->eye, glm::vec3(0.0f,0.0f,0.0f), g_pFlyCamera->getUpVector());
+			AIv = glm::lookAt(g_pFlyCamera->eye, glm::vec3(0.0f, 0.0f, 0.0f), g_pFlyCamera->getUpVector());
+			Pv = glm::lookAt(g_pFlyCamera->eye, glm::vec3(0.0f, 0.0f, 0.0f), g_pFlyCamera->getUpVector());
 		}
 		glViewport(0, 0, width, height);
 
@@ -141,9 +151,16 @@ int main(void)
 			::g_pFlyCamera->eye.z, 1.0f);
 
 		GLint matView_UL = glGetUniformLocation(shaderProgID, "matView");
+		GLint matAIView_UL = glGetUniformLocation(shaderProgID, "theAIView");
+		GLint matPlatformView_UL = glGetUniformLocation(shaderProgID, "thePlatformView");
 		GLint matProj_UL = glGetUniformLocation(shaderProgID, "matProj");
 
+		GLint renderAI_UL = glGetUniformLocation(shaderProgID, "useAI");
+		GLint renderPlatform_UL = glGetUniformLocation(shaderProgID, "usePlatform");
+
 		glUniformMatrix4fv(matView_UL, 1, GL_FALSE, glm::value_ptr(v));
+		glUniformMatrix4fv(matAIView_UL, 1, GL_FALSE, glm::value_ptr(AIv));
+		glUniformMatrix4fv(matPlatformView_UL, 1, GL_FALSE, glm::value_ptr(Pv));
 		glUniformMatrix4fv(matProj_UL, 1, GL_FALSE, glm::value_ptr(p));
 
 
@@ -157,9 +174,10 @@ int main(void)
 		//                                                                
 		//                                                                
 
-		//g_pFlyCamera->eye = glm::vec3(0.0f, 200.0, -50.0);
-		//v = glm::lookAt(glm::vec3(0.0f, 200.0, -50.0), glm::vec3(0.0f, 0.0f, 0.0f), g_pFlyCamera->getUpVector());
+		//v = glm::lookAt(theAICamera->eye, glm::vec3(0.0f, 0.0f, 0.0f), theAICamera->getUpVector());
+		glUniform1f(renderAI_UL, true);
 		DrawAIFBO();
+		glUniform1f(renderAI_UL, false);
 
 
 		//    _____  _       _    __                       ______ _          _     _____              
@@ -170,8 +188,10 @@ int main(void)
 		//   |_|    |_|\__,_|\__|_| \___/|_|  |_| |_| |_| |_|    |_|_|  |___/\__| |_|   \__,_|___/___/
 		//                                                                                            
 		//                                                                                            
-		//v = glm::lookAt(glm::vec3(0.0f, 200.0, -50.0), glm::vec3(0.0f, 0.0f, 0.0f), g_pFlyCamera->getUpVector());
+		//v = glm::lookAt(thePlatformCamera->eye, glm::vec3(thePlatformCamera->eye.x, thePlatformCamera->eye.y, 0.0f), thePlatformCamera->getUpVector());
+		glUniform1f(renderPlatform_UL, true);
 		DrawPlatformFBO();
+		glUniform1f(renderPlatform_UL, false);
 
 		//     _____                          _   _____              
 		//    / ____|                        | | |  __ \             
@@ -184,26 +204,20 @@ int main(void)
 
 		if (currentRender == renderTag::AI)
 		{
-			pCurrentObject = pFindObjectByFriendlyName("mainXWing");
-			if (pCurrentObject)
-			{
-				v = glm::lookAt(g_pFlyCamera->eye, pCurrentObject->getPositionXYZ(), g_pFlyCamera->getUpVector());
-			}
-			else
-			{
-				v = glm::lookAt(g_pFlyCamera->eye, glm::vec3(0.0f), g_pFlyCamera->getUpVector());
-			}
+			glUniform1f(renderAI_UL, true);
 			DrawAI();
+			glUniform1f(renderAI_UL, false);
 		}
 		else if (currentRender == renderTag::Platform)
 		{
-			v = glm::lookAt(::g_pFlyCamera->eye,
-				glm::vec3(0.0f, 0.0f, 0.0f),
-				::g_pFlyCamera->getUpVector());
+			glUniform1f(renderPlatform_UL, true);
 			DrawPlatform();
+			glUniform1f(renderPlatform_UL, false);
 		}
 		else if (currentRender == renderTag::none)
-		{                                                        
+		{
+			glUniform1f(renderPlatform_UL, false);
+			glUniform1f(renderAI_UL, false);
 			//g_pFlyCamera->eye = glm::vec3(0.0f, 20.0, -80.0);
 			pCurrentObject = pFindObjectByFriendlyName("mainCharacter");
 			if (pCurrentObject)

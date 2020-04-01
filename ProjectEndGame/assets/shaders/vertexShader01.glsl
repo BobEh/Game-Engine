@@ -4,7 +4,12 @@
 uniform mat4 matModel;		// Model or World 
 uniform mat4 matModelInverseTranspose;		// For normal calculation
 uniform mat4 matView; 		// View or camera
+uniform mat4 theAIView;		// View for AI
+uniform mat4 thePlatformView;	//View for Platform game
 uniform mat4 matProj;		// Projection transform
+
+uniform bool useAI;
+uniform bool usePlatform;
 
 in vec4 vColour;				// Was vec3
 in vec4 vPosition;				// Was vec3
@@ -70,8 +75,22 @@ void main()
 		vec4 vertOriginal = vec4(vertPosition.xyz, 1.0f);
 
 		vec4 vertAfterBoneTransform = BoneTransform * vertOriginal;
-				
-		mat4 matMVP = matProj * matView * matModel;		
+
+		mat4 matMVP;
+		
+		if (useAI)
+		{
+			matMVP = matProj * theAIView * matModel;	
+		}
+		else if (usePlatform)
+		{
+			matMVP = matProj * thePlatformView * matModel;	
+		}
+		else
+		{
+			matMVP = matProj * matView * matModel;	
+		}
+			
 		// Transform the updated vertex location (from the bone)
 		//  and transform with model view projection matrix (as usual)
 		gl_Position = matMVP * vertAfterBoneTransform;		
@@ -94,7 +113,21 @@ void main()
 	else
 	{
 		vec4 vertOriginal = vec4(vertPosition.xyz, 1.0f);
-		mat4 matMVP = matProj * matView * matModel;
+
+		mat4 matMVP;
+		
+		if (useAI)
+		{
+			matMVP = matProj * theAIView * matModel;	
+		}
+		else if (usePlatform)
+		{
+			matMVP = matProj * thePlatformView * matModel;	
+		}
+		else
+		{
+			matMVP = matProj * matView * matModel;	
+		}
 	
 		gl_Position = matMVP * vertOriginal;
 	

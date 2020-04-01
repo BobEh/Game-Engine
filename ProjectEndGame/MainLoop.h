@@ -57,6 +57,7 @@ int attackCount = 0;
 
 void DrawAIFBO()
 {
+	drawSpace = true;
 	// **************************************************
 	// **************************************************
 	// Loop to draw everything in the scene
@@ -73,6 +74,7 @@ void DrawAIFBO()
 
 	if (currentRender != renderTag::AI)
 	{
+		drawSpace = true;
 		for (int index = 0; index != ::g_vec_pAIGameObjects.size(); index++)
 		{
 
@@ -91,18 +93,9 @@ void DrawAIFBO()
 
 			iObject* pCurrentObject = ::g_vec_pAIEnvironmentObjects[index];
 
-			if (pCurrentObject->getFriendlyName() == "skybox")
-			{
-				currentRender = renderTag::AI;
-			}
 			//pCurrentObject->setIsWireframe(true);
 			DrawObject(matModel, pCurrentObject,
 				shaderProgID, pTheVAOManager);
-
-			if (pCurrentObject->getFriendlyName() == "skybox")
-			{
-				currentRender = renderTag::none;
-			}
 
 		}//for (int index...
 
@@ -119,26 +112,18 @@ void DrawAIFBO()
 
 		}//for (int index...
 	}
-	else if (currentRender == renderTag::AI)
+	if (currentRender == renderTag::AI)
 	{
+		drawSpace = false;
 		for (int index = 0; index != ::g_vec_pGameObjects.size(); index++)
 		{
 			glm::mat4 matModel = glm::mat4(1.0f);
 
 			iObject* pCurrentObject = ::g_vec_pGameObjects[index];
 
-			if (pCurrentObject->getFriendlyName() == "skybox")
-			{
-				currentRender = renderTag::none;
-			}
-
 			DrawObject(matModel, pCurrentObject,
 				shaderProgID, pTheVAOManager);
 
-			if (pCurrentObject->getFriendlyName() == "skybox")
-			{
-				currentRender = renderTag::AI;
-			}
 		}//for (int index...
 
 		for (int index = 0; index != ::g_vec_pEnvironmentObjects.size(); index++)
@@ -202,6 +187,7 @@ void DrawAIFBO()
 
 void DrawAI()
 {
+	drawSpace = true;
 	glm::quat moonRotation = glm::quat(glm::vec3(0.0f, 0.0f, glm::radians(-0.04f)));
 	if (pMoon)
 	{
@@ -703,12 +689,13 @@ void DrawAI()
 
 void DrawPlatformFBO()
 {
+	drawSpace = false;
 	// **************************************************
-	// **************************************************
-	// Loop to draw everything in the scene
+// **************************************************
+// Loop to draw everything in the scene
 
-	//Draw everything to the external frame buffer
-	// (I get the frame buffer ID, and use that)
+//Draw everything to the external frame buffer
+// (I get the frame buffer ID, and use that)
 	glBindFramebuffer(GL_FRAMEBUFFER, pPlatformFBO->ID);
 
 	pPlatformFBO->clearBuffers(true, true);
@@ -737,18 +724,9 @@ void DrawPlatformFBO()
 
 			iObject* pCurrentObject = ::g_vec_pPlatformEnvironmentObjects[index];
 
-			if (pCurrentObject->getFriendlyName() == "skybox")
-			{
-				currentRender = renderTag::Platform;
-			}
 			//pCurrentObject->setIsWireframe(true);
 			DrawObject(matModel, pCurrentObject,
 				shaderProgID, pTheVAOManager);
-
-			if (pCurrentObject->getFriendlyName() == "skybox")
-			{
-				currentRender = renderTag::none;
-			}
 
 		}//for (int index...
 
@@ -765,7 +743,7 @@ void DrawPlatformFBO()
 
 		}//for (int index...
 	}
-	else if (currentRender == renderTag::Platform)
+	if (currentRender == renderTag::Platform)
 	{
 		for (int index = 0; index != ::g_vec_pGameObjects.size(); index++)
 		{
@@ -773,18 +751,9 @@ void DrawPlatformFBO()
 
 			iObject* pCurrentObject = ::g_vec_pGameObjects[index];
 
-			if (pCurrentObject->getFriendlyName() == "skybox")
-			{
-				currentRender = renderTag::none;
-			}
-
 			DrawObject(matModel, pCurrentObject,
 				shaderProgID, pTheVAOManager);
 
-			if (pCurrentObject->getFriendlyName() == "skybox")
-			{
-				currentRender = renderTag::Platform;
-			}
 		}//for (int index...
 
 		for (int index = 0; index != ::g_vec_pEnvironmentObjects.size(); index++)
@@ -848,6 +817,7 @@ void DrawPlatformFBO()
 
 void DrawPlatform()
 {
+	drawSpace = false;
 	// 1. Disable the FBO
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -1139,6 +1109,7 @@ void DrawPlatform()
 
 void DrawSecondPass()
 {
+	drawSpace = false;
 	if (jumping)
 	{
 		jumpCount++;
@@ -1229,45 +1200,51 @@ void DrawSecondPass()
 	glBindTexture(GL_TEXTURE_2D, pAIFBO->colourTexture_0_ID);
 
 	GLuint texSampAIFBO_UL = glGetUniformLocation(shaderProgID, "AIPassColourTexture");
-	glUniform1i(texSampAIFBO_UL, 40);
+ 	glUniform1i(texSampAIFBO_UL, 40);
 
 	// 4. Draw a single object (a triangle or quad)
 	iObject* pAIQuad = pFindObjectByFriendlyName("debug_cube");
-	pAIQuad->setScale(30.0f);
-	pAIQuad->setIsVisible(true);
-	//glm::vec3 oldLocation = glm::vec3(::g_pFlyCamera->eye.x, ::g_pFlyCamera->eye.y, ::g_pFlyCamera->eye.z);
-	pAIQuad->setPositionXYZ(glm::vec3(::g_pFlyCamera->getAtInWorldSpace().x, ::g_pFlyCamera->getAtInWorldSpace().y, ::g_pFlyCamera->getAtInWorldSpace().z + 300));
-	//pQuadOrIsIt->setPositionXYZ(glm::vec3(::g_pFlyCamera->eye.x, ::g_pFlyCamera->eye.y, ::g_pFlyCamera->eye.z + 100));
-	pAIQuad->setIsWireframe(false);
+	if (pAIQuad)
+	{
+		pAIQuad->setScale(30.0f);
+		pAIQuad->setIsVisible(true);
+		//glm::vec3 oldLocation = glm::vec3(::g_pFlyCamera->eye.x, ::g_pFlyCamera->eye.y, ::g_pFlyCamera->eye.z);
+		pAIQuad->setPositionXYZ(glm::vec3(::g_pFlyCamera->getAtInWorldSpace().x, ::g_pFlyCamera->getAtInWorldSpace().y, ::g_pFlyCamera->getAtInWorldSpace().z + 300));
+		//pQuadOrIsIt->setPositionXYZ(glm::vec3(::g_pFlyCamera->eye.x, ::g_pFlyCamera->eye.y, ::g_pFlyCamera->eye.z + 100));
+		pAIQuad->setIsWireframe(false);
 
-	// Move the camera
-	// Maybe set it to orthographic, etc.
-	glm::mat4 matAIQuad = glm::mat4(1.0f);
-	DrawObject(matAIQuad, pAIQuad, shaderProgID, pTheVAOManager);
+		// Move the camera
+		// Maybe set it to orthographic, etc.
+		glm::mat4 matAIQuad = glm::mat4(1.0f);
+		DrawObject(matAIQuad, pAIQuad, shaderProgID, pTheVAOManager);
+	}
 
 	// 3. Use the FBO colour texture as the texture on that quad.
 	// set the passNumber to 1
 	glUniform1i(passNumber_UniLoc, 2);
 
-	glActiveTexture(GL_TEXTURE0 + 40);
-	glBindTexture(GL_TEXTURE_2D, pAIFBO->colourTexture_0_ID);
+	glActiveTexture(GL_TEXTURE0 + 30);
+	glBindTexture(GL_TEXTURE_2D, pPlatformFBO->colourTexture_0_ID);
 
-	GLuint texSampPlatformFBO_UL = glGetUniformLocation(shaderProgID, "PlatformPassColourTexture");
-	glUniform1i(texSampAIFBO_UL, 40);
+	GLuint texSampPlatformFBO_UL = glGetUniformLocation(shaderProgID, "PlatformColourTexture");
+	glUniform1i(texSampPlatformFBO_UL, 30);
 
 	// 4. Draw a single object (a triangle or quad)
 	iObject* pPlatformQuad = pFindObjectByFriendlyName("debug_cube");
-	pPlatformQuad->setScale(30.0f);
-	pPlatformQuad->setIsVisible(true);
-	//glm::vec3 oldLocation = glm::vec3(::g_pFlyCamera->eye.x, ::g_pFlyCamera->eye.y, ::g_pFlyCamera->eye.z);
-	pPlatformQuad->setPositionXYZ(glm::vec3(::g_pFlyCamera->getAtInWorldSpace().x - 100.0f, ::g_pFlyCamera->getAtInWorldSpace().y, ::g_pFlyCamera->getAtInWorldSpace().z + 300));
-	//pQuadOrIsIt->setPositionXYZ(glm::vec3(::g_pFlyCamera->eye.x, ::g_pFlyCamera->eye.y, ::g_pFlyCamera->eye.z + 100));
-	pPlatformQuad->setIsWireframe(false);
+	if (pPlatformQuad)
+	{
+		pPlatformQuad->setScale(30.0f);
+		pPlatformQuad->setIsVisible(true);
+		//glm::vec3 oldLocation = glm::vec3(::g_pFlyCamera->eye.x, ::g_pFlyCamera->eye.y, ::g_pFlyCamera->eye.z);
+		pPlatformQuad->setPositionXYZ(glm::vec3(::g_pFlyCamera->getAtInWorldSpace().x - 100.0f, ::g_pFlyCamera->getAtInWorldSpace().y, ::g_pFlyCamera->getAtInWorldSpace().z + 300));
+		//pQuadOrIsIt->setPositionXYZ(glm::vec3(::g_pFlyCamera->eye.x, ::g_pFlyCamera->eye.y, ::g_pFlyCamera->eye.z + 100));
+		pPlatformQuad->setIsWireframe(false);
 
-	// Move the camera
-	// Maybe set it to orthographic, etc.
-	glm::mat4 matPlatformQuad = glm::mat4(1.0f);
-	DrawObject(matPlatformQuad, pPlatformQuad, shaderProgID, pTheVAOManager);
+		// Move the camera
+		// Maybe set it to orthographic, etc.
+		glm::mat4 matPlatformQuad = glm::mat4(1.0f);
+		DrawObject(matPlatformQuad, pPlatformQuad, shaderProgID, pTheVAOManager);
+	}
 
 	// set pass number back to 0 to render the rest of the scene
 	glUniform1i(passNumber_UniLoc, 0);

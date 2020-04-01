@@ -257,36 +257,6 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 	if (!isShiftKeyDownByAlone(mods) && !isCtrlKeyDownByAlone(mods))
 	{
 
-		// Move the camera (A & D for left and right, along the x axis)
-		if (key == GLFW_KEY_A)
-		{
-			cameraEye.x -= CAMERASPEED;		// Move the camera -0.01f units
-		}
-		if (key == GLFW_KEY_D)
-		{
-			cameraEye.x += CAMERASPEED;		// Move the camera +0.01f units
-		}
-
-		// Move the camera (Q & E for up and down, along the y axis)
-		if (key == GLFW_KEY_Q)
-		{
-			cameraEye.y -= CAMERASPEED;		// Move the camera -0.01f units
-		}
-		if (key == GLFW_KEY_E)
-		{
-			cameraEye.y += CAMERASPEED;		// Move the camera +0.01f units
-		}
-
-		// Move the camera (W & S for towards and away, along the z axis)
-		if (key == GLFW_KEY_W)
-		{
-			cameraEye.z -= CAMERASPEED;		// Move the camera -0.01f units
-		}
-		if (key == GLFW_KEY_S)
-		{
-			cameraEye.z += CAMERASPEED;		// Move the camera +0.01f units
-		}
-
 		if (key == GLFW_KEY_B)
 		{
 
@@ -307,46 +277,11 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 		}
 		if (key == GLFW_KEY_1 && action == GLFW_PRESS)
 		{
-			if (currentRender == renderTag::AI)
-			{
-				currentRender = renderTag::none;
-			}
-			else
-			{
-				currentRender = renderTag::AI;
-			}
-
-			if (currentRender == renderTag::AI)
-			{
-				g_pFlyCamera->eye = glm::vec3(0.0f, 200.0, -50.0);
-				pCurrentObject = pFindObjectByFriendlyName("mainXWing");
-			}
-			else
-			{
-				g_pFlyCamera->eye = glm::vec3(0.0f, 20.0, -80.0);
-				pCurrentObject = pFindObjectByFriendlyName("mainCharacter");
-			}
+			currentRender = renderTag::AI;
 		}
 		if (key == GLFW_KEY_2 && action == GLFW_PRESS)
 		{
-			if (currentRender == renderTag::Platform)
-			{
-				currentRender = renderTag::none;
-			}
-			else
-			{
-				currentRender = renderTag::Platform;
-			}
-			if (currentRender == renderTag::Platform)
-			{
-				g_pFlyCamera->eye = glm::vec3(-460.0f, 250.0f, -960.0f);
-				pCurrentObject = pFindObjectByFriendlyName("platformCharacter");
-			}
-			else
-			{
-				g_pFlyCamera->eye = glm::vec3(0.0f, 20.0, -80.0);
-				pCurrentObject = pFindObjectByFriendlyName("mainCharacter");
-			}
+			currentRender = renderTag::Platform;
 		}
 		if (key == GLFW_KEY_9)
 		{

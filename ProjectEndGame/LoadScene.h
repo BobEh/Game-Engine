@@ -676,6 +676,14 @@ DWORD WINAPI LoadObjects(LPVOID params)
 	pMainCharacter->getSM()->LoadMeshFromFile("mainCharacter", "assets/modelsFBX/RPG-Character(FBX2013).FBX");
 
 	sModelDrawInfo* mainCharacterMeshInfo = pMainCharacter->getSM()->CreateMeshObjectFromCurrentModel();
+	if (mainCharacterMeshInfo)
+	{
+		std::cout << mainCharacterMeshInfo->numberOfVertices << " vertices" << std::endl;
+		std::cout << mainCharacterMeshInfo->numberOfTriangles << " triangles" << std::endl;
+		std::cout << mainCharacterMeshInfo->numberOfIndices << " indices" << std::endl;
+
+		pTheVAOManager->LoadModelDrawInfoIntoVAO(*mainCharacterMeshInfo, shaderProgID);
+	}
 
 	pMainCharacter->getSM()->LoadMeshAnimation("Run", "assets/modelsFBX/Run.fbx");
 	pMainCharacter->getSM()->LoadMeshAnimation("Walk-Slow", "assets/modelsFBX/RPG-Character_Unarmed-Walk-Slow(FBX2013).FBX");
@@ -691,7 +699,7 @@ DWORD WINAPI LoadObjects(LPVOID params)
 	pMainCharacter->setFriendlyName("mainCharacter");	// We use to search
 	pMainCharacter->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
 	pMainCharacter->setScale(0.2f);
-	//pMainCharacter->setObjectColourRGBA(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+	pMainCharacter->setObjectColourRGBA(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 	pMainCharacter->setDebugColour(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
 	pMainCharacter->setVelocity(glm::vec3(0.0f, 0.0f, 0.0f));
 	pMainCharacter->setAccel(glm::vec3(0.0f, 0.0f, 0.0f));
@@ -705,14 +713,6 @@ DWORD WINAPI LoadObjects(LPVOID params)
 	pMainCharacter->setTransprancyValue(1.0f);
 	g_vec_pCharacterObjects.push_back(pMainCharacter);
 	physicsWorld->AddComponent(pMainCharacter->GetComponent());
-	if (mainCharacterMeshInfo)
-	{
-		std::cout << mainCharacterMeshInfo->numberOfVertices << " vertices" << std::endl;
-		std::cout << mainCharacterMeshInfo->numberOfTriangles << " triangles" << std::endl;
-		std::cout << mainCharacterMeshInfo->numberOfIndices << " indices" << std::endl;
-
-		pTheVAOManager->LoadModelDrawInfoIntoVAO(*mainCharacterMeshInfo, shaderProgID);
-	}
 
 	// Sphere and cube
 	iObject* pSphere = pFactory->CreateObject("sphere", nPhysics::eComponentType::ball);

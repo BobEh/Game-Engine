@@ -11,6 +11,7 @@ enum class renderTag
 	Platform,
 	none
 };
+bool drawSpace = false;
 renderTag currentRender;
 
 // physics stuff
@@ -83,10 +84,8 @@ bool bLightDebugSheresOn = false;
 
 //camera stuff
 cFlyCamera* g_pFlyCamera = NULL;
-float cameraLeftRight = 0.0f;
-glm::vec3 cameraEye;
-glm::vec3 cameraTarget;
-glm::vec3 upVector;
+cFlyCamera* theAICamera = NULL;
+cFlyCamera* thePlatformCamera = NULL;
 
 // game object vectors
 std::vector<iObject*> g_vec_pGameObjects;

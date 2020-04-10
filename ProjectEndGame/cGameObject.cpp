@@ -1,5 +1,10 @@
 #include "cGameObject.h"
 
+std::string cGameObject::getAnimation()
+{
+	return this->_Animation;
+}
+
 std::string cGameObject::getBehaviour()
 {
 	return this->_Behaviour;
@@ -124,6 +129,10 @@ bool cGameObject::getDisableDepthBufferWrite()
 void cGameObject::addTestPoint(glm::vec3 testPoint)
 {
 	
+}
+void cGameObject::setAnimation(std::string animation)
+{
+	this->_Animation = animation;
 }
 void cGameObject::setBehaviour(std::string behaviour)
 {

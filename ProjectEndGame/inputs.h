@@ -355,6 +355,7 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 	{
 		if (currentRender == renderTag::AI)
 		{
+			pCurrentObject = pFindObjectByFriendlyName("mainXWing");
 			if (key == GLFW_KEY_D)
 			{
 				glm::quat rotation = glm::quat(glm::vec3(0.0f, glm::radians(-1.5f), 0.0f));
@@ -449,6 +450,7 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 		}*/
 		else
 		{
+			pCurrentObject = pFindObjectByFriendlyName("mainCharacter");
 			if (key == GLFW_KEY_A)
 			{
 				//pCurrentObject->setRotationXYZ(glm::vec3(0.0f, glm::radians(90.0f), 0.0f));

@@ -33,6 +33,7 @@ public:
 	virtual nPhysics::iPhysicsComponent* GetComponent() = 0;
 
 	//getters
+	virtual std::string getAnimation() = 0;
 	virtual std::string getBehaviour() = 0;
 	virtual cSimpleAssimpSkinnedMesh* getSM() = 0;
 	virtual std::vector<glm::vec3> getTestPoints() = 0;
@@ -68,6 +69,7 @@ public:
 	//leave this one ( don't need a setter )
 	virtual unsigned int getUniqueID(void) = 0;
 	//setters
+	virtual void setAnimation(std::string animation) = 0;
 	virtual void setBehaviour(std::string) = 0;
 	virtual void setSM(cSimpleAssimpSkinnedMesh* skinnedMesh) = 0;
 	virtual void addTestPoint(glm::vec3) = 0;

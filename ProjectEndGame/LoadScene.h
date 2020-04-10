@@ -165,6 +165,12 @@ int LoadMeshes()
 	cMesh cubeMesh;
 	pTheModelLoader->LoadPlyModel("assets/models/Cube_1_Unit_from_origin_XYZ_uv.ply", cubeMesh);
 
+	cMesh cubeMeshDebug;
+	if (!pTheModelLoader->LoadPlyModel("assets/models/Cube_debug.ply", cubeMeshDebug))
+	{
+		std::cout << "Error: couldn't find the debug cube ply file." << std::endl;
+	}
+
 	cMesh eagleMesh;
 	pTheModelLoader->LoadPlyModel("assets/models/Eagle_xyz_n_uv.ply", eagleMesh);
 
@@ -196,6 +202,15 @@ int LoadMeshes()
 		sphereMesh,		// Sphere mesh info
 		sphereMeshInfo,
 		shaderProgID);
+
+	sModelDrawInfo cubeMeshDebugInfo;
+	if (!pTheVAOManager->LoadModelIntoVAO("cubeDebug",
+		cubeMeshDebug,		// Sphere mesh info
+		cubeMeshDebugInfo,
+		shaderProgID))
+	{
+		std::cout << "Error: couldn't load debug cube into VAO." << std::endl;
+	}
 
 	sModelDrawInfo cubeMeshInfo;
 	pTheVAOManager->LoadModelIntoVAO("cube",
@@ -355,7 +370,7 @@ void LoadLevel()
 		pCube->setDebugColour(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 		pCube->setIsWireframe(false);
 		pCube->setInverseMass(0.0f);			// Sphere won't move
-		pCube->setIsVisible(false);
+		pCube->setIsVisible(true);
 		pCube->setTexture("StoneTex_1024.bmp", 1);
 		pCube->setTextureRatio(1, 1);
 		pCube->setTransprancyValue(1.0f);
@@ -375,7 +390,7 @@ void LoadLevel()
 		pCube->setDebugColour(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 		pCube->setIsWireframe(false);
 		pCube->setInverseMass(0.0f);			// Sphere won't move
-		pCube->setIsVisible(false);
+		pCube->setIsVisible(true);
 		pCube->setTexture("StoneTex_1024.bmp", 1);
 		pCube->setTextureRatio(1, 1);
 		pCube->setTransprancyValue(1.0f);
@@ -395,7 +410,7 @@ void LoadLevel()
 		pCube->setDebugColour(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 		pCube->setIsWireframe(false);
 		pCube->setInverseMass(0.0f);			// Sphere won't move
-		pCube->setIsVisible(false);
+		pCube->setIsVisible(true);
 		pCube->setTexture("StoneTex_1024.bmp", 1);
 		pCube->setTextureRatio(1, 1);
 		pCube->setTransprancyValue(1.0f);
@@ -415,7 +430,7 @@ void LoadLevel()
 		pCube->setDebugColour(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 		pCube->setIsWireframe(false);
 		pCube->setInverseMass(0.0f);			// Sphere won't move
-		pCube->setIsVisible(false);
+		pCube->setIsVisible(true);
 		pCube->setTexture("StoneTex_1024.bmp", 1);
 		pCube->setTextureRatio(1, 1);
 		pCube->setTransprancyValue(1.0f);
@@ -435,7 +450,7 @@ void LoadLevel()
 		pCube->setDebugColour(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 		pCube->setIsWireframe(false);
 		pCube->setInverseMass(0.0f);			// Sphere won't move
-		pCube->setIsVisible(false);
+		pCube->setIsVisible(true);
 		pCube->setTexture("StoneTex_1024.bmp", 1);
 		pCube->setTextureRatio(1, 1);
 		pCube->setTransprancyValue(1.0f);
@@ -455,7 +470,7 @@ void LoadLevel()
 		pCube->setDebugColour(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 		pCube->setIsWireframe(false);
 		pCube->setInverseMass(0.0f);			// Sphere won't move
-		pCube->setIsVisible(false);
+		pCube->setIsVisible(true);
 		pCube->setTexture("StoneTex_1024.bmp", 1);
 		pCube->setTextureRatio(1, 1);
 		pCube->setTransprancyValue(1.0f);
@@ -475,7 +490,7 @@ void LoadLevel()
 		pCube->setDebugColour(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 		pCube->setIsWireframe(false);
 		pCube->setInverseMass(0.0f);			// Sphere won't move
-		pCube->setIsVisible(false);
+		pCube->setIsVisible(true);
 		pCube->setTexture("StoneTex_1024.bmp", 1);
 		pCube->setTextureRatio(1, 1);
 		pCube->setTransprancyValue(1.0f);
@@ -495,7 +510,7 @@ void LoadLevel()
 		pCube->setDebugColour(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 		pCube->setIsWireframe(false);
 		pCube->setInverseMass(0.0f);			// Sphere won't move
-		pCube->setIsVisible(false);
+		pCube->setIsVisible(true);
 		pCube->setTexture("StoneTex_1024.bmp", 1);
 		pCube->setTextureRatio(1, 1);
 		pCube->setTransprancyValue(1.0f);
@@ -515,7 +530,7 @@ void LoadLevel()
 		pCube->setDebugColour(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 		pCube->setIsWireframe(false);
 		pCube->setInverseMass(0.0f);			// Sphere won't move
-		pCube->setIsVisible(false);
+		pCube->setIsVisible(true);
 		pCube->setTexture("StoneTex_1024.bmp", 1);
 		pCube->setTextureRatio(1, 1);
 		pCube->setTransprancyValue(1.0f);
@@ -535,7 +550,7 @@ void LoadLevel()
 		pCube->setDebugColour(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 		pCube->setIsWireframe(false);
 		pCube->setInverseMass(0.0f);			// Sphere won't move
-		pCube->setIsVisible(false);
+		pCube->setIsVisible(true);
 		pCube->setTexture("StoneTex_1024.bmp", 1);
 		pCube->setTextureRatio(1, 1);
 		pCube->setTransprancyValue(1.0f);
@@ -555,7 +570,7 @@ void LoadLevel()
 		pCube->setDebugColour(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 		pCube->setIsWireframe(false);
 		pCube->setInverseMass(0.0f);			// Sphere won't move
-		pCube->setIsVisible(false);
+		pCube->setIsVisible(true);
 		pCube->setTexture("StoneTex_1024.bmp", 1);
 		pCube->setTextureRatio(1, 1);
 		pCube->setTransprancyValue(1.0f);
@@ -575,7 +590,7 @@ void LoadLevel()
 		pCube->setDebugColour(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 		pCube->setIsWireframe(false);
 		pCube->setInverseMass(0.0f);			// Sphere won't move
-		pCube->setIsVisible(false);
+		pCube->setIsVisible(true);
 		pCube->setTexture("StoneTex_1024.bmp", 1);
 		pCube->setTextureRatio(1, 1);
 		pCube->setTransprancyValue(1.0f);
@@ -595,7 +610,7 @@ void LoadLevel()
 		pCube->setDebugColour(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 		pCube->setIsWireframe(false);
 		pCube->setInverseMass(0.0f);			// Sphere won't move
-		pCube->setIsVisible(false);
+		pCube->setIsVisible(true);
 		pCube->setTexture("StoneTex_1024.bmp", 1);
 		pCube->setTextureRatio(1, 1);
 		pCube->setTransprancyValue(1.0f);
@@ -694,7 +709,7 @@ DWORD WINAPI LoadObjects(LPVOID params)
 	pMainCharacter->getSM()->LoadMeshAnimation("Idle", "assets/modelsFBX/RPG-Character_Unarmed-Idle(FBX2013).FBX");
 	pMainCharacter->getSM()->LoadMeshAnimation("Dying", "assets/modelsFBX/RPG-Character_Unarmed-Death1(FBX2013).FBX");
 	pMainCharacter->getSM()->LoadMeshAnimation("Roll", "assets/modelsFBX/Sprinting Forward Roll.fbx");
-	currentAnimationName = "Idle";
+	pMainCharacter->setAnimation("Idle");
 	pMainCharacter->setMeshName("mainCharacter");
 	pMainCharacter->setFriendlyName("mainCharacter");	// We use to search
 	pMainCharacter->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
@@ -948,7 +963,7 @@ DWORD WINAPI LoadObjects(LPVOID params)
 	pDebugSphere->SetComponent(pDebugPhysics);
 
 	pDebugCube = pFactory->CreateObject("sphere", nPhysics::eComponentType::plane);
-	pDebugCube->setMeshName("cube");
+	pDebugCube->setMeshName("cubeDebug");
 	pDebugCube->setFriendlyName("debug_cube");
 	//pDebugCube->setPositionXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
 	pDebugCube->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
@@ -958,13 +973,6 @@ DWORD WINAPI LoadObjects(LPVOID params)
 	pDebugCube->setIsWireframe(true);
 	pDebugCube->setInverseMass(0.0f);			// Sphere won't move
 	pDebugCube->setIsVisible(false);
-	nPhysics::sBallDef physicsCubeDebug;
-	physicsCubeDebug.Mass = 0.0f;
-	physicsCubeDebug.Position = glm::vec3(0.0f, 0.0f, 0.0f);
-	physicsCubeDebug.Radius = 1.0f;
-	physicsCubeDebug.Scale = glm::vec3(30.0f, 30.0f, 30.0f);
-	nPhysics::iBallComponent* pDebugCubePhysics = physicsFactory->CreateBall(physicsCubeDebug);
-	pDebugCube->SetComponent(pDebugCubePhysics);
 
 	g_vec_pGameFBOObjects.push_back(pDebugCube);
 
@@ -1206,7 +1214,7 @@ DWORD WINAPI LoadObjects(LPVOID params)
 	//pPlatformCharacter->SetComponent(pPlatformCharacterPhysics);
 	cSimpleAssimpSkinnedMesh* platformSkinnedMesh = new cSimpleAssimpSkinnedMesh();
 	pPlatformCharacter->setSM(platformSkinnedMesh);
-	pPlatformCharacter->getSM()->LoadMeshFromFile("platformCharacter", "assets/modelsFBX/RPG-Character(FBX2013).FBX");
+	pPlatformCharacter->getSM()->LoadMeshFromFile("platformCharacter", "assets/modelsFBX/RPG-Character(FBX2013)2.FBX");
 
 	sModelDrawInfo* platformCharacterMeshInfo = pPlatformCharacter->getSM()->CreateMeshObjectFromCurrentModel();
 
@@ -1219,9 +1227,10 @@ DWORD WINAPI LoadObjects(LPVOID params)
 	pPlatformCharacter->getSM()->LoadMeshAnimation("Idle", "assets/modelsFBX/RPG-Character_Unarmed-Idle(FBX2013).FBX");
 	pPlatformCharacter->getSM()->LoadMeshAnimation("Dying", "assets/modelsFBX/RPG-Character_Unarmed-Death1(FBX2013).FBX");
 	pPlatformCharacter->getSM()->LoadMeshAnimation("Roll", "assets/modelsFBX/Sprinting Forward Roll.fbx");
-	currentAnimationName = "Idle";
+	pPlatformCharacter->setAnimation("Idle");
 	pPlatformCharacter->setMeshName("platformCharacter");
 	pPlatformCharacter->setFriendlyName("platformCharacter");	// We use to search
+	pPlatformCharacter->setPositionXYZ(glm::vec3(-680.0, 120.0f, 0.0f));
 	pPlatformCharacter->setRotationXYZ(glm::vec3(0.0f, glm::radians(-90.0f), 0.0f));
 	pPlatformCharacter->setScale(0.2f);
 	pPlatformCharacter->setDebugColour(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));

@@ -223,7 +223,7 @@ void DrawAI()
 	iObject* pQuadOrIsIt = pFindObjectByFriendlyName("debug_cube");
 	if (pQuadOrIsIt)
 	{
-		pQuadOrIsIt->setScale(30.0f);
+		pQuadOrIsIt->setScale(3.0f);
 		pQuadOrIsIt->setIsVisible(true);
 		//glm::vec3 oldLocation = glm::vec3(::g_pFlyCamera->eye.x, ::g_pFlyCamera->eye.y, ::g_pFlyCamera->eye.z);
 		pQuadOrIsIt->setPositionXYZ(glm::vec3(::g_pFlyCamera->getAtInWorldSpace().x, ::g_pFlyCamera->getAtInWorldSpace().y, ::g_pFlyCamera->getAtInWorldSpace().z + 300));
@@ -233,7 +233,7 @@ void DrawAI()
 		// Move the camera
 		// Maybe set it to orthographic, etc.
 		glm::mat4 matQuad = glm::mat4(1.0f);
-		DrawObject(matQuad, pQuadOrIsIt, shaderProgID, pTheVAOManager);
+		//DrawObject(matQuad, pQuadOrIsIt, shaderProgID, pTheVAOManager);
 	}
 
 	// set pass number back to 0 to render the rest of the scene
@@ -836,8 +836,8 @@ void DrawPlatform()
 	glUniform1i(texSampFBO_UL, 40);
 
 	// 4. Draw a single object (a triangle or quad)
-	iObject* pQuadOrIsIt = pFindObjectByFriendlyName("debug_cube");
-	pQuadOrIsIt->setScale(30.0f);
+	iObject* pQuadOrIsIt = pFindObjectByFriendlyName("cube");
+	pQuadOrIsIt->setScale(10.0f);
 	pQuadOrIsIt->setIsVisible(true);
 	//glm::vec3 oldLocation = glm::vec3(::g_pFlyCamera->eye.x, ::g_pFlyCamera->eye.y, ::g_pFlyCamera->eye.z);
 	pQuadOrIsIt->setPositionXYZ(glm::vec3(::g_pFlyCamera->getAtInWorldSpace().x, ::g_pFlyCamera->getAtInWorldSpace().y, ::g_pFlyCamera->getAtInWorldSpace().z + 300));
@@ -853,6 +853,7 @@ void DrawPlatform()
 	glUniform1i(passNumber_UniLoc, 0);
 
 	iObject* pMainCharacter = pFindObjectByFriendlyName("platformCharacter");
+	std::string currentAnimationName = pMainCharacter->getAnimation();
 	for (int index = 0; index != ::g_vec_pPlatformGameObjects.size(); index++)
 	{
 		glm::mat4 matModel = glm::mat4(1.0f);
@@ -930,6 +931,65 @@ void DrawPlatform()
 		{
 			currentAnimationName = "Idle";
 		}
+	}
+
+	enemyCount1++;
+	enemyCount2++;
+	enemyCount3++;
+	enemyCount4++;
+
+	iObject* pEnemy1 = pFindObjectByFriendlyName("enemy1");
+	iObject* pEnemy2 = pFindObjectByFriendlyName("enemy2");
+	iObject* pEnemy3 = pFindObjectByFriendlyName("enemy3");
+	iObject* pEnemy4 = pFindObjectByFriendlyName("enemy4");
+
+	if (enemyCount1 > 400)
+	{
+		if (pEnemy1->getRotationXYZ().y < 0)
+		{
+			pEnemy1->setRotationXYZ(glm::vec3(0.0f, glm::radians(90.0f), 0.0f));
+		}
+		else
+		{
+			pEnemy1->setRotationXYZ(glm::vec3(0.0f, glm::radians(-90.0f), 0.0f));
+		}
+		enemyCount1 = 0;
+	}
+	if (enemyCount2 > 500)
+	{
+		if (pEnemy2->getRotationXYZ().y < 0)
+		{
+			pEnemy2->setRotationXYZ(glm::vec3(0.0f, glm::radians(90.0f), 0.0f));
+		}
+		else
+		{
+			pEnemy2->setRotationXYZ(glm::vec3(0.0f, glm::radians(-90.0f), 0.0f));
+		}
+		enemyCount2 = 0;
+	}
+	if (enemyCount3 > 470)
+	{
+		if (pEnemy3->getRotationXYZ().y < 0)
+		{
+			pEnemy3->setRotationXYZ(glm::vec3(0.0f, glm::radians(90.0f), 0.0f));
+		}
+		else
+		{
+			pEnemy3->setRotationXYZ(glm::vec3(0.0f, glm::radians(-90.0f), 0.0f));
+		}
+		enemyCount3 = 0;
+	}
+	if (enemyCount4 > 450)
+	{
+		if (pEnemy4->getRotationXYZ().y < 0)
+		{
+			pEnemy4->setRotationXYZ(glm::vec3(0.0f, glm::radians(90.0f), 0.0f));
+		}
+		else
+		{
+			pEnemy4->setRotationXYZ(glm::vec3(0.0f, glm::radians(-90.0f), 0.0f));
+		}
+		enemyCount4 = 0;
 	}
 
 	pPlatformPhysics->IntegrationStep(g_vec_pPlatformEnemyObjects, 0.03f);
@@ -1085,6 +1145,8 @@ void DrawPlatform()
 		}
 	}
 
+	pMainCharacter->setAnimation(currentAnimationName);
+
 	// collisions for walls
 	if (pMainCharacter->getPositionXYZ().x > -10.0f)
 	{
@@ -1109,6 +1171,13 @@ void DrawPlatform()
 
 void DrawSecondPass()
 {
+	iObject* pMainCharacter = pFindObjectByFriendlyName("mainCharacter");
+	std::string currentAnimationName = "Idle";
+	if (pMainCharacter)
+	{
+		currentAnimationName = pMainCharacter->getAnimation();
+	}
+	else 
 	drawSpace = false;
 	if (jumping)
 	{
@@ -1155,7 +1224,7 @@ void DrawSecondPass()
 		}
 	}
 	// The whole scene is now drawn (to the FBO)
-	iObject* pMainCharacter = pFindObjectByFriendlyName("mainCharacter");
+
 
 	if (pMainCharacter != nullptr && currentAnimationName != "Jump" && currentAnimationName != "Roll" && currentAnimationName != "Dying" && currentAnimationName != "Attack")
 	{
@@ -1203,10 +1272,10 @@ void DrawSecondPass()
  	glUniform1i(texSampAIFBO_UL, 40);
 
 	// 4. Draw a single object (a triangle or quad)
-	iObject* pAIQuad = pFindObjectByFriendlyName("debug_cube");
+	iObject* pAIQuad = pFindObjectByFriendlyName("cube");
 	if (pAIQuad)
 	{
-		pAIQuad->setScale(30.0f);
+		pAIQuad->setScale(5.0f);
 		pAIQuad->setIsVisible(true);
 		//glm::vec3 oldLocation = glm::vec3(::g_pFlyCamera->eye.x, ::g_pFlyCamera->eye.y, ::g_pFlyCamera->eye.z);
 		pAIQuad->setPositionXYZ(glm::vec3(::g_pFlyCamera->getAtInWorldSpace().x, ::g_pFlyCamera->getAtInWorldSpace().y, ::g_pFlyCamera->getAtInWorldSpace().z + 300));
@@ -1230,10 +1299,10 @@ void DrawSecondPass()
 	glUniform1i(texSampPlatformFBO_UL, 30);
 
 	// 4. Draw a single object (a triangle or quad)
-	iObject* pPlatformQuad = pFindObjectByFriendlyName("debug_cube");
+	iObject* pPlatformQuad = pFindObjectByFriendlyName("cube");
 	if (pPlatformQuad)
 	{
-		pPlatformQuad->setScale(30.0f);
+		pPlatformQuad->setScale(5.0f);
 		pPlatformQuad->setIsVisible(true);
 		//glm::vec3 oldLocation = glm::vec3(::g_pFlyCamera->eye.x, ::g_pFlyCamera->eye.y, ::g_pFlyCamera->eye.z);
 		pPlatformQuad->setPositionXYZ(glm::vec3(::g_pFlyCamera->getAtInWorldSpace().x - 100.0f, ::g_pFlyCamera->getAtInWorldSpace().y, ::g_pFlyCamera->getAtInWorldSpace().z + 300));
@@ -1258,18 +1327,18 @@ void DrawSecondPass()
 		//*******************************
 		//	FACE FORWARD
 
-		//glm::vec3 currentVelocity;
-		//pCurrentObject->GetVelocity(currentVelocity);
-		//if (currentVelocity.x > 0.0f && currentVelocity.y > 0.0f && currentVelocity.z > 0.0f)
-		//{
-		//	glm::vec3 normalizedVelocity = glm::normalize(currentVelocity);
-		//	//normalizedVelocity.z *= -1.0f;
-		//	glm::quat orientation = glm::quatLookAt(normalizedVelocity, glm::vec3(0.0f, 1.0f, 0.0f));
-		//	orientation.x = 0.0f;
-		//	orientation.y *= -1.0f;
-		//	orientation.z = 0.0f;
-		//	pCurrentObject->setRotationXYZ(orientation);
-		//}
+		glm::vec3 currentVelocity;
+		pCurrentObject->GetVelocity(currentVelocity);
+		if (currentVelocity.x > 0.0f && currentVelocity.y > 0.0f && currentVelocity.z > 0.0f)
+		{
+			glm::vec3 normalizedVelocity = glm::normalize(currentVelocity);
+			//normalizedVelocity.z *= -1.0f;
+			glm::quat orientation = glm::quatLookAt(normalizedVelocity, glm::vec3(0.0f, 1.0f, 0.0f));
+			orientation.x = 0.0f;
+			orientation.y *= -1.0f;
+			orientation.z = 0.0f;
+			pCurrentObject->setRotationXYZ(orientation);
+		}
 
 		//*********************************
 
@@ -1327,4 +1396,8 @@ void DrawSecondPass()
 	{
 		DrawDebugSpheres();
 	}// if (bLightDebugSheresOn) 
+	if (pMainCharacter)
+	{
+		pMainCharacter->setAnimation(currentAnimationName);
+	}
 }

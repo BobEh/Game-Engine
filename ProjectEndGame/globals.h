@@ -63,8 +63,6 @@ cFBO* pAIFBO = NULL;
 cFBO* pPlatformFBO = NULL;
 GLint passNumber_UniLoc;
 
-std::string currentAnimationName;
-
 glm::vec2 waterOffset;
 
 bool fileChanged = false;

@@ -35,6 +35,11 @@ cSimpleAssimpSkinnedMesh* cClothObject::getSM()
 	return this->pSM;
 }
 
+std::string cClothObject::getAnimation()
+{
+	return std::string();
+}
+
 std::string cClothObject::getBehaviour()
 {
 	return this->_Behaviour;
@@ -155,6 +160,9 @@ bool cClothObject::getDisableDepthBufferWrite()
 void cClothObject::addTestPoint(glm::vec3 testPoint)
 {
 	this->testPoints.push_back(testPoint);
+}
+void cClothObject::setAnimation(std::string animation)
+{
 }
 void cClothObject::setBehaviour(std::string behaviour)
 {

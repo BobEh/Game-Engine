@@ -53,6 +53,11 @@ cSimpleAssimpSkinnedMesh* cSphereObject::getSM()
 	return result;
 }
 
+std::string cSphereObject::getAnimation()
+{
+	return this->_Animation;
+}
+
 std::string cSphereObject::getBehaviour()
 {
 	EnterCriticalSection(&object_lock);
@@ -255,6 +260,10 @@ void cSphereObject::addTestPoint(glm::vec3 testPoint)
 	EnterCriticalSection(&object_lock);
 	this->testPoints.push_back(testPoint);
 	LeaveCriticalSection(&object_lock);
+}
+void cSphereObject::setAnimation(std::string animation)
+{
+	this->_Animation = animation;
 }
 void cSphereObject::setBehaviour(std::string behaviour)
 {

@@ -131,7 +131,7 @@ int main(void)
 		{
 			v = glm::lookAt(g_pFlyCamera->eye, pCurrentObject->getPositionXYZ(), g_pFlyCamera->getUpVector());
 			AIv = glm::lookAt(theAICamera->eye, glm::vec3(0.0f, 0.0f, 0.0f), theAICamera->getUpVector());
-			Pv = v = glm::lookAt(thePlatformCamera->eye, glm::vec3(thePlatformCamera->eye.x, thePlatformCamera->eye.y, 0.0f), thePlatformCamera->getUpVector());
+			Pv = glm::lookAt(thePlatformCamera->eye, glm::vec3(thePlatformCamera->eye.x, thePlatformCamera->eye.y, 0.0f), thePlatformCamera->getUpVector());
 		}
 		else
 		{
@@ -174,7 +174,7 @@ int main(void)
 		//                                                                
 		//                                                                
 
-		//v = glm::lookAt(theAICamera->eye, glm::vec3(0.0f, 0.0f, 0.0f), theAICamera->getUpVector());
+		//AIv = glm::lookAt(theAICamera->eye, glm::vec3(0.0f, 0.0f, 0.0f), theAICamera->getUpVector());
 		glUniform1f(renderAI_UL, true);
 		DrawAIFBO();
 		glUniform1f(renderAI_UL, false);
@@ -187,8 +187,13 @@ int main(void)
 		//   | |    | | (_| | |_| || (_) | |  | | | | | | | |    | | |  \__ \ |_  | |  | (_| \__ \__ \
 		//   |_|    |_|\__,_|\__|_| \___/|_|  |_| |_| |_| |_|    |_|_|  |___/\__| |_|   \__,_|___/___/
 		//                                                                                            
-		//                                                                                            
-		//v = glm::lookAt(thePlatformCamera->eye, glm::vec3(thePlatformCamera->eye.x, thePlatformCamera->eye.y, 0.0f), thePlatformCamera->getUpVector());
+		//
+		std::map<std::pair<int, int>, int> colVals;
+		int r = 1;
+		int c = 1;
+		int currentNode = 4;
+		colVals.insert(std::make_pair(std::make_pair(c,r),currentNode));
+		//Pv = glm::lookAt(thePlatformCamera->eye, glm::vec3(thePlatformCamera->eye.x, thePlatformCamera->eye.y, 0.0f), thePlatformCamera->getUpVector());
 		glUniform1f(renderPlatform_UL, true);
 		DrawPlatformFBO();
 		glUniform1f(renderPlatform_UL, false);

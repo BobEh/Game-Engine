@@ -320,7 +320,9 @@ void DrawObject(glm::mat4 m, iObject* pCurrentObject, GLint shaderProgID, cVAOMa
 
 	GLint isSkinnedMesh_UniLoc = glad_glGetUniformLocation(shaderProgID, "isSkinnedMesh");
 
-	if (pCurrentObject->getSM() != NULL)
+	bool doThis = false;
+
+	if (pCurrentObject->getSM() != NULL && doThis)
 	{
 		glUniform1f(isSkinnedMesh_UniLoc, (float)GL_TRUE);
 
@@ -334,9 +336,11 @@ void DrawObject(glm::mat4 m, iObject* pCurrentObject, GLint shaderProgID, cVAOMa
 		}
 
 		// Taken from "Skinned Mesh 2 - todo.docx"
-		std::vector< glm::mat4x4 > vecFinalTransformation;
+ 		std::vector< glm::mat4x4 > vecFinalTransformation;
 		std::vector< glm::mat4x4 > vecOffsets;
 		std::vector< glm::mat4x4 > vecObjectBoneTransformation;
+
+		std::string currentAnimationName = pCurrentObject->getAnimation();
 
 		// This loads the bone transforms from the animation model
 		pCurrentObject->getSM()->BoneTransform(HACK_FrameTime,	// 0.0f // Frame time
@@ -665,11 +669,9 @@ glm::mat4 calculateWorldMatrix(iObject* pCurrentObject)
 	//pCurrentObject->GetComponent()->GetPosition(tempPosition);
 	glm::mat4 componentTrans;
 	//pCurrentObject->GetComponent()->GetTransform(componentTrans);
-	componentTrans
-		= glm::translate(glm::mat4(1.0f),
-			glm::vec3(pCurrentObject->getPositionXYZ().x,
-				pCurrentObject->getPositionXYZ().y,
-				pCurrentObject->getPositionXYZ().z));
+	glm::vec3 currentPosition = pCurrentObject->getPositionXYZ();
+	componentTrans = glm::translate(glm::mat4(1.0f),
+		currentPosition);
 	//std::cout << "In Calculate function X: " << pCurrentObject->getPositionXYZ().x << ", Y: " << pCurrentObject->getPositionXYZ().y << ", Z: " << pCurrentObject->getPositionXYZ().z << std::endl;
 	matWorld = matWorld * componentTrans;
 	// ******* TRANSLATION TRANSFORM *********

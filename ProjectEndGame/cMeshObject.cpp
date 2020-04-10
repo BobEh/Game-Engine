@@ -35,6 +35,11 @@ bool cMeshObject::getIsTranspanrancy()
 	return this->isTranspanrancy;
 }
 
+std::string cMeshObject::getAnimation()
+{
+	return this->_Animation;
+}
+
 std::string cMeshObject::getBehaviour()
 {
 	return this->_Behaviour;
@@ -54,8 +59,15 @@ std::string cMeshObject::getFriendlyName()
 }
 glm::vec3 cMeshObject::getPositionXYZ()
 {
-	glm::vec3 result = glm::vec3(0.0f, 0.0f, 0.0f);
-	//this->_component->GetPosition(result);
+	glm::vec3 result = glm::vec3(0.0f);
+	if (this->_component != nullptr)
+	{
+		this->_component->GetPosition(result);
+	}
+	else
+	{
+		result = _positionXYZ;
+	}
 	return result;
 }
 glm::quat cMeshObject::getRotationXYZ()
@@ -138,6 +150,10 @@ bool cMeshObject::getDisableDepthBufferWrite()
 void cMeshObject::addTestPoint(glm::vec3 testPoint)
 {
 	
+}
+void cMeshObject::setAnimation(std::string animation)
+{
+	this->_Animation = animation;
 }
 void cMeshObject::setBehaviour(std::string behaviour)
 {

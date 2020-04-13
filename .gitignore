@@ -37,7 +37,6 @@
 # output folder
 x64/
 x64
-*.vcxproj
 *.filters
 *.log
 *.tlog

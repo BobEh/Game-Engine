@@ -121,7 +121,7 @@ public:
 	glm::mat4 mGlobalInverseTransformation;
 
 
-	bool Initialize(void);
+	bool Initialize();
 
 	void CalcInterpolatedRotation(float AnimationTime, const aiNodeAnim* pNodeAnim, aiQuaternion& out);
 	void CalcInterpolatedPosition(float AnimationTime, const aiNodeAnim* pNodeAnim, aiVector3D& out);

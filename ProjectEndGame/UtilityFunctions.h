@@ -320,9 +320,9 @@ void DrawObject(glm::mat4 m, iObject* pCurrentObject, GLint shaderProgID, cVAOMa
 
 	GLint isSkinnedMesh_UniLoc = glad_glGetUniformLocation(shaderProgID, "isSkinnedMesh");
 
-	bool doThis = false;
+	//bool doThis = false;
 
-	if (pCurrentObject->getSM() != NULL && doThis)
+	if (pCurrentObject->getSM() != NULL)
 	{
 		glUniform1f(isSkinnedMesh_UniLoc, (float)GL_TRUE);
 

@@ -46,6 +46,7 @@ int main(void)
 
 	thread_handles[0] = CreateThread(NULL, 0, LoadObjects, 0, 0, &thread_ids[0]);
 	//LoadObjects();
+	LoadAnimationObjects();
 
 	LoadLights();
 

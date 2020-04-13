@@ -60,6 +60,7 @@ void cSimpleAssimpSkinnedMesh::ShutErDown(void)
 bool cSimpleAssimpSkinnedMesh::LoadMeshFromFile(const std::string& friendlyName,
 	const std::string& filename)		// mesh we draw
 {
+
 	unsigned int Flags = aiProcess_Triangulate |
 		aiProcess_OptimizeMeshes |
 		aiProcess_OptimizeGraph |
@@ -174,7 +175,7 @@ void cSimpleAssimpSkinnedMesh::GetListOfBoneIDandNames(std::vector<std::string>&
 //	      const aiScene* > mapAnimationNameTo_pScene;		// Animations
 
 
-bool cSimpleAssimpSkinnedMesh::Initialize(void)
+bool cSimpleAssimpSkinnedMesh::Initialize()
 {
 	this->m_numberOfVertices = this->pScene->mMeshes[0]->mNumVertices;
 
@@ -601,10 +602,10 @@ sModelDrawInfo* cSimpleAssimpSkinnedMesh::CreateMeshObjectFromCurrentModel(unsig
 		// Colours
 		if (pAIMesh->GetNumColorChannels() > 0)
 		{
-			pCurVert->r = this->pScene->mMeshes[0]->mColors[vertIndex]->r;
-			pCurVert->g = this->pScene->mMeshes[0]->mColors[vertIndex]->g;
-			pCurVert->b = this->pScene->mMeshes[0]->mColors[vertIndex]->b;
-			pCurVert->a = this->pScene->mMeshes[0]->mColors[vertIndex]->a;
+			pCurVert->r = this->pScene->mMeshes[meshIndex]->mColors[vertIndex]->r;
+			pCurVert->g = this->pScene->mMeshes[meshIndex]->mColors[vertIndex]->g;
+			pCurVert->b = this->pScene->mMeshes[meshIndex]->mColors[vertIndex]->b;
+			pCurVert->a = this->pScene->mMeshes[meshIndex]->mColors[vertIndex]->a;
 		}
 		else
 		{

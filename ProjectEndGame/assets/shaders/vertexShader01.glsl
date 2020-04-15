@@ -6,10 +6,12 @@ uniform mat4 matModelInverseTranspose;		// For normal calculation
 uniform mat4 matView; 		// View or camera
 uniform mat4 theAIView;		// View for AI
 uniform mat4 thePlatformView;	//View for Platform game
+uniform mat4 theFullScreenView; //View for fullscreen fbo
 uniform mat4 matProj;		// Projection transform
 
 uniform bool useAI;
 uniform bool usePlatform;
+uniform bool useFullScreen;
 
 in vec4 vColour;				// Was vec3
 in vec4 vPosition;				// Was vec3
@@ -86,6 +88,10 @@ void main()
 		{
 			matMVP = matProj * thePlatformView * matModel;	
 		}
+		else if (useFullScreen)
+		{
+			matMVP = matProj * theFullScreenView * matModel;
+		}
 		else
 		{
 			matMVP = matProj * matView * matModel;	
@@ -123,6 +129,10 @@ void main()
 		else if (usePlatform)
 		{
 			matMVP = matProj * thePlatformView * matModel;	
+		}
+		else if (useFullScreen)
+		{
+			matMVP = matProj * theFullScreenView * matModel;
 		}
 		else
 		{

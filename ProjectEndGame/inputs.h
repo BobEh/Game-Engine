@@ -277,11 +277,19 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 		}
 		if (key == GLFW_KEY_1 && action == GLFW_PRESS)
 		{
-			currentRender = renderTag::AI;
+			//currentRender = renderTag::AI;
+			if (currentRender == renderTag::none)
+			{
+				changeToAI = true;
+			}
 		}
 		if (key == GLFW_KEY_2 && action == GLFW_PRESS)
 		{
-			currentRender = renderTag::Platform;
+			//currentRender = renderTag::Platform;
+			if (currentRender == renderTag::none)
+			{
+				changeToPlatform = true;
+			}
 		}
 		if (key == GLFW_KEY_9)
 		{
@@ -453,31 +461,37 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 			pCurrentObject = pFindObjectByFriendlyName("mainCharacter");
 			if (key == GLFW_KEY_A)
 			{
-				//pCurrentObject->setRotationXYZ(glm::vec3(0.0f, glm::radians(90.0f), 0.0f));
+				//pCurrentObject->setRotationXYZ(glm::vec3(0.0f, pCurrentObject->getRotationXYZ().y + glm::radians(10.0f), 0.0f));
 				//pCurrentObject->setVelocity(glm::vec3(pCurrentObject->getVelocity().x, 0.0f, 20.0f));
-				pCurrentObject->ApplyForce(glm::vec3(0.0f, 0.0f, 0.1f));
+				//pCurrentObject->ApplyForce(glm::vec3(0.0f, 0.0f, 0.1f));
+				glm::quat rotation = glm::quat(glm::vec3(0.0f, glm::radians(1.5f), 0.0f));
+				pCurrentObject->setRotationXYZ(pCurrentObject->getRotationXYZ()* rotation);
 			}
 			if (key == GLFW_KEY_D)
 			{
-				//pCurrentObject->setRotationXYZ(glm::vec3(0.0f, glm::radians(-90.0f), 0.0f));
+				//pCurrentObject->setRotationXYZ(glm::vec3(0.0f, pCurrentObject->getRotationXYZ().y + glm::radians(-10.0f), 0.0f));
 				//pCurrentObject->setVelocity(glm::vec3(pCurrentObject->getVelocity().x, 0.0f, 20.0f));
-				pCurrentObject->ApplyForce(glm::vec3(0.0f, 0.0f, -0.1f));
+				//pCurrentObject->ApplyForce(glm::vec3(0.0f, 0.0f, -0.1f));
+				glm::quat rotation = glm::quat(glm::vec3(0.0f, glm::radians(-1.5f), 0.0f));
+				pCurrentObject->setRotationXYZ(pCurrentObject->getRotationXYZ()* rotation);
 			}
 			if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
 			{
-				pCurrentObject->ApplyForce(glm::vec3(0.0f, 5.0f, 0.0f));
+				pCurrentObject->ApplyForce(glm::vec3(0.0f, 15.0f, 0.0f));
 				//jumping = true;
 				//currentAnimationName = "Jump";
 			}
 			if (key == GLFW_KEY_S)
 			{
-				//rolling = true;
-				//currentAnimationName = "Roll";
-				pCurrentObject->ApplyForce(glm::vec3(-0.1f, 0.0f, 0.0f));
+				glm::quat forwardDirection = pCurrentObject->getRotationXYZ();
+				forwardDirection *= -0.1f;
+				pCurrentObject->ApplyForce(glm::vec3(forwardDirection.y, 0.0f, forwardDirection.w));
 			}
 			if (key == GLFW_KEY_W)
 			{
-				pCurrentObject->ApplyForce(glm::vec3(0.1f, 0.0f, 0.0f));
+				glm::quat forwardDirection = pCurrentObject->getRotationXYZ();
+				forwardDirection *= 0.1f;
+				pCurrentObject->ApplyForce(glm::vec3(forwardDirection.y, 0.0f, forwardDirection.w));
 			}
 			if (key == GLFW_KEY_ENTER)
 			{

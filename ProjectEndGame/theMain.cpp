@@ -59,6 +59,8 @@ int main(void)
 	theAICamera->eye = glm::vec3(0.0f, 200.0, -50.0);
 	thePlatformCamera = new cFlyCamera();
 	thePlatformCamera->eye = glm::vec3(-460.0f, 250.0f, -960.0f);
+	theFullScreenCamera = new cFlyCamera();
+	theFullScreenCamera->eye = glm::vec3(0.0f, 0.0f, -50.0f);
 
 	glEnable(GL_DEPTH);			// Write to the depth buffer
 	glEnable(GL_DEPTH_TEST);	// Test with buffer when drawing
@@ -66,10 +68,24 @@ int main(void)
 	//delta time stuff
 	lastTime = glfwGetTime();
 
+	width = 1920;
+	height = 1080;
+
 	//Load the fbo stuff
+	pFullScreenFBO = new cFBO();
+	std::string FullScreenFBOError;
+	if (pFullScreenFBO->init(1920, 1080, FullScreenFBOError))
+	{
+		std::cout << "Full screen Frame buffer is OK" << std::endl;
+	}
+	else
+	{
+		std::cout << "Full screen FBO Error: " << FullScreenFBOError << std::endl;
+	}
+
 	pAIFBO = new cFBO();
 	std::string AIFBOError;
-	if (pAIFBO->init(1080, 1080, AIFBOError))
+	if (pAIFBO->init(1920, 1080, AIFBOError))
 	{
 		std::cout << "AI Frame buffer is OK" << std::endl;
 	}
@@ -80,7 +96,7 @@ int main(void)
 
 	pPlatformFBO = new cFBO();
 	std::string PlatformFBOError;
-	if (pPlatformFBO->init(1080, 1080, PlatformFBOError))
+	if (pPlatformFBO->init(1920, 1080, PlatformFBOError))
 	{
 		std::cout << "Platform Frame buffer is OK" << std::endl;
 	}
@@ -111,8 +127,6 @@ int main(void)
 		ProcessAsyncMouse(window);
 
 		float ratio;
-		
-		glm::mat4 p, v, AIv, Pv;
 
 		glfwGetFramebufferSize(window, &width, &height);
 		ratio = width / (float)height;
@@ -127,12 +141,14 @@ int main(void)
 		v = glm::mat4(1.0f);
 		AIv = glm::mat4(1.0f);
 		Pv = glm::mat4(1.0f);
+		FSv = glm::mat4(1.0f);
 
 		if (pCurrentObject)
 		{
 			v = glm::lookAt(g_pFlyCamera->eye, pCurrentObject->getPositionXYZ(), g_pFlyCamera->getUpVector());
 			AIv = glm::lookAt(theAICamera->eye, glm::vec3(0.0f, 0.0f, 0.0f), theAICamera->getUpVector());
 			Pv = glm::lookAt(thePlatformCamera->eye, glm::vec3(thePlatformCamera->eye.x, thePlatformCamera->eye.y, 0.0f), thePlatformCamera->getUpVector());
+			FSv = glm::lookAt(glm::vec3(0.0f, 0.0f, -50.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		}
 		else
 		{
@@ -154,17 +170,37 @@ int main(void)
 		GLint matView_UL = glGetUniformLocation(shaderProgID, "matView");
 		GLint matAIView_UL = glGetUniformLocation(shaderProgID, "theAIView");
 		GLint matPlatformView_UL = glGetUniformLocation(shaderProgID, "thePlatformView");
+		GLint matFullScreenView_UL = glGetUniformLocation(shaderProgID, "theFullScreenView");
 		GLint matProj_UL = glGetUniformLocation(shaderProgID, "matProj");
 
 		GLint renderAI_UL = glGetUniformLocation(shaderProgID, "useAI");
 		GLint renderPlatform_UL = glGetUniformLocation(shaderProgID, "usePlatform");
+		renderFullScreen_UL = glGetUniformLocation(shaderProgID, "useFullScreen");
 
 		glUniformMatrix4fv(matView_UL, 1, GL_FALSE, glm::value_ptr(v));
 		glUniformMatrix4fv(matAIView_UL, 1, GL_FALSE, glm::value_ptr(AIv));
 		glUniformMatrix4fv(matPlatformView_UL, 1, GL_FALSE, glm::value_ptr(Pv));
+		glUniformMatrix4fv(matFullScreenView_UL, 1, GL_FALSE, glm::value_ptr(FSv));
 		glUniformMatrix4fv(matProj_UL, 1, GL_FALSE, glm::value_ptr(p));
 
+		GLint floatBufferOffset_UL = glGetUniformLocation(shaderProgID, "bufferOffset");
+		glUniform1f(floatBufferOffset_UL, bufferOffset);
 
+		if (changeToAI)
+		{
+			TransitionToAI(deltaTime);
+		}
+		if (changeToPlatform)
+		{
+			TransitionToPlatform(deltaTime);
+		}
+		if (changeToMain)
+		{
+
+			glfwSwapBuffers(window);
+			glfwPollEvents();
+			continue;
+		}
 
 		//             _____   ______ _          _     _____              
 		//       /\   |_   _| |  ____(_)        | |   |  __ \             
@@ -175,7 +211,6 @@ int main(void)
 		//                                                                
 		//                                                                
 
-		//AIv = glm::lookAt(theAICamera->eye, glm::vec3(0.0f, 0.0f, 0.0f), theAICamera->getUpVector());
 		glUniform1f(renderAI_UL, true);
 		DrawAIFBO();
 		glUniform1f(renderAI_UL, false);
@@ -189,12 +224,7 @@ int main(void)
 		//   |_|    |_|\__,_|\__|_| \___/|_|  |_| |_| |_| |_|    |_|_|  |___/\__| |_|   \__,_|___/___/
 		//                                                                                            
 		//
-		std::map<std::pair<int, int>, int> colVals;
-		int r = 1;
-		int c = 1;
-		int currentNode = 4;
-		colVals.insert(std::make_pair(std::make_pair(c,r),currentNode));
-		//Pv = glm::lookAt(thePlatformCamera->eye, glm::vec3(thePlatformCamera->eye.x, thePlatformCamera->eye.y, 0.0f), thePlatformCamera->getUpVector());
+
 		glUniform1f(renderPlatform_UL, true);
 		DrawPlatformFBO();
 		glUniform1f(renderPlatform_UL, false);
@@ -234,6 +264,7 @@ int main(void)
 			{
 				v = glm::lookAt(g_pFlyCamera->eye, glm::vec3(0.0f), g_pFlyCamera->getUpVector());
 			}
+			//v = glm::lookAt(glm::vec3(0.0f, 0.0f, -50.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 			DrawSecondPass();
 		}
 

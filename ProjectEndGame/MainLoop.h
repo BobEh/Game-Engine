@@ -691,11 +691,11 @@ void DrawPlatformFBO()
 {
 	drawSpace = false;
 	// **************************************************
-// **************************************************
-// Loop to draw everything in the scene
+	// **************************************************
+	// Loop to draw everything in the scene
 
-//Draw everything to the external frame buffer
-// (I get the frame buffer ID, and use that)
+	//Draw everything to the external frame buffer
+	// (I get the frame buffer ID, and use that)
 	glBindFramebuffer(GL_FRAMEBUFFER, pPlatformFBO->ID);
 
 	pPlatformFBO->clearBuffers(true, true);
@@ -852,7 +852,8 @@ void DrawPlatform()
 	// set pass number back to 0 to render the rest of the scene
 	glUniform1i(passNumber_UniLoc, 0);
 
-	iObject* pMainCharacter = pFindObjectByFriendlyName("platformCharacter");
+	//iObject* pMainCharacter = pFindObjectByFriendlyName("platformCharacter");
+	iObject* pMainCharacter = pFindObjectByFriendlyName("mainCharacter");
 	std::string currentAnimationName = pMainCharacter->getAnimation();
 	for (int index = 0; index != ::g_vec_pPlatformGameObjects.size(); index++)
 	{
@@ -1254,7 +1255,7 @@ void DrawSecondPass()
 	gCoordinator->update(deltaTime);
 	gAIManager->update(deltaTime);
 
-// 1. Disable the FBO
+	// 1. Disable the FBO
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	// 2. Clear the ACTUAL screen buffer
@@ -1318,6 +1319,20 @@ void DrawSecondPass()
 	// set pass number back to 0 to render the rest of the scene
 	glUniform1i(passNumber_UniLoc, 0);
 
+	// **************************************************
+	// **************************************************
+	// Loop to draw everything in the scene
+
+	//Draw everything to the external frame buffer
+	// (I get the frame buffer ID, and use that)
+	glBindFramebuffer(GL_FRAMEBUFFER, pFullScreenFBO->ID);
+
+	pPlatformFBO->clearBuffers(true, true);
+
+	// set the passNumber to 0
+	passNumber_UniLoc = glGetUniformLocation(shaderProgID, "passNumber");
+	glUniform1i(passNumber_UniLoc, 0);
+
 	for (int index = 0; index != ::g_vec_pCharacterObjects.size(); index++)
 	{
 		glm::mat4 matModel = glm::mat4(1.0f);
@@ -1327,18 +1342,18 @@ void DrawSecondPass()
 		//*******************************
 		//	FACE FORWARD
 
-		glm::vec3 currentVelocity;
-		pCurrentObject->GetVelocity(currentVelocity);
-		if (currentVelocity.x > 0.0f && currentVelocity.y > 0.0f && currentVelocity.z > 0.0f)
-		{
-			glm::vec3 normalizedVelocity = glm::normalize(currentVelocity);
-			//normalizedVelocity.z *= -1.0f;
-			glm::quat orientation = glm::quatLookAt(normalizedVelocity, glm::vec3(0.0f, 1.0f, 0.0f));
-			orientation.x = 0.0f;
-			orientation.y *= -1.0f;
-			orientation.z = 0.0f;
-			pCurrentObject->setRotationXYZ(orientation);
-		}
+		//glm::vec3 currentVelocity = pCurrentObject->getVelocity();
+		//if (currentVelocity.x == 0.0f && currentVelocity.z == 0.0f)
+		//{
+		//	currentVelocity += 0.000001f;
+		//}
+		//glm::vec3 normalizedVelocity = glm::normalize(currentVelocity);
+		//normalizedVelocity.z *= -1.0f;
+		//glm::quat orientation = glm::quatLookAt(normalizedVelocity, glm::vec3(0.0f, 1.0f, 0.0f));
+		//orientation.x = 0.0f;
+		//orientation.y *= -1.0f;
+		//orientation.z = 0.0f;
+		//pCurrentObject->setRotationXYZ(orientation);
 
 		//*********************************
 
@@ -1400,4 +1415,44 @@ void DrawSecondPass()
 	{
 		pMainCharacter->setAnimation(currentAnimationName);
 	}
+
+	// 1. Disable the FBO
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	// 2. Clear the ACTUAL screen buffer
+	glViewport(0, 0, width, height);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	// 3. Use the FBO colour texture as the texture on that quad.
+	// set the passNumber to 1
+	glUniform1i(passNumber_UniLoc, 3);
+
+	glActiveTexture(GL_TEXTURE0 + 20);
+	glBindTexture(GL_TEXTURE_2D, pFullScreenFBO->colourTexture_0_ID);
+
+	GLuint texSampFullScreenFBO_UL = glGetUniformLocation(shaderProgID, "FullScreenColourTexture");
+	glUniform1i(texSampFullScreenFBO_UL, 20);
+
+	// 4. Draw a single object (a triangle or quad)
+	iObject* pFullScreenQuad = pFindObjectByFriendlyName("fbo");
+	if (pFullScreenQuad)
+	{
+		pFullScreenQuad->setScale(1.55f);
+		pFullScreenQuad->setIsVisible(true);
+		pFullScreenQuad->setPositionXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
+		pFullScreenQuad->setIsWireframe(false);
+
+		v = glm::lookAt( glm::vec3( 0.0f, 0.0f, -50.0f ), glm::vec3( 0.0f, 0.0f, 0.0f ), glm::vec3( 0.0f, 1.0f, 0.0f ) );
+
+		// Move the camera
+		// Maybe set it to orthographic, etc.
+		glm::mat4 matFullScreenQuad = glm::mat4(1.0f);
+		glUniform1f(renderFullScreen_UL, true);
+		DrawObject(matFullScreenQuad, pFullScreenQuad, shaderProgID, pTheVAOManager);
+		glUniform1f(renderFullScreen_UL, false);
+	}
+
+	// 3. Use the FBO colour texture as the texture on that quad.
+	// set the passNumber to 1
+	glUniform1i(passNumber_UniLoc, 0);
 }

@@ -85,6 +85,9 @@ namespace phys
 		//       Remember... F=ma  ...so an applied acceleration will be f/m
 		mAcceleration += force / mInvMass;
 	}
+	void cRigidBody::ApplyRelativeForce(const float& force)
+	{
+	}
 	void cRigidBody::GetPosition(glm::vec3& positionOut)
 	{
 		positionOut = this->mPosition;

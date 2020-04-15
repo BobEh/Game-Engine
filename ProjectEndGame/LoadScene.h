@@ -161,9 +161,11 @@ int LoadMeshes()
 	cMesh piece6Mesh;
 	pTheModelLoader->LoadPlyModel("assets/models/Android_Robot_Torso.ply", piece6Mesh);
 
-
 	cMesh cubeMesh;
 	pTheModelLoader->LoadPlyModel("assets/models/Cube_1_Unit_from_origin_XYZ_uv.ply", cubeMesh);
+
+	cMesh fboCubeMesh;
+	pTheModelLoader->LoadPlyModel("assets/models/fbo_cube.ply", fboCubeMesh);
 
 	cMesh cubeMeshDebug;
 	if (!pTheModelLoader->LoadPlyModel("assets/models/Cube_debug.ply", cubeMeshDebug))
@@ -216,6 +218,12 @@ int LoadMeshes()
 	pTheVAOManager->LoadModelIntoVAO("cube",
 		cubeMesh,		// Sphere mesh info
 		cubeMeshInfo,
+		shaderProgID);
+
+	sModelDrawInfo fboCubeMeshInfo;
+	pTheVAOManager->LoadModelIntoVAO("fboCube",
+		fboCubeMesh,		// Sphere mesh info
+		fboCubeMeshInfo,
 		shaderProgID);
 
 	sModelDrawInfo xWingRMeshInfo;
@@ -677,7 +685,7 @@ void LoadAnimationObjects()
 	//iObject* pPlatformCharacter = pFactory->CreateObject("sphere", nPhysics::eComponentType::ball);
 	//cSimpleAssimpSkinnedMesh* platformSkinnedMesh = new cSimpleAssimpSkinnedMesh();
 	//pPlatformCharacter->setSM(platformSkinnedMesh);
-	//pPlatformCharacter->getSM()->LoadMeshFromFile("platformCharacter", "assets/modelsFBX/RPG-Character(FBX2013)2.FBX");
+	//pPlatformCharacter->getSM()->LoadMeshFromFile("platformCharacter", "assets/modelsFBX/RPG-Character(FBX2013)2.FBX", 1);
 
 	//sModelDrawInfo* platformCharacterMeshInfo = pPlatformCharacter->getSM()->CreateMeshObjectFromCurrentModel(1);
 
@@ -725,56 +733,6 @@ DWORD WINAPI LoadObjects(LPVOID params)
 	//AI
 	gAIManager = new AIManager();
 	gCoordinator = new Coordinator();
-
-	//Objects
-	iObject* pCloth = pFactory->CreateObject("cloth", nPhysics::eComponentType::cloth);
-	pCloth->setMeshName("sphere");
-	pCloth->setFriendlyName("cloth");	// We use to search 
-	pCloth->setPositionXYZ(glm::vec3(0.0f, 50.0f, 0.0f));
-	pCloth->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
-	pCloth->setScale(0.2f);
-	pCloth->setObjectColourRGBA(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
-	//pCloth->setDebugColour(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
-	pCloth->setVelocity(glm::vec3(0.0f, 0.0f, 0.0f));
-	pCloth->setAccel(glm::vec3(0.0f, 0.0f, 0.0f));
-	pCloth->set_SPHERE_radius(1.0f);
-	pCloth->setInverseMass(1.0f);
-	pCloth->setTexture("StoneTex_1024.bmp", 1);
-	pCloth->setTextureRatio(1, 1);
-	pCloth->SetPlaneType("floor");
-	pCloth->setTransprancyValue(1.0f);
-	pCloth->setIsVisible(true);
-	pCloth->setIsWireframe(false);
-	//pSphere->SetMassType(0);
-	nPhysics::sClothDef physicsCloth;
-	physicsCloth.CornerA = glm::vec3(5.0f, 20.0f, 0.0f);
-	physicsCloth.CornerB = glm::vec3(-20.0f, 20.0f, 0.0f);
-	physicsCloth.DownDirection = glm::vec3(0.0f, 1.0f, 0.0f);
-	physicsCloth.NodeMass = 0.4f;
-	physicsCloth.NumNodesAcross = 40;
-	physicsCloth.NumNodesDown = 20;
-	physicsCloth.SpringConstant = 25.0f;
-	physicsCloth.NodeRadius = 1.0f;
-	nPhysics::iClothComponent* pClothPhysics = physicsFactory->CreateCloth(physicsCloth);
-	g_vec_pGameComponentObjects.push_back(pClothPhysics);
-	pCloth->SetComponent(pClothPhysics);
-	cMesh clothMesh;
-	size_t numNodes = pClothPhysics->NumNodes();
-	sPlyVertexXYZ_N_UV vertex;
-	for (size_t idx = 0; idx < numNodes; idx++)
-	{		
-		glm::vec3 triPosition = glm::vec3(0.0f);
-		pClothPhysics->GetNodePosition(idx, triPosition);
-		vertex.x = triPosition.x;
-		vertex.y = triPosition.y;
-		vertex.z = triPosition.z;
-		clothMesh.vecVertices.push_back(vertex);
-	}
-	sModelDrawInfo clothMeshInfo;
-	pTheVAOManager->LoadModelIntoVAO("clothMesh", clothMesh, clothMeshInfo, shaderProgID);
-	//pCloth->setMeshName("clothMesh");
-	::g_vec_pClothObjects.push_back(pCloth);
-	physicsWorld->AddComponent(pCloth->GetComponent());
 
 	// Sphere and cube
 	iObject* pSphere = pFactory->CreateObject("sphere", nPhysics::eComponentType::ball);
@@ -1022,6 +980,18 @@ DWORD WINAPI LoadObjects(LPVOID params)
 	pDebugCube->setIsVisible(false);
 
 	g_vec_pGameFBOObjects.push_back(pDebugCube);
+
+	iObject* pFBOCube = pFactory->CreateObject("mesh", nPhysics::eComponentType::plane);
+	pFBOCube->setMeshName("fboCube");
+	pFBOCube->setFriendlyName("fbo");
+	pFBOCube->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
+	pFBOCube->setScale(1.0f);
+	pFBOCube->setDebugColour(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+	pFBOCube->setIsWireframe(true);
+	pFBOCube->setInverseMass(0.0f);			// Sphere won't move
+	pFBOCube->setIsVisible(false);
+
+	g_vec_pGameFBOObjects.push_back(pFBOCube);
 
 	// "SkyBox"
 	pSkyBoxSphere = pFactory->CreateObject("mesh", nPhysics::eComponentType::plane);

@@ -59,9 +59,13 @@ cAABB* pCurrentAABBFront;
 cAABB* pCurrentAABBBack;
 
 // off screen rendering
+cFBO* pFullScreenFBO = NULL;
 cFBO* pAIFBO = NULL;
 cFBO* pPlatformFBO = NULL;
 GLint passNumber_UniLoc;
+GLint renderFullScreen_UL;
+
+glm::mat4 p, v, AIv, Pv, FSv;
 
 glm::vec2 waterOffset;
 
@@ -84,6 +88,7 @@ bool bLightDebugSheresOn = false;
 cFlyCamera* g_pFlyCamera = NULL;
 cFlyCamera* theAICamera = NULL;
 cFlyCamera* thePlatformCamera = NULL;
+cFlyCamera* theFullScreenCamera = NULL;
 
 // game object vectors
 std::vector<iObject*> g_vec_pGameObjects;
@@ -125,6 +130,12 @@ int enemy3Health = 3;
 int enemy4Health = 3;
 
 bool gotHit = false;
+
+bool changeToAI = false;
+bool changeToMain = false;
+bool changeToPlatform = false;
+
+float bufferOffset = 0.0f;
 
 // returns NULL (0) if we didn't find it.
 iObject* pFindObjectByFriendlyName(std::string name);
@@ -169,4 +180,33 @@ T randInRange(T min, T max)
 static void error_callback(int error, const char* description)
 {
 	fprintf(stderr, "Error: %s\n", description);
+}
+
+float transitionTime = 0.0f;
+void TransitionToAI(float dt)
+{
+	if (transitionTime < 3.0f)
+	{
+		bufferOffset = randInRange(0.0f, 1.0f);
+		transitionTime += dt;
+		return;
+	}
+	currentRender = renderTag::AI;
+	transitionTime = 0.0f;
+	bufferOffset = 0.0f;
+	changeToAI = false;
+}
+
+void TransitionToPlatform(float dt)
+{
+	if (transitionTime < 5.0f)
+	{
+		bufferOffset += dt * 0.1f;
+		transitionTime += dt;
+		return;
+	}
+	currentRender = renderTag::Platform;
+	transitionTime = 0.0f;
+	bufferOffset = 0.0f;
+	changeToAI = false;
 }

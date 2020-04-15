@@ -24,6 +24,7 @@ uniform float seaFloor;
 uniform float mountainTop;
 
 // Texture samplers
+uniform float bufferOffset;
 uniform sampler2D textSamp00;
 uniform sampler2D textSamp01;
 uniform sampler2D textSamp02;
@@ -31,6 +32,7 @@ uniform sampler2D textSamp03;
 
 uniform sampler2D AIPassColourTexture;
 uniform sampler2D PlatformColourTexture;
+uniform sampler2D FullScreenColourTexture;
 
 uniform float textRatio0;
 uniform float textRatio1;
@@ -117,6 +119,17 @@ void main()
 		// * * O * *		**O**
 		// * * * * *          *
 		// * * * * *          *
+
+		vec2 uvs = fUVx2.st;			// Make a copy of the texture coords
+		
+		int screenWidth = 1920;
+		int screenHeight = 1080; 
+		
+		uvs.s = gl_FragCoord.x / float(screenWidth);		// "u" or "x"
+		uvs.t = gl_FragCoord.y / float(screenHeight);		// "v" or "y"
+		
+		uvs.s = fVertWorldLocation.x / 50.0f;
+		uvs.t = fVertWorldLocation.y / 50.0f;
 		
 		vec3 texRGB1 = texture( AIPassColourTexture, vec2(fUVx2.s + 0.0f, fUVx2.t + 0.0f) ).rgb;
 		
@@ -156,6 +169,17 @@ void main()
 		// * * O * *		**O**
 		// * * * * *          *
 		// * * * * *          *
+
+		vec2 uvs = fUVx2.st;			// Make a copy of the texture coords
+		
+		int screenWidth = 1920;
+		int screenHeight = 1080; 
+		
+		uvs.s = gl_FragCoord.x / float(screenWidth);		// "u" or "x"
+		uvs.t = gl_FragCoord.y / float(screenHeight);		// "v" or "y"
+		
+		uvs.s = fVertWorldLocation.x / 50.0f;
+		uvs.t = fVertWorldLocation.y / 50.0f;
 		
 		vec3 texRGB1 = texture( PlatformColourTexture, vec2(fUVx2.s + 0.0f, fUVx2.t + 0.0f) ).rgb;
 		
@@ -163,6 +187,56 @@ void main()
 		vec3 texRGB3 = texture( PlatformColourTexture, vec2(fUVx2.s + bo, fUVx2.t + 0.0f) ).rgb;
 		vec3 texRGB4 = texture( PlatformColourTexture, vec2(fUVx2.s + 0.0f, fUVx2.t - bo) ).rgb;
 		vec3 texRGB5 = texture( PlatformColourTexture, vec2(fUVx2.s + 0.0f, fUVx2.t + bo) ).rgb;
+		
+		vec3 RGB = 0.5f * texRGB1 +
+		           0.125f * texRGB2 +
+				   0.125f * texRGB3 +
+				   0.125f * texRGB4 +
+				   0.125f * texRGB5;
+
+		vec3 texFBO_RGB = texture( PlatformColourTexture, fUVx2.st ).rgb;
+		//pixelColour.rgb = texFBO_RGB;
+		pixelColour.rgb = RGB;
+		pixelColour.a = 1.0f;
+
+		return;
+	}
+
+	// What pass is this?
+	// Is it the 2nd pass?
+	if ( passNumber == 3)
+	{
+		//pixelColour = vec4(0.0f, 1.0f, 0.0f, 1.0f);
+		float bo = 0.01f;		// For "blurr offset"
+		
+		// *  *  *
+		// *  O  *
+		// *  *  *
+		
+		// This is a Gaussian Kernel (Goo
+		// * * * * *          *
+		// * * * * *          *
+		// * * O * *		**O**
+		// * * * * *          *
+		// * * * * *          *
+
+		vec2 uvs = fUVx2.st;			// Make a copy of the texture coords
+		
+		int screenWidth = 1920;
+		int screenHeight = 1080; 
+		
+		uvs.s = gl_FragCoord.x / float(screenWidth);		// "u" or "x"
+		uvs.t = gl_FragCoord.y / float(screenHeight);		// "v" or "y"
+		
+		uvs.s = fVertWorldLocation.x / 50.0f;
+		uvs.t = fVertWorldLocation.y / 50.0f;
+		
+		vec3 texRGB1 = texture( FullScreenColourTexture, vec2(fUVx2.s + 0.0f, fUVx2.t + 0.0f) ).rgb;
+		
+		vec3 texRGB2 = texture( FullScreenColourTexture, vec2(fUVx2.s - bufferOffset, fUVx2.t + 0.0f) ).rgb;
+		vec3 texRGB3 = texture( FullScreenColourTexture, vec2(fUVx2.s + bufferOffset, fUVx2.t + 0.0f) ).rgb;
+		vec3 texRGB4 = texture( FullScreenColourTexture, vec2(fUVx2.s + 0.0f, fUVx2.t - bufferOffset) ).rgb;
+		vec3 texRGB5 = texture( FullScreenColourTexture, vec2(fUVx2.s + 0.0f, fUVx2.t + bufferOffset) ).rgb;
 		
 		vec3 RGB = 0.5f * texRGB1 +
 		           0.125f * texRGB2 +

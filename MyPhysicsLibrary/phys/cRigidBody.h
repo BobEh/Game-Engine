@@ -80,6 +80,10 @@ namespace phys
 		// The force is applied center-mass, affecting the acceleration.
 		void ApplyForce(const glm::vec3& force);
 
+		// ApplyRelativeForce
+		// Apply a force withing object space
+		void ApplyRelativeForce(const float& force);
+
 		// TODO:
 		// ApplyImpulse
 		// Apply an impulse to the center-mass of this rigid body.

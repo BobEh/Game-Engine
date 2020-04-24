@@ -274,6 +274,8 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 		if (key == GLFW_KEY_0 && action == GLFW_PRESS)
 		{
 			currentRender = renderTag::none;
+			pCurrentObject = pFindObjectByFriendlyName("mainCharacter");
+			pCurrentObject->setAnimation("Idle");
 		}
 		if (key == GLFW_KEY_1 && action == GLFW_PRESS)
 		{
@@ -290,48 +292,6 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 			{
 				changeToPlatform = true;
 			}
-		}
-		if (key == GLFW_KEY_9)
-		{
-			bLightDebugSheresOn = false;
-		}
-		if (key == GLFW_KEY_0)
-		{
-			bLightDebugSheresOn = true;
-		}
-		// switch lights to control
-		if (key == GLFW_KEY_M)
-		{
-			currentLight = 0;		// Move the camera -0.01f units
-		}
-		// move the light
-		if (key == GLFW_KEY_A)
-		{
-			pLightsVec.at(0)->_PositionX -= CAMERASPEED;
-		}
-		if (key == GLFW_KEY_D)
-		{
-			pLightsVec.at(0)->_PositionX += CAMERASPEED;
-		}
-
-		// Move the camera (Q & E for up and down, along the y axis)
-		if (key == GLFW_KEY_Q)
-		{
-			pLightsVec.at(0)->_PositionY -= CAMERASPEED;
-		}
-		if (key == GLFW_KEY_E)
-		{
-			pLightsVec.at(0)->_PositionY += CAMERASPEED;
-		}
-
-		// Move the camera (W & S for towards and away, along the z axis)
-		if (key == GLFW_KEY_W)
-		{
-			pLightsVec.at(0)->_PositionZ -= CAMERASPEED;
-		}
-		if (key == GLFW_KEY_S)
-		{
-			pLightsVec.at(0)->_PositionZ += CAMERASPEED;
 		}
 
 		if (key == GLFW_KEY_K)
@@ -350,11 +310,6 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 				}
 			}
 			fileChanged = true;
-		}
-
-		if (key == GLFW_KEY_9)
-		{
-			bLightDebugSheresOn = false;
 		}
 
 	}//if (isShiftKeyDownByAlone(mods))
@@ -464,7 +419,7 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 				//pCurrentObject->setRotationXYZ(glm::vec3(0.0f, pCurrentObject->getRotationXYZ().y + glm::radians(10.0f), 0.0f));
 				//pCurrentObject->setVelocity(glm::vec3(pCurrentObject->getVelocity().x, 0.0f, 20.0f));
 				//pCurrentObject->ApplyForce(glm::vec3(0.0f, 0.0f, 0.1f));
-				glm::quat rotation = glm::quat(glm::vec3(0.0f, glm::radians(1.5f), 0.0f));
+				glm::quat rotation = glm::quat(glm::vec3(0.0f, glm::radians(-2.5f), 0.0f));
 				pCurrentObject->setRotationXYZ(pCurrentObject->getRotationXYZ()* rotation);
 			}
 			if (key == GLFW_KEY_D)
@@ -472,26 +427,26 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 				//pCurrentObject->setRotationXYZ(glm::vec3(0.0f, pCurrentObject->getRotationXYZ().y + glm::radians(-10.0f), 0.0f));
 				//pCurrentObject->setVelocity(glm::vec3(pCurrentObject->getVelocity().x, 0.0f, 20.0f));
 				//pCurrentObject->ApplyForce(glm::vec3(0.0f, 0.0f, -0.1f));
-				glm::quat rotation = glm::quat(glm::vec3(0.0f, glm::radians(-1.5f), 0.0f));
+				glm::quat rotation = glm::quat(glm::vec3(0.0f, glm::radians(2.5f), 0.0f));
 				pCurrentObject->setRotationXYZ(pCurrentObject->getRotationXYZ()* rotation);
 			}
 			if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
 			{
-				pCurrentObject->ApplyForce(glm::vec3(0.0f, 15.0f, 0.0f));
+				pCurrentObject->ApplyForce(glm::vec3(0.0f, 5.0f, 0.0f));
 				//jumping = true;
 				//currentAnimationName = "Jump";
 			}
 			if (key == GLFW_KEY_S)
 			{
-				glm::quat forwardDirection = pCurrentObject->getRotationXYZ();
-				forwardDirection *= -0.1f;
-				pCurrentObject->ApplyForce(glm::vec3(forwardDirection.y, 0.0f, forwardDirection.w));
+				glm::vec3 forwardDirection = pCurrentObject->GetRelativeDirection(glm::vec3(0.0f, 0.0f, -0.1f));
+				pCurrentObject->ApplyForce(forwardDirection);
 			}
 			if (key == GLFW_KEY_W)
 			{
-				glm::quat forwardDirection = pCurrentObject->getRotationXYZ();
-				forwardDirection *= 0.1f;
-				pCurrentObject->ApplyForce(glm::vec3(forwardDirection.y, 0.0f, forwardDirection.w));
+				//glm::quat forwardDirection = pCurrentObject->getRotationXYZ();
+				//forwardDirection *= 0.1f;
+				glm::vec3 forwardDirection = pCurrentObject->GetRelativeDirection(glm::vec3(0.0f, 0.0f, 0.1f));
+				pCurrentObject->ApplyForce(forwardDirection);
 			}
 			if (key == GLFW_KEY_ENTER)
 			{

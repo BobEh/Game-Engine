@@ -76,6 +76,9 @@ unsigned int currentRamp = 0;
 // light stuff
 cLight* pMainLight = new cLight();
 cLight* pMainLight1 = new cLight();
+cLight* pMainLight2 = new cLight();
+cLight* pMainLight3 = new cLight();
+cLight* pMainLight4 = new cLight();
 std::vector<cLight*> pLightsVec;
 unsigned int currentLight = 0;
 cLight* pCorner1Light = new cLight();
@@ -161,6 +164,7 @@ iObject* pMoon;
 iObject* pMars;
 iObject* pMainShip;
 iObject* gPlayerBullet;
+iObject* pShipToken;
 
 #define NUM_OF_THREADS 1
 
@@ -187,13 +191,18 @@ void TransitionToAI(float dt)
 {
 	if (transitionTime < 3.0f)
 	{
-		bufferOffset = randInRange(0.0f, 1.0f);
+		bufferOffset = randInRange(0.0f, 0.5f);
 		transitionTime += dt;
+		glm::quat tokenRotation = glm::quat(glm::vec3(0.0f, 0.0f, glm::radians(10.0f)));
+		pShipToken->setRotationXYZ(pShipToken->getRotationXYZ() * tokenRotation);
 		return;
 	}
 	currentRender = renderTag::AI;
 	transitionTime = 0.0f;
 	bufferOffset = 0.0f;
+	iObject* pMainCharacter = pFindObjectByFriendlyName("mainCharacter");
+	pMainCharacter->setPositionXYZ(glm::vec3(40.0f, 5.0f, 0.0f));
+	pMainCharacter->ApplyForce(glm::vec3(0.0f, 0.0f, -10.0f));
 	changeToAI = false;
 }
 
@@ -208,5 +217,5 @@ void TransitionToPlatform(float dt)
 	currentRender = renderTag::Platform;
 	transitionTime = 0.0f;
 	bufferOffset = 0.0f;
-	changeToAI = false;
+	changeToPlatform = false;
 }

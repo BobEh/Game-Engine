@@ -20,7 +20,7 @@ glm::quat cTestObject::getRotationXYZ()
 {
 	return this->qRotation;
 }
-float cTestObject::getScale()
+glm::vec3 cTestObject::getScale()
 {
 	return this->_scale;
 }
@@ -113,7 +113,7 @@ void cTestObject::setRotationXYZ(glm::quat rotationXYZ)
 {
 	this->qRotation = rotationXYZ;
 }
-void cTestObject::setScale(float scale)
+void cTestObject::setScale(glm::vec3 scale)
 {
 	this->_scale = scale;
 }
@@ -188,7 +188,7 @@ void cTestObject::setDisableDepthBufferWrite(bool disableDepthBufferWrite)
 
 cTestObject::cTestObject()
 {
-	this->_scale = 0.0f;
+	this->_scale = glm::vec3(0.0f);
 	this->_isVisible = true;
 
 	this->_isWireframe = false;

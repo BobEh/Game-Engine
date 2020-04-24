@@ -74,6 +74,54 @@ int LoadMeshes()
 
 	std::string assimpErrorString = "";
 
+	cMesh platformCharacterMesh;
+	if (!pTheModelLoader->LoadModel_Assimp("assets/modelsFBX/RPG-Character(FBX2013).FBX",platformCharacterMesh, assimpErrorString))
+	{
+		std::cout << "Error: couldn't find the platform character fbx." << std::endl;
+	}
+
+	cMesh firTreeLeavesMesh;
+	if (!pTheModelLoader->LoadPlyModel("assets/models/firTreeLeaves.ply", firTreeLeavesMesh))
+	{
+		std::cout << "Error: couldn't find the fir tree leaves ply." << std::endl;
+	}
+
+	cMesh firTreeTrunkMesh;
+	if (!pTheModelLoader->LoadPlyModel("assets/models/firTreeTrunk.ply", firTreeTrunkMesh))
+	{
+		std::cout << "Error: couldn't find the fir tree trunk ply." << std::endl;
+	}
+
+	cMesh bigTreeTrunkMesh;
+	if (!pTheModelLoader->LoadPlyModel("assets/models/bigTreeTrunk.ply", bigTreeTrunkMesh))
+	{
+		std::cout << "Error: couldn't find the big tree trunk ply." << std::endl;
+	}
+
+	cMesh bigTreeLeavesMesh;
+	if (!pTheModelLoader->LoadPlyModel("assets/models/bigTreeLeaves.ply", bigTreeLeavesMesh))
+	{
+		std::cout << "Error: couldn't find the big tree Leaves ply." << std::endl;
+	}
+
+	cMesh bigTreeBranchesMesh;
+	if (!pTheModelLoader->LoadPlyModel("assets/models/bigTreeBranches.ply", bigTreeBranchesMesh))
+	{
+		std::cout << "Error: couldn't find the big tree branches ply." << std::endl;
+	}
+
+	cMesh bushLeavesMesh;
+	if (!pTheModelLoader->LoadPlyModel("assets/models/bushLeaves.ply", bushLeavesMesh))
+	{
+		std::cout << "Error: couldn't find the bush leaves ply." << std::endl;
+	}
+
+	cMesh bushBranchesMesh;
+	if (!pTheModelLoader->LoadPlyModel("assets/models/bushBranches.ply", bushBranchesMesh))
+	{
+		std::cout << "Error: couldn't find the bush branches ply." << std::endl;
+	}
+
 	cMesh floorMesh;
 	if (!pTheModelLoader->LoadPlyModel("assets/models/Floor.ply", floorMesh))
 	{
@@ -205,6 +253,54 @@ int LoadMeshes()
 		sphereMeshInfo,
 		shaderProgID);
 
+	sModelDrawInfo platformCharacterMeshInfo;
+	pTheVAOManager->LoadModelIntoVAO("platformCharacter",
+		platformCharacterMesh,		// Sphere mesh info
+		platformCharacterMeshInfo,
+		shaderProgID);
+
+	sModelDrawInfo firTreeTrunkMeshInfo;
+	pTheVAOManager->LoadModelIntoVAO("firTreeTrunk",
+		firTreeTrunkMesh,		// Sphere mesh info
+		firTreeTrunkMeshInfo,
+		shaderProgID);
+
+	sModelDrawInfo firTreeLeavesMeshInfo;
+	pTheVAOManager->LoadModelIntoVAO("firTreeLeaves",
+		firTreeLeavesMesh,		// Sphere mesh info
+		firTreeLeavesMeshInfo,
+		shaderProgID);
+
+	sModelDrawInfo bigTreeTrunkMeshInfo;
+	pTheVAOManager->LoadModelIntoVAO("bigTreeTrunk",
+		bigTreeTrunkMesh,		// Sphere mesh info
+		bigTreeTrunkMeshInfo,
+		shaderProgID);
+
+	sModelDrawInfo bigTreeLeavesMeshInfo;
+	pTheVAOManager->LoadModelIntoVAO("bigTreeLeaves",
+		bigTreeLeavesMesh,		// Sphere mesh info
+		bigTreeLeavesMeshInfo,
+		shaderProgID);
+
+	sModelDrawInfo bigTreeBranchesMeshInfo;
+	pTheVAOManager->LoadModelIntoVAO("bigTreeBranches",
+		bigTreeBranchesMesh,		// Sphere mesh info
+		bigTreeBranchesMeshInfo,
+		shaderProgID);
+
+	sModelDrawInfo bushLeavesMeshInfo;
+	pTheVAOManager->LoadModelIntoVAO("bushLeaves",
+		bushLeavesMesh,		// Sphere mesh info
+		bushLeavesMeshInfo,
+		shaderProgID);
+
+	sModelDrawInfo bushBranchesMeshInfo;
+	pTheVAOManager->LoadModelIntoVAO("bushBranches",
+		bushBranchesMesh,		// Sphere mesh info
+		bushBranchesMeshInfo,
+		shaderProgID);
+
 	sModelDrawInfo cubeMeshDebugInfo;
 	if (!pTheVAOManager->LoadModelIntoVAO("cubeDebug",
 		cubeMeshDebug,		// Sphere mesh info
@@ -315,6 +411,16 @@ int LoadTextures()
 
 	g_pTextureManager->Create2DTextureFromBMPFile("moon.bmp", true);
 
+	g_pTextureManager->Create2DTextureFromBMPFile("brown.bmp", true);
+
+	g_pTextureManager->Create2DTextureFromBMPFile("grass.bmp", true);
+
+	g_pTextureManager->Create2DTextureFromBMPFile("leaf.bmp", true);
+
+	g_pTextureManager->Create2DTextureFromBMPFile("leaves.bmp", true);
+
+	g_pTextureManager->Create2DTextureFromBMPFile("Menu.bmp", true);
+
 	::g_pTextureManager->Create2DTextureFromBMPFile("water_800.bmp", true);
 
 	::g_pTextureManager->Create2DTextureFromBMPFile("purple.bmp", true);
@@ -373,7 +479,7 @@ void LoadLevel()
 		pCube->setFriendlyName(cubeName);
 		pCube->setPositionXYZ(glm::vec3((i * size) * -1.0f, 0.0f, 0.0f));
 		pCube->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
-		pCube->setScale(1.0f);
+		pCube->setScale(glm::vec3(1.0f));
 		//	pCube->objectColourRGBA = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
 		pCube->setDebugColour(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 		pCube->setIsWireframe(false);
@@ -393,7 +499,7 @@ void LoadLevel()
 		pCube->setFriendlyName(cubeName);
 		pCube->setPositionXYZ(glm::vec3((startPoint + (i * size)) * -1.0f, 0.0f, 0.0f));
 		pCube->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
-		pCube->setScale(1.0f);
+		pCube->setScale(glm::vec3(1.0f));
 		//	pCube->objectColourRGBA = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
 		pCube->setDebugColour(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 		pCube->setIsWireframe(false);
@@ -413,7 +519,7 @@ void LoadLevel()
 		pCube->setFriendlyName(cubeName);
 		pCube->setPositionXYZ(glm::vec3(0.0f, (i * size), 0.0f));
 		pCube->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
-		pCube->setScale(1.0f);
+		pCube->setScale(glm::vec3(1.0f));
 		//	pCube->objectColourRGBA = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
 		pCube->setDebugColour(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 		pCube->setIsWireframe(false);
@@ -433,7 +539,7 @@ void LoadLevel()
 		pCube->setFriendlyName(cubeName);
 		pCube->setPositionXYZ(glm::vec3(0.0f, (i * size), 0.0f));
 		pCube->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
-		pCube->setScale(1.0f);
+		pCube->setScale(glm::vec3(1.0f));
 		//	pCube->objectColourRGBA = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
 		pCube->setDebugColour(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 		pCube->setIsWireframe(false);
@@ -453,7 +559,7 @@ void LoadLevel()
 		pCube->setFriendlyName(cubeName);
 		pCube->setPositionXYZ(glm::vec3(-880.0f, (i * size), 0.0f));
 		pCube->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
-		pCube->setScale(1.0f);
+		pCube->setScale(glm::vec3(1.0f));
 		//	pCube->objectColourRGBA = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
 		pCube->setDebugColour(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 		pCube->setIsWireframe(false);
@@ -473,7 +579,7 @@ void LoadLevel()
 		pCube->setFriendlyName(cubeName);
 		pCube->setPositionXYZ(glm::vec3((i * size) * -1.0f, 100.0f, 0.0f));
 		pCube->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
-		pCube->setScale(1.0f);
+		pCube->setScale(glm::vec3(1.0f));
 		//	pCube->objectColourRGBA = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
 		pCube->setDebugColour(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 		pCube->setIsWireframe(false);
@@ -493,7 +599,7 @@ void LoadLevel()
 		pCube->setFriendlyName(cubeName);
 		pCube->setPositionXYZ(glm::vec3((i * size) * -1.0f, 360.0f, 0.0f));
 		pCube->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
-		pCube->setScale(1.0f);
+		pCube->setScale(glm::vec3(1.0f));
 		//	pCube->objectColourRGBA = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
 		pCube->setDebugColour(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 		pCube->setIsWireframe(false);
@@ -513,7 +619,7 @@ void LoadLevel()
 		pCube->setFriendlyName(cubeName);
 		pCube->setPositionXYZ(glm::vec3((i * size) * -1.0f, 180.0f, 0.0f));
 		pCube->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
-		pCube->setScale(1.0f);
+		pCube->setScale(glm::vec3(1.0f));
 		//	pCube->objectColourRGBA = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
 		pCube->setDebugColour(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 		pCube->setIsWireframe(false);
@@ -533,7 +639,7 @@ void LoadLevel()
 		pCube->setFriendlyName(cubeName);
 		pCube->setPositionXYZ(glm::vec3((i * size) * -1.0f, 360.0f, 0.0f));
 		pCube->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
-		pCube->setScale(1.0f);
+		pCube->setScale(glm::vec3(1.0f));
 		//	pCube->objectColourRGBA = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
 		pCube->setDebugColour(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 		pCube->setIsWireframe(false);
@@ -553,7 +659,7 @@ void LoadLevel()
 		pCube->setFriendlyName(cubeName);
 		pCube->setPositionXYZ(glm::vec3((i * size) * -1.0f, 360.0f, 0.0f));
 		pCube->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
-		pCube->setScale(1.0f);
+		pCube->setScale(glm::vec3(1.0f));
 		//	pCube->objectColourRGBA = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
 		pCube->setDebugColour(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 		pCube->setIsWireframe(false);
@@ -573,7 +679,7 @@ void LoadLevel()
 		pCube->setFriendlyName(cubeName);
 		pCube->setPositionXYZ(glm::vec3((i * size) * -1.0f, 210.0f, 0.0f));
 		pCube->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
-		pCube->setScale(1.0f);
+		pCube->setScale(glm::vec3(1.0f));
 		//	pCube->objectColourRGBA = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
 		pCube->setDebugColour(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 		pCube->setIsWireframe(false);
@@ -593,7 +699,7 @@ void LoadLevel()
 		pCube->setFriendlyName(cubeName);
 		pCube->setPositionXYZ(glm::vec3((i * size) * -1.0f, 210.0f, 0.0f));
 		pCube->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
-		pCube->setScale(1.0f);
+		pCube->setScale(glm::vec3(1.0f));
 		//	pCube->objectColourRGBA = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
 		pCube->setDebugColour(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 		pCube->setIsWireframe(false);
@@ -613,7 +719,7 @@ void LoadLevel()
 		pCube->setFriendlyName(cubeName);
 		pCube->setPositionXYZ(glm::vec3((i * size) * -1.0f, 110.0f, 0.0f));
 		pCube->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
-		pCube->setScale(1.0f);
+		pCube->setScale(glm::vec3(1.0f));
 		//	pCube->objectColourRGBA = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
 		pCube->setDebugColour(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 		pCube->setIsWireframe(false);
@@ -631,8 +737,8 @@ void LoadAnimationObjects()
 	iObject* pMainCharacter = pFactory->CreateObject("sphere", nPhysics::eComponentType::ball);
 	nPhysics::sBallDef characterPhysics;
 	characterPhysics.Mass = 1.0;
-	characterPhysics.Position = glm::vec3(30.0f, 50.0f, 0.0f);
-	characterPhysics.Radius = 5.0f;
+	characterPhysics.Position = glm::vec3(40.0f, 10.0f, 0.0f);
+	characterPhysics.Radius = 1.0f;
 	characterPhysics.Rotation = glm::vec3(0.0f, 0.0f, 0.0f);
 	characterPhysics.Scale = glm::vec3(0.05f, 0.05f, 0.05f);
 	characterPhysics.Angle = 1.0f;
@@ -666,7 +772,7 @@ void LoadAnimationObjects()
 	pMainCharacter->setMeshName("mainCharacter");
 	pMainCharacter->setFriendlyName("mainCharacter");	// We use to search
 	pMainCharacter->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
-	pMainCharacter->setScale(0.2f);
+	pMainCharacter->setScale(glm::vec3(0.2f));
 	pMainCharacter->setObjectColourRGBA(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 	pMainCharacter->setDebugColour(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
 	pMainCharacter->setVelocity(glm::vec3(0.0f, 0.0f, 0.0f));
@@ -682,49 +788,26 @@ void LoadAnimationObjects()
 	g_vec_pCharacterObjects.push_back(pMainCharacter);
 	physicsWorld->AddComponent(pMainCharacter->GetComponent());
 
-	//iObject* pPlatformCharacter = pFactory->CreateObject("sphere", nPhysics::eComponentType::ball);
-	//cSimpleAssimpSkinnedMesh* platformSkinnedMesh = new cSimpleAssimpSkinnedMesh();
-	//pPlatformCharacter->setSM(platformSkinnedMesh);
-	//pPlatformCharacter->getSM()->LoadMeshFromFile("platformCharacter", "assets/modelsFBX/RPG-Character(FBX2013)2.FBX", 1);
-
-	//sModelDrawInfo* platformCharacterMeshInfo = pPlatformCharacter->getSM()->CreateMeshObjectFromCurrentModel(1);
-
-	//pPlatformCharacter->getSM()->LoadMeshAnimation("Run", "assets/modelsFBX/Run.fbx");
-	//pPlatformCharacter->getSM()->LoadMeshAnimation("Walk-Slow", "assets/modelsFBX/RPG-Character_Unarmed-Walk-Slow(FBX2013).FBX");
-	//pPlatformCharacter->getSM()->LoadMeshAnimation("Walk", "assets/modelsFBX/Walking.fbx");
-	//pPlatformCharacter->getSM()->LoadMeshAnimation("Jump", "assets/modelsFBX/Jumping.fbx");
-	//pPlatformCharacter->getSM()->LoadMeshAnimation("Fall", "assets/modelsFBX/RPG-Character_Unarmed-Fall(FBX2013).FBX");
-	//pPlatformCharacter->getSM()->LoadMeshAnimation("Attack", "assets/modelsFBX/RPG-Character_Unarmed-Attack-R3(FBX2013).FBX");
-	//pPlatformCharacter->getSM()->LoadMeshAnimation("Idle", "assets/modelsFBX/RPG-Character_Unarmed-Idle(FBX2013).FBX");
-	//pPlatformCharacter->getSM()->LoadMeshAnimation("Dying", "assets/modelsFBX/RPG-Character_Unarmed-Death1(FBX2013).FBX");
-	//pPlatformCharacter->getSM()->LoadMeshAnimation("Roll", "assets/modelsFBX/Sprinting Forward Roll.fbx");
-	//pPlatformCharacter->setAnimation("Idle");
-	//pPlatformCharacter->setMeshName("platformCharacter");
-	//pPlatformCharacter->setFriendlyName("platformCharacter");	// We use to search
-	//pPlatformCharacter->setPositionXYZ(glm::vec3(-680.0, 120.0f, 0.0f));
-	//pPlatformCharacter->setRotationXYZ(glm::vec3(0.0f, glm::radians(-90.0f), 0.0f));
-	//pPlatformCharacter->setScale(0.2f);
-	//pPlatformCharacter->setDebugColour(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
-	//pPlatformCharacter->setVelocity(glm::vec3(0.0f, 0.0f, 0.0f));
-	//pPlatformCharacter->setAccel(glm::vec3(0.0f, 0.0f, 0.0f));
-	//pPlatformCharacter->setInverseMass(1.0f);
-	//pPlatformCharacter->setIsVisible(true);
-	//pPlatformCharacter->setIsWireframe(false);
-	//pPlatformCharacter->setTexture("StoneTex_1024.bmp", 0);
-	//pPlatformCharacter->setTexture("grassTexture_512.bmp", 1);
-	//pPlatformCharacter->setTexture("sandTexture_1024.bmp", 2);
-	//pPlatformCharacter->setTextureRatio(1, 1);
-	//pPlatformCharacter->setTransprancyValue(1.0f);
-	//g_vec_pPlatformCharacterObjects.push_back(pPlatformCharacter);
-	////physicsWorld->AddComponent(pPlatformCharacter->GetComponent());
-	//if (platformCharacterMeshInfo)
-	//{
-	//	std::cout << platformCharacterMeshInfo->numberOfVertices << " vertices" << std::endl;
-	//	std::cout << platformCharacterMeshInfo->numberOfTriangles << " triangles" << std::endl;
-	//	std::cout << platformCharacterMeshInfo->numberOfIndices << " indices" << std::endl;
-
-	//	pTheVAOManager->LoadModelDrawInfoIntoVAO(*platformCharacterMeshInfo, shaderProgID);
-	//}
+	iObject* pPlatformCharacter = pFactory->CreateObject("sphere", nPhysics::eComponentType::ball);
+	pPlatformCharacter->setAnimation("Idle");
+	pPlatformCharacter->setMeshName("platformCharacter");
+	pPlatformCharacter->setFriendlyName("platformCharacter");	// We use to search
+	pPlatformCharacter->setPositionXYZ(glm::vec3(-680.0, 120.0f, 0.0f));
+	pPlatformCharacter->setRotationXYZ(glm::vec3(glm::radians(-90.0f), 0.0f, 0.0f));
+	pPlatformCharacter->setScale(glm::vec3(0.2f));
+	pPlatformCharacter->setDebugColour(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+	pPlatformCharacter->setVelocity(glm::vec3(0.0f, 0.0f, 0.0f));
+	pPlatformCharacter->setAccel(glm::vec3(0.0f, 0.0f, 0.0f));
+	pPlatformCharacter->setInverseMass(1.0f);
+	pPlatformCharacter->setIsVisible(true);
+	pPlatformCharacter->setIsWireframe(false);
+	pPlatformCharacter->setTexture("StoneTex_1024.bmp", 0);
+	pPlatformCharacter->setTexture("grassTexture_512.bmp", 1);
+	pPlatformCharacter->setTexture("sandTexture_1024.bmp", 2);
+	pPlatformCharacter->setTextureRatio(1, 1);
+	pPlatformCharacter->setTransprancyValue(1.0f);
+	g_vec_pPlatformCharacterObjects.push_back(pPlatformCharacter);
+	//physicsWorld->AddComponent(pPlatformCharacter->GetComponent());
 }
 
 DWORD WINAPI LoadObjects(LPVOID params)
@@ -741,7 +824,7 @@ DWORD WINAPI LoadObjects(LPVOID params)
 	pSphere->setFriendlyName("physicsSphere");	// We use to search 
 	pSphere->setPositionXYZ(glm::vec3(0.0f, 50.0f, 0.0f));
 	pSphere->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
-	pSphere->setScale(1.0f);
+	pSphere->setScale(glm::vec3(1.0f));
 	pSphere->setObjectColourRGBA(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 	//pSphere->setDebugColour(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 	pSphere->setVelocity(glm::vec3(0.0f, 0.0f, 0.0f));
@@ -777,7 +860,7 @@ DWORD WINAPI LoadObjects(LPVOID params)
 		pAnotherSphere->setFriendlyName(theName);	// We use to search 
 		//pSphere->setPositionXYZ(glm::vec3(0.0f, 50.0f, 0.0f));
 		pAnotherSphere->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
-		pAnotherSphere->setScale(scaleRadius);
+		pAnotherSphere->setScale(glm::vec3(scaleRadius));
 		pAnotherSphere->setObjectColourRGBA(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 		//pSphere->setDebugColour(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 		pAnotherSphere->setVelocity(glm::vec3(0.0f, 0.0f, 0.0f));
@@ -810,7 +893,7 @@ DWORD WINAPI LoadObjects(LPVOID params)
 	pWallLeft->setFriendlyName("wallLeft");	// We use to search 
 	//pFloor->setPositionXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
 	pWallLeft->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
-	pWallLeft->setScale(1.0f);
+	pWallLeft->setScale(glm::vec3(1.0f));
 	pWallLeft->setObjectColourRGBA(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 	pWallLeft->setAccel(glm::vec3(0.0f, 0.0f, 0.0f));
 	pWallLeft->set_SPHERE_radius(1.0f);
@@ -823,7 +906,7 @@ DWORD WINAPI LoadObjects(LPVOID params)
 	pWallLeft->setTransprancyValue(0.1f);
 	nPhysics::sPlaneDef physicsPlaneWallLeft;
 	physicsPlaneWallLeft.Normal = glm::vec3(1.0f, 0.0f, 0.0f);
-	physicsPlaneWallLeft.Position = glm::vec3(-50.0f, 0.0f, 0.0f);
+	physicsPlaneWallLeft.Position = glm::vec3(-500.0f, 0.0f, 0.0f);
 	physicsPlaneWallLeft.Constant = glm::dot(physicsPlaneWallLeft.Normal, physicsPlaneWallLeft.Position);
 	physicsPlaneWallLeft.Mass = 0.0f;
 	nPhysics::iPlaneComponent* pWallLeftPhysics = physicsFactory->CreatePlane(physicsPlaneWallLeft);
@@ -838,7 +921,7 @@ DWORD WINAPI LoadObjects(LPVOID params)
 	pWallRight->setFriendlyName("wallRight");	// We use to search 
 	//pFloor->setPositionXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
 	pWallRight->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
-	pWallRight->setScale(1.0f);
+	pWallRight->setScale(glm::vec3(1.0f));
 	pWallRight->setObjectColourRGBA(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 	pWallRight->setAccel(glm::vec3(0.0f, 0.0f, 0.0f));
 	pWallRight->set_SPHERE_radius(1.0f);
@@ -851,7 +934,7 @@ DWORD WINAPI LoadObjects(LPVOID params)
 	pWallRight->setTransprancyValue(0.1f);
 	nPhysics::sPlaneDef physicsPlaneWallRight;
 	physicsPlaneWallRight.Normal = glm::vec3(-1.0f, 0.0f, 0.0f);
-	physicsPlaneWallRight.Position = glm::vec3(50.0f, 0.0f, 0.0f);
+	physicsPlaneWallRight.Position = glm::vec3(500.0f, 0.0f, 0.0f);
 	physicsPlaneWallRight.Constant = glm::dot(physicsPlaneWallRight.Normal, physicsPlaneWallRight.Position);
 	physicsPlaneWallRight.Mass = 0.0f;
 	nPhysics::iPlaneComponent* pWallRightPhysics = physicsFactory->CreatePlane(physicsPlaneWallRight);
@@ -866,7 +949,7 @@ DWORD WINAPI LoadObjects(LPVOID params)
 	pWallFront->setFriendlyName("wallFront");	// We use to search 
 	//pFloor->setPositionXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
 	pWallFront->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
-	pWallFront->setScale(1.0f);
+	pWallFront->setScale(glm::vec3(1.0f));
 	pWallFront->setObjectColourRGBA(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 	pWallFront->setAccel(glm::vec3(0.0f, 0.0f, 0.0f));
 	pWallFront->set_SPHERE_radius(1.0f);
@@ -879,7 +962,7 @@ DWORD WINAPI LoadObjects(LPVOID params)
 	pWallFront->setTransprancyValue(0.1f);
 	nPhysics::sPlaneDef physicsPlaneWallFront;
 	physicsPlaneWallFront.Normal = glm::vec3(0.0f, 0.0f, -1.0f);
-	physicsPlaneWallFront.Position = glm::vec3(0.0f, 0.0f, 50.0f);
+	physicsPlaneWallFront.Position = glm::vec3(0.0f, 0.0f, 500.0f);
 	physicsPlaneWallFront.Constant = glm::dot(physicsPlaneWallFront.Normal, physicsPlaneWallFront.Position);
 	physicsPlaneWallFront.Mass = 0.0f;
 	nPhysics::iPlaneComponent* pWallFrontPhysics = physicsFactory->CreatePlane(physicsPlaneWallFront);
@@ -894,7 +977,7 @@ DWORD WINAPI LoadObjects(LPVOID params)
 	pWallBack->setFriendlyName("wallBack");	// We use to search 
 	//pFloor->setPositionXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
 	pWallBack->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
-	pWallBack->setScale(1.0f);
+	pWallBack->setScale(glm::vec3(1.0f));
 	pWallBack->setObjectColourRGBA(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 	pWallBack->setAccel(glm::vec3(0.0f, 0.0f, 0.0f));
 	pWallBack->set_SPHERE_radius(1.0f);
@@ -907,7 +990,7 @@ DWORD WINAPI LoadObjects(LPVOID params)
 	pWallBack->setTransprancyValue(0.1f);
 	nPhysics::sPlaneDef physicsPlaneWallBack;
 	physicsPlaneWallBack.Normal = glm::vec3(0.0f, 0.0f, 1.0f);
-	physicsPlaneWallBack.Position = glm::vec3(0.0f, 0.0f, -50.0f);
+	physicsPlaneWallBack.Position = glm::vec3(0.0f, 0.0f, -500.0f);
 	physicsPlaneWallBack.Constant = glm::dot(physicsPlaneWallBack.Normal, physicsPlaneWallBack.Position);
 	physicsPlaneWallBack.Mass = 0.0f;
 	nPhysics::iPlaneComponent* pWallBackPhysics = physicsFactory->CreatePlane(physicsPlaneWallBack);
@@ -922,14 +1005,14 @@ DWORD WINAPI LoadObjects(LPVOID params)
 	pFloor->setFriendlyName("floor");	// We use to search 
 	pFloor->setPositionXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
 	pFloor->setRotationXYZ(glm::vec3(glm::radians(90.0f), 0.0f, 0.0f));
-	pFloor->setScale(1.0f);
+	pFloor->setScale(glm::vec3(1.0f, 1.0f, 1.0f));
 	pFloor->setObjectColourRGBA(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 	pFloor->setAccel(glm::vec3(0.0f, 0.0f, 0.0f));
 	pFloor->set_SPHERE_radius(1.0f);
 	pFloor->setInverseMass(1.0f);
 	pFloor->setIsVisible(true);
 	pFloor->setIsWireframe(false);
-	pFloor->setTexture("grassTexture_512.bmp", 1);
+	pFloor->setTexture("grass.bmp", 1);
 	pFloor->setTextureRatio(1, 1);
 	pFloor->SetPlaneType("floor");
 	pFloor->setTransprancyValue(1.0f);
@@ -954,7 +1037,7 @@ DWORD WINAPI LoadObjects(LPVOID params)
 	pDebugSphere->setFriendlyName("debug_sphere");
 	//pDebugSphere->setPositionXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
 	pDebugSphere->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
-	pDebugSphere->setScale(0.1f);
+	pDebugSphere->setScale(glm::vec3(0.1f));
 	//	pDebugSphere->objectColourRGBA = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
 	pDebugSphere->setDebugColour(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 	pDebugSphere->setIsWireframe(true);
@@ -972,7 +1055,7 @@ DWORD WINAPI LoadObjects(LPVOID params)
 	pDebugCube->setFriendlyName("debug_cube");
 	//pDebugCube->setPositionXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
 	pDebugCube->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
-	pDebugCube->setScale(1.0f);
+	pDebugCube->setScale(glm::vec3(1.0f));
 	//	pDebugSphere->objectColourRGBA = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
 	pDebugCube->setDebugColour(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 	pDebugCube->setIsWireframe(true);
@@ -985,7 +1068,7 @@ DWORD WINAPI LoadObjects(LPVOID params)
 	pFBOCube->setMeshName("fboCube");
 	pFBOCube->setFriendlyName("fbo");
 	pFBOCube->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
-	pFBOCube->setScale(1.0f);
+	pFBOCube->setScale(glm::vec3(1.0f));
 	pFBOCube->setDebugColour(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 	pFBOCube->setIsWireframe(true);
 	pFBOCube->setInverseMass(0.0f);			// Sphere won't move
@@ -1000,7 +1083,7 @@ DWORD WINAPI LoadObjects(LPVOID params)
 	//pSkyBoxSphere->setPositionXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
 	pSkyBoxSphere->setDebugColour(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
 	pSkyBoxSphere->setIsWireframe(false);
-	pSkyBoxSphere->setScale(5000.0f);		// 1.0 to 10,000,000
+	pSkyBoxSphere->setScale(glm::vec3(5000.0f));		// 1.0 to 10,000,000
 	//pSkyBoxSphere->isWireframe = true;
 	//pSkyBoxSphere->debugColour = glm::vec4( 0.0f, 1.0f, 0.0f, 1.0f );
 	//pSkyBoxSphere->setTexture("Pizza.bmp",1);
@@ -1036,7 +1119,7 @@ DWORD WINAPI LoadObjects(LPVOID params)
 	pMoon->setFriendlyName("moon");	// We use to search 
 	pMoon->setPositionXYZ(glm::vec3(-100.0f, -300.0f, -95.0f));
 	pMoon->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
-	pMoon->setScale(1.0f);
+	pMoon->setScale(glm::vec3(1.0f));
 	pMoon->setObjectColourRGBA(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 	//pSphere->setDebugColour(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 	pMoon->setTexture("moon.bmp", 1);
@@ -1066,7 +1149,7 @@ DWORD WINAPI LoadObjects(LPVOID params)
 	pMars->setFriendlyName("mars");	// We use to search 
 	pMars->setPositionXYZ(glm::vec3(200.0f, -600.0f, 300.0f));
 	pMars->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
-	pMars->setScale(1.0f);
+	pMars->setScale(glm::vec3(1.0f));
 	pMars->setObjectColourRGBA(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 	//pSphere->setDebugColour(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 	pMars->setTexture("mars.bmp", 1);
@@ -1096,7 +1179,7 @@ DWORD WINAPI LoadObjects(LPVOID params)
 	gPlayerBullet->setFriendlyName("bullet");	// We use to search 
 	gPlayerBullet->setPositionXYZ(glm::vec3(0.0f, 10.0f, -100.0f));
 	gPlayerBullet->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
-	gPlayerBullet->setScale(1.0f);
+	gPlayerBullet->setScale(glm::vec3(1.0f));
 	//gPlayerBullet->setObjectColourRGBA(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 	gPlayerBullet->setDebugColour(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 	gPlayerBullet->setTexture("red.bmp", 1);
@@ -1125,7 +1208,7 @@ DWORD WINAPI LoadObjects(LPVOID params)
 	pMainShip->setFriendlyName("mainXWing");	// We use to search 
 	pMainShip->setPositionXYZ(glm::vec3(0.0f, 10.0f, 0.0f));
 	pMainShip->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
-	pMainShip->setScale(1.0f);
+	pMainShip->setScale(glm::vec3(1.0f));
 	pMainShip->setObjectColourRGBA(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 	pMainShip->setTexture("X-Wing-Texture_bit.bmp", 1);
 	pMainShip->setTextureRatio(1, 1);
@@ -1137,6 +1220,24 @@ DWORD WINAPI LoadObjects(LPVOID params)
 	pMainShip->setIsVisible(true);
 	pMainShip->setIsWireframe(false);
 	::g_vec_pAIGameObjects.push_back(pMainShip);
+
+	pShipToken = pFactory->CreateObject("sphere", nPhysics::eComponentType::ball);
+	pShipToken->setMeshName("xWing");
+	pShipToken->setFriendlyName("shipTransporter");	// We use to search 
+	pShipToken->setPositionXYZ(glm::vec3(40.0f, 10.0f, 40.0f));
+	pShipToken->setRotationXYZ(glm::vec3(glm::radians(-90.0f), 0.0f, 0.0f));
+	pShipToken->setScale(glm::vec3(1.0f));
+	pShipToken->setObjectColourRGBA(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+	pShipToken->setTexture("X-Wing-Texture_bit.bmp", 1);
+	pShipToken->setTextureRatio(1, 1);
+	pShipToken->setTransprancyValue(1.0f);
+	pShipToken->setVelocity(glm::vec3(0.0f, 0.0f, 0.0f));
+	pShipToken->setAccel(glm::vec3(0.0f, 0.0f, 0.0f));
+	pShipToken->set_SPHERE_radius(1.0f);
+	pShipToken->setInverseMass(1.0f);
+	pShipToken->setIsVisible(true);
+	pShipToken->setIsWireframe(false);
+	::g_vec_pEnvironmentObjects.push_back(pShipToken);
 
 	cPhysics* pPhsyics = new cPhysics();
 
@@ -1171,7 +1272,7 @@ DWORD WINAPI LoadObjects(LPVOID params)
 		pEnemy->setFriendlyName(friendlyName);	// We use to search 
 		pEnemy->setPositionXYZ(glm::vec3(randInRange(-100.0f, 100.0f), 10.0f, randInRange(100.0f, 175.0f)));
 		pEnemy->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
-		pEnemy->setScale(1.0f);
+		pEnemy->setScale(glm::vec3(1.0f));
 		if (pEnemy->getBehaviour() == "seek")
 		{
 			Seek* seekBehaviour = new Seek(pEnemy, pSphere);
@@ -1223,7 +1324,7 @@ DWORD WINAPI LoadObjects(LPVOID params)
 	pEnemy1->setFriendlyName("enemy1");	// We use to search 
 	pEnemy1->setPositionXYZ(glm::vec3(-30.0, 10.0f, 0.0f));
 	pEnemy1->setRotationXYZ(glm::vec3(0.0f, glm::radians(-90.0f), 0.0f));
-	pEnemy1->setScale(1.0f);
+	pEnemy1->setScale(glm::vec3(1.0f));
 	//pEnemy1->setObjectColourRGBA(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 	pEnemy1->setDebugColour(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
 	pEnemy1->setVelocity(glm::vec3(0.0f, 0.0f, 20.0f));
@@ -1241,7 +1342,7 @@ DWORD WINAPI LoadObjects(LPVOID params)
 	pEnemy2->setFriendlyName("enemy2");	// We use to search 
 	pEnemy2->setPositionXYZ(glm::vec3(-60.0, 110.0f, 0.0f));
 	pEnemy2->setRotationXYZ(glm::vec3(0.0f, glm::radians(-90.0f), 0.0f));
-	pEnemy2->setScale(1.0f);
+	pEnemy2->setScale(glm::vec3(1.0f));
 	//pEnemy2->setObjectColourRGBA(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 	pEnemy2->setDebugColour(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
 	pEnemy2->setVelocity(glm::vec3(0.0f, 0.0f, 20.0f));
@@ -1259,7 +1360,7 @@ DWORD WINAPI LoadObjects(LPVOID params)
 	pEnemy3->setFriendlyName("enemy3");	// We use to search 
 	pEnemy3->setPositionXYZ(glm::vec3(-540.0, 220.0f, 0.0f));
 	pEnemy3->setRotationXYZ(glm::vec3(0.0f, glm::radians(-90.0f), 0.0f));
-	pEnemy3->setScale(1.0f);
+	pEnemy3->setScale(glm::vec3(1.0f));
 	//pEnemy3->setObjectColourRGBA(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 	pEnemy3->setDebugColour(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
 	pEnemy3->setVelocity(glm::vec3(0.0f, 0.0f, 20.0f));
@@ -1277,7 +1378,7 @@ DWORD WINAPI LoadObjects(LPVOID params)
 	pEnemy4->setFriendlyName("enemy4");	// We use to search 
 	pEnemy4->setPositionXYZ(glm::vec3(-540.0, 370.0f, 0.0f));
 	pEnemy4->setRotationXYZ(glm::vec3(0.0f, glm::radians(-90.0f), 0.0f));
-	pEnemy4->setScale(1.0f);
+	pEnemy4->setScale(glm::vec3(1.0f));
 	//pEnemy4->setObjectColourRGBA(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 	pEnemy4->setDebugColour(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
 	pEnemy4->setVelocity(glm::vec3(0.0f, 0.0f, 20.0f));
@@ -1293,6 +1394,104 @@ DWORD WINAPI LoadObjects(LPVOID params)
 	LoadLevel();
 
 	pCurrentObject = pFindObjectByFriendlyName("mainCharacter");
+
+	for (int i = 0; i < 20; i++)
+	{
+		glm::vec3 bushLocation = glm::vec3(randInRange(-200.0f, 200.0f), 0.0f, randInRange(-200.0f, 200.0f));
+		iObject* pBushBranches = pFactory->CreateObject("sphere", nPhysics::eComponentType::ball);
+		pBushBranches->setMeshName("bushBranches");
+		std::string branchesName = "bush" + i;
+		pBushBranches->setFriendlyName(branchesName);	// We use to search 
+		pBushBranches->setPositionXYZ(bushLocation);
+		pBushBranches->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
+		pBushBranches->setScale(glm::vec3(1.0f));
+		pBushBranches->setDebugColour(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+		pBushBranches->setVelocity(glm::vec3(0.0f, 0.0f, 20.0f));
+		pBushBranches->setAccel(glm::vec3(0.0f, 0.0f, 0.0f));
+		pBushBranches->setInverseMass(0.0f);
+		pBushBranches->setIsVisible(true);
+		pBushBranches->setIsWireframe(false);
+		pBushBranches->setTexture("brown.bmp", 1);
+		pBushBranches->setTextureRatio(1, 1);
+		pBushBranches->setTransprancyValue(1.0f);
+		g_vec_pEnvironmentObjects.push_back(pBushBranches);
+
+		iObject* pBushLeaves = pFactory->CreateObject("sphere", nPhysics::eComponentType::ball);
+		pBushLeaves->setMeshName("bushLeaves");
+		std::string leavesName = "bush" + i;
+		pBushLeaves->setFriendlyName(leavesName);	// We use to search 
+		pBushLeaves->setPositionXYZ(bushLocation);
+		pBushLeaves->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
+		pBushLeaves->setScale(glm::vec3(1.0f));
+		pBushLeaves->setDebugColour(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+		pBushLeaves->setVelocity(glm::vec3(0.0f, 0.0f, 20.0f));
+		pBushLeaves->setAccel(glm::vec3(0.0f, 0.0f, 0.0f));
+		pBushLeaves->setInverseMass(0.0f);
+		pBushLeaves->setIsVisible(true);
+		pBushLeaves->setIsWireframe(false);
+		pBushLeaves->setTexture("leaf.bmp", 1);
+		pBushLeaves->setTextureRatio(1, 1);
+		pBushLeaves->setTransprancyValue(1.0f);
+		g_vec_pEnvironmentObjects.push_back(pBushLeaves);
+	}
+
+	for (int i = 0; i < 5; i++)
+	{
+		glm::vec3 bigTreeLocation = glm::vec3(randInRange(-200.0f, 200.0f), 0.0f, randInRange(-200.0f, 200.0f));
+		iObject* pBigTreeBranches = pFactory->CreateObject("sphere", nPhysics::eComponentType::ball);
+		pBigTreeBranches->setMeshName("bigTreeBranches");
+		std::string branchesName = "bush" + i;
+		pBigTreeBranches->setFriendlyName(branchesName);	// We use to search 
+		pBigTreeBranches->setPositionXYZ(bigTreeLocation);
+		pBigTreeBranches->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
+		pBigTreeBranches->setScale(glm::vec3(1.0f));
+		pBigTreeBranches->setDebugColour(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+		pBigTreeBranches->setVelocity(glm::vec3(0.0f, 0.0f, 20.0f));
+		pBigTreeBranches->setAccel(glm::vec3(0.0f, 0.0f, 0.0f));
+		pBigTreeBranches->setInverseMass(0.0f);
+		pBigTreeBranches->setIsVisible(true);
+		pBigTreeBranches->setIsWireframe(false);
+		pBigTreeBranches->setTexture("brown.bmp", 1);
+		pBigTreeBranches->setTextureRatio(1, 1);
+		pBigTreeBranches->setTransprancyValue(1.0f);
+		g_vec_pEnvironmentObjects.push_back(pBigTreeBranches);
+
+		iObject* pBigTreeLeaves = pFactory->CreateObject("sphere", nPhysics::eComponentType::ball);
+		pBigTreeLeaves->setMeshName("bigTreeLeaves");
+		std::string leavesName = "bush" + i;
+		pBigTreeLeaves->setFriendlyName(leavesName);	// We use to search 
+		pBigTreeLeaves->setPositionXYZ(bigTreeLocation);
+		pBigTreeLeaves->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
+		pBigTreeLeaves->setScale(glm::vec3(1.0f));
+		pBigTreeLeaves->setDebugColour(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+		pBigTreeLeaves->setVelocity(glm::vec3(0.0f, 0.0f, 20.0f));
+		pBigTreeLeaves->setAccel(glm::vec3(0.0f, 0.0f, 0.0f));
+		pBigTreeLeaves->setInverseMass(0.0f);
+		pBigTreeLeaves->setIsVisible(true);
+		pBigTreeLeaves->setIsWireframe(false);
+		pBigTreeLeaves->setTexture("leaves.bmp", 1);
+		pBigTreeLeaves->setTextureRatio(1, 1);
+		pBigTreeLeaves->setTransprancyValue(1.0f);
+		g_vec_pEnvironmentObjects.push_back(pBigTreeLeaves);
+
+		iObject* pBigTreeTrunk = pFactory->CreateObject("sphere", nPhysics::eComponentType::ball);
+		pBigTreeTrunk->setMeshName("bigTreeTrunk");
+		std::string trunkName = "bush" + i;
+		pBigTreeTrunk->setFriendlyName(trunkName);	// We use to search 
+		pBigTreeTrunk->setPositionXYZ(bigTreeLocation);
+		pBigTreeTrunk->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
+		pBigTreeTrunk->setScale(glm::vec3(1.0f));
+		pBigTreeTrunk->setDebugColour(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+		pBigTreeTrunk->setVelocity(glm::vec3(0.0f, 0.0f, 20.0f));
+		pBigTreeTrunk->setAccel(glm::vec3(0.0f, 0.0f, 0.0f));
+		pBigTreeTrunk->setInverseMass(0.0f);
+		pBigTreeTrunk->setIsVisible(true);
+		pBigTreeTrunk->setIsWireframe(false);
+		pBigTreeTrunk->setTexture("brown.bmp", 1);
+		pBigTreeTrunk->setTextureRatio(1, 1);
+		pBigTreeTrunk->setTransprancyValue(1.0f);
+		g_vec_pEnvironmentObjects.push_back(pBigTreeTrunk);
+	}
 
 	LeaveCriticalSection(&output_lock);
 
@@ -1328,6 +1527,42 @@ int LoadLights()
 	pMainLight1->setInnerSpot(std::stof(mainLight1Node.child("SpotInnerAngle").child_value()));
 	pMainLight1->setOuterSpot(std::stof(mainLight1Node.child("SpotOuterAngle").child_value()));
 
+	pMainLight2->setNodeName("MainLight2");
+	xml_node mainLigh2tNode = lightData.child("MainLight2");
+	pMainLight2->setPositionX(std::stof(mainLightNode.child("PositionX").child_value()));
+	pMainLight2->setPositionY(std::stof(mainLightNode.child("PositionY").child_value()));
+	pMainLight2->setPositionZ(std::stof(mainLightNode.child("PositionZ").child_value()));
+	pMainLight2->setPositionXYZ(glm::vec3(std::stof(mainLightNode.child("PositionX").child_value()), std::stof(mainLightNode.child("PositionY").child_value()), std::stof(mainLightNode.child("PositionZ").child_value())));
+	pMainLight2->setConstAtten(std::stof(mainLightNode.child("ConstAtten").child_value()));
+	pMainLight2->setLinearAtten(std::stof(mainLightNode.child("LinearAtten").child_value()));
+	pMainLight2->setQuadraticAtten(std::stof(mainLightNode.child("QuadraticAtten").child_value()));
+	pMainLight2->setInnerSpot(std::stof(mainLightNode.child("SpotInnerAngle").child_value()));
+	pMainLight2->setOuterSpot(std::stof(mainLightNode.child("SpotOuterAngle").child_value()));
+
+	pMainLight3->setNodeName("MainLight3");
+	xml_node mainLight3Node = lightData.child("MainLight3");
+	pMainLight3->setPositionX(std::stof(mainLightNode.child("PositionX").child_value()));
+	pMainLight3->setPositionY(std::stof(mainLightNode.child("PositionY").child_value()));
+	pMainLight3->setPositionZ(std::stof(mainLightNode.child("PositionZ").child_value()));
+	pMainLight3->setPositionXYZ(glm::vec3(std::stof(mainLightNode.child("PositionX").child_value()), std::stof(mainLightNode.child("PositionY").child_value()), std::stof(mainLightNode.child("PositionZ").child_value())));
+	pMainLight3->setConstAtten(std::stof(mainLightNode.child("ConstAtten").child_value()));
+	pMainLight3->setLinearAtten(std::stof(mainLightNode.child("LinearAtten").child_value()));
+	pMainLight3->setQuadraticAtten(std::stof(mainLightNode.child("QuadraticAtten").child_value()));
+	pMainLight3->setInnerSpot(std::stof(mainLightNode.child("SpotInnerAngle").child_value()));
+	pMainLight3->setOuterSpot(std::stof(mainLightNode.child("SpotOuterAngle").child_value()));
+
+	pMainLight4->setNodeName("MainLight4");
+	xml_node mainLight4Node = lightData.child("MainLight4");
+	pMainLight4->setPositionX(std::stof(mainLightNode.child("PositionX").child_value()));
+	pMainLight4->setPositionY(std::stof(mainLightNode.child("PositionY").child_value()));
+	pMainLight4->setPositionZ(std::stof(mainLightNode.child("PositionZ").child_value()));
+	pMainLight4->setPositionXYZ(glm::vec3(std::stof(mainLightNode.child("PositionX").child_value()), std::stof(mainLightNode.child("PositionY").child_value()), std::stof(mainLightNode.child("PositionZ").child_value())));
+	pMainLight4->setConstAtten(std::stof(mainLightNode.child("ConstAtten").child_value()));
+	pMainLight4->setLinearAtten(std::stof(mainLightNode.child("LinearAtten").child_value()));
+	pMainLight4->setQuadraticAtten(std::stof(mainLightNode.child("QuadraticAtten").child_value()));
+	pMainLight4->setInnerSpot(std::stof(mainLightNode.child("SpotInnerAngle").child_value()));
+	pMainLight4->setOuterSpot(std::stof(mainLightNode.child("SpotOuterAngle").child_value()));
+
 	//pMainLight1->setNodeName("SharkSpotLight");
 	//pMainLight1->setPositionX(30.0f);
 	//pMainLight1->setPositionY(50.0f);
@@ -1341,6 +1576,9 @@ int LoadLights()
 
 	pLightsVec.push_back(pMainLight);
 	pLightsVec.push_back(pMainLight1);
+	pLightsVec.push_back(pMainLight2);
+	pLightsVec.push_back(pMainLight3);
+	pLightsVec.push_back(pMainLight4);
 	return 0;
 }
 
@@ -1351,7 +1589,7 @@ int DrawDebugSpheres()
 		{
 			glm::mat4 matModel = glm::mat4(1.0f);
 			pDebugSphere->setPositionXYZ(pLightsVec.at(i)->getPositionXYZ());
-			pDebugSphere->setScale(0.5f);
+			pDebugSphere->setScale(glm::vec3(0.5f));
 			pDebugSphere->setDebugColour(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 			pDebugSphere->setIsWireframe(true);
 			DrawObject(matModel, pDebugSphere,
@@ -1371,7 +1609,7 @@ int DrawDebugSpheres()
 			pLightsVec.at(currentLight)->getConstAtten(),
 			pLightsVec.at(currentLight)->getLinearAtten(),
 			pLightsVec.at(currentLight)->getQuadraticAtten());
-		pDebugSphere->setScale(sphereSize);
+		pDebugSphere->setScale(glm::vec3(sphereSize));
 		pDebugSphere->setDebugColour(glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
 		pDebugSphere->setIsWireframe(true);
 		DrawObject(matModel, pDebugSphere,
@@ -1387,7 +1625,7 @@ int DrawDebugSpheres()
 			pLightsVec.at(currentLight)->getConstAtten(),
 			pLightsVec.at(currentLight)->getLinearAtten(),
 			pLightsVec.at(currentLight)->getQuadraticAtten());
-		pDebugSphere->setScale(sphereSize);
+		pDebugSphere->setScale(glm::vec3(sphereSize));
 		pDebugSphere->setDebugColour(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
 		pDebugSphere->setIsWireframe(true);
 		DrawObject(matModel, pDebugSphere,
@@ -1403,7 +1641,7 @@ int DrawDebugSpheres()
 			pLightsVec.at(currentLight)->getConstAtten(),
 			pLightsVec.at(currentLight)->getLinearAtten(),
 			pLightsVec.at(currentLight)->getQuadraticAtten());
-		pDebugSphere->setScale(sphereSize);
+		pDebugSphere->setScale(glm::vec3(sphereSize));
 		pDebugSphere->setDebugColour(glm::vec4(0.0f, 1.0f, 1.0f, 1.0f));
 		pDebugSphere->setIsWireframe(true);
 		DrawObject(matModel, pDebugSphere,
@@ -1419,7 +1657,7 @@ int DrawDebugSpheres()
 			pLightsVec.at(currentLight)->getConstAtten(),
 			pLightsVec.at(currentLight)->getLinearAtten(),
 			pLightsVec.at(currentLight)->getQuadraticAtten());
-		pDebugSphere->setScale(sphereSize);
+		pDebugSphere->setScale(glm::vec3(sphereSize));
 		pDebugSphere->setDebugColour(glm::vec4(1.0f, 1.0f, 0.0f, 1.0f));
 		pDebugSphere->setIsWireframe(true);
 		DrawObject(matModel, pDebugSphere,
@@ -1435,7 +1673,7 @@ int DrawDebugSpheres()
 			pLightsVec.at(currentLight)->getConstAtten(),
 			pLightsVec.at(currentLight)->getLinearAtten(),
 			pLightsVec.at(currentLight)->getQuadraticAtten());
-		pDebugSphere->setScale(sphereSize);
+		pDebugSphere->setScale(glm::vec3(sphereSize));
 		pDebugSphere->setDebugColour(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
 		pDebugSphere->setIsWireframe(true);
 		DrawObject(matModel, pDebugSphere,

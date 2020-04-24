@@ -191,10 +191,10 @@ void DrawObject(glm::mat4 m, iObject* pCurrentObject, GLint shaderProgID, cVAOMa
 				m *= rotation;
 
 				//Scale
-				float theScale = pCurrentObject->getScale();
+				glm::vec3 theScale = pCurrentObject->getScale();
 				glm::vec3 scaleVec = glm::vec3(theScale);
 				glm::mat4 scale = glm::scale(glm::mat4(1.0f),
-					glm::vec3(theScale));
+					theScale);
 				m = m * scale;
 			}
 		}
@@ -353,7 +353,7 @@ void DrawObject(glm::mat4 m, iObject* pCurrentObject, GLint shaderProgID, cVAOMa
 
 		if (currentAnimationName == "Walk")
 		{
-			HACK_FrameTime += 0.009f;
+			HACK_FrameTime += 0.02f;
 		}
 		else if (currentAnimationName == "Jump")
 		{
@@ -688,9 +688,7 @@ glm::mat4 calculateWorldMatrix(iObject* pCurrentObject)
 
 	// ******* SCALE TRANSFORM *********
 	glm::mat4 scale = glm::scale(glm::mat4(1.0f),
-		glm::vec3(pCurrentObject->getScale(),
-			pCurrentObject->getScale(),
-			pCurrentObject->getScale()));
+		glm::vec3(pCurrentObject->getScale()));
 	matWorld = matWorld * scale;
 	// ******* SCALE TRANSFORM *********
 

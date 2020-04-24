@@ -111,9 +111,9 @@ glm::quat cSphereObject::getRotationXYZ()
 	return glm::quat(this->qRotation);
 }
 
-float cSphereObject::getScale()
+glm::vec3 cSphereObject::getScale()
 {
-	float scale = 1.0f;
+	glm::vec3 scale = glm::vec3(1.0f);
 	if (this->_component != nullptr)
 	{
 		this->GetComponent()->GetScale(scale);
@@ -314,7 +314,7 @@ void cSphereObject::setRotationXYZ(glm::quat rotationXYZ)
 	this->qRotation = rotationXYZ;
 	LeaveCriticalSection(&object_lock);
 }
-void cSphereObject::setScale(float scale)
+void cSphereObject::setScale(glm::vec3 scale)
 {
 	EnterCriticalSection(&object_lock);
 	this->_scale = scale;
@@ -502,7 +502,7 @@ nPhysics::iPhysicsComponent* cSphereObject::GetComponent()
 
 cSphereObject::cSphereObject(nPhysics::eComponentType componentType)
 {
-	this->_scale = 0.0f;
+	this->_scale = glm::vec3(0.0f);
 	this->_isVisible = true;
 	this->mComponentType = componentType;
 
@@ -557,6 +557,30 @@ void cSphereObject::MoveInRelativeDirection(glm::vec3 relativeDirection)
 	this->setPositionXYZ(this->getPositionXYZ() + glm::vec3(forwardInWorldSpace));
 
 	return;
+}
+
+glm::vec3 cSphereObject::GetRelativeDirection(glm::vec3 desiredDirection)
+{
+	// The "forward" vector is +ve Z
+// (the 4th number is because we need a vec4 later)
+	glm::vec4 forwardDirObject = glm::vec4(desiredDirection, 1.0f);
+
+	glm::mat4 matModel = glm::mat4(1.0f);	// Identity
+
+	// Roation
+	// Constructor for the GLM mat4x4 can take a quaternion
+	glm::quat currentRotation = glm::quat(this->getRotationXYZ().x, this->getRotationXYZ().y, this->getRotationXYZ().z, this->getRotationXYZ().w);
+	glm::mat4 matRotation = glm::mat4(currentRotation);
+	matModel *= matRotation;
+	// *******************
+
+	// Like in the vertex shader, I multiply the test points
+	// by the model matrix (MUST be a VEC4 because it's a 4x4 matrix)
+	glm::vec4 forwardInWorldSpace = matModel * forwardDirObject;
+
+
+	// Add this to the position of the object
+	return /*this->getPositionXYZ() + */glm::vec3(forwardInWorldSpace);
 }
 
 void cSphereObject::setTexture(std::string tex, int index)

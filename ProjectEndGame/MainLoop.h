@@ -55,6 +55,11 @@ int rollCount = 0;
 int dyingCount = 0;
 int attackCount = 0;
 
+void RenderMenu()
+{
+
+}
+
 void DrawAIFBO()
 {
 	drawSpace = true;
@@ -223,7 +228,7 @@ void DrawAI()
 	iObject* pQuadOrIsIt = pFindObjectByFriendlyName("debug_cube");
 	if (pQuadOrIsIt)
 	{
-		pQuadOrIsIt->setScale(3.0f);
+		pQuadOrIsIt->setScale(glm::vec3(3.0f));
 		pQuadOrIsIt->setIsVisible(true);
 		//glm::vec3 oldLocation = glm::vec3(::g_pFlyCamera->eye.x, ::g_pFlyCamera->eye.y, ::g_pFlyCamera->eye.z);
 		pQuadOrIsIt->setPositionXYZ(glm::vec3(::g_pFlyCamera->getAtInWorldSpace().x, ::g_pFlyCamera->getAtInWorldSpace().y, ::g_pFlyCamera->getAtInWorldSpace().z + 300));
@@ -533,7 +538,7 @@ void DrawAI()
 						pCrashAsteroid->setFriendlyName("asteroid");	// We use to search 
 						pCrashAsteroid->setPositionXYZ(g_vec_pAIEnemyObjects.at(k)->getPositionXYZ());
 						pCrashAsteroid->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
-						pCrashAsteroid->setScale(randInRange(0.005f, 0.02f));
+						pCrashAsteroid->setScale(glm::vec3(randInRange(0.005f, 0.02f)));
 						pCrashAsteroid->setTexture("moon.bmp", 1);
 						pCrashAsteroid->setTextureRatio(1, 1);
 						pCrashAsteroid->setTransprancyValue(1.0f);
@@ -562,7 +567,7 @@ void DrawAI()
 						pHitAsteroid->setFriendlyName("asteroid");	// We use to search 
 						pHitAsteroid->setPositionXYZ(g_vec_pAIEnemyObjects.at(k)->getPositionXYZ());
 						pHitAsteroid->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
-						pHitAsteroid->setScale(randInRange(0.005f, 0.02f));
+						pHitAsteroid->setScale(glm::vec3(randInRange(0.005f, 0.02f)));
 						pHitAsteroid->setTexture("moon.bmp", 1);
 						pHitAsteroid->setTextureRatio(1, 1);
 						pHitAsteroid->setTransprancyValue(1.0f);
@@ -639,7 +644,7 @@ void DrawAI()
 		pEnemy->setMeshName("xWingR");
 		pEnemy->setPositionXYZ(glm::vec3(randInRange(-100.0f, 100.0f), 10.0f, randInRange(100.0f, 175.0f)));
 		pEnemy->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
-		pEnemy->setScale(1.0f);
+		pEnemy->setScale(glm::vec3(1.0f));
 		if (pEnemy->getBehaviour() == "seek")
 		{
 			Seek* seekBehaviour = new Seek(pEnemy, pMainShip);
@@ -837,7 +842,7 @@ void DrawPlatform()
 
 	// 4. Draw a single object (a triangle or quad)
 	iObject* pQuadOrIsIt = pFindObjectByFriendlyName("cube");
-	pQuadOrIsIt->setScale(10.0f);
+	pQuadOrIsIt->setScale(glm::vec3(10.0f));
 	pQuadOrIsIt->setIsVisible(true);
 	//glm::vec3 oldLocation = glm::vec3(::g_pFlyCamera->eye.x, ::g_pFlyCamera->eye.y, ::g_pFlyCamera->eye.z);
 	pQuadOrIsIt->setPositionXYZ(glm::vec3(::g_pFlyCamera->getAtInWorldSpace().x, ::g_pFlyCamera->getAtInWorldSpace().y, ::g_pFlyCamera->getAtInWorldSpace().z + 300));
@@ -1050,7 +1055,7 @@ void DrawPlatform()
 						pPiece1->setFriendlyName("piece1");	// We use to search 
 						pPiece1->setPositionXYZ(pointOfImpact);
 						pPiece1->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
-						pPiece1->setScale(1.0f);
+						pPiece1->setScale(glm::vec3(1.0f));
 						pPiece1->setVelocity(glm::vec3(randInRange(10.0f, 30.0f), randInRange(10.0f, 30.0f), randInRange(10.0f, 30.0f)));
 						pPiece1->setInverseMass(1.0f);
 						pPiece1->setIsVisible(true);
@@ -1065,7 +1070,7 @@ void DrawPlatform()
 						pPiece2->setFriendlyName("piece1");	// We use to search 
 						pPiece2->setPositionXYZ(pointOfImpact);
 						pPiece2->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
-						pPiece2->setScale(1.0f);
+						pPiece2->setScale(glm::vec3(1.0f));
 						pPiece2->setVelocity(glm::vec3(randInRange(10.0f, 30.0f), randInRange(10.0f, 30.0f), randInRange(10.0f, 30.0f)));
 						pPiece2->setInverseMass(1.0f);
 						pPiece2->setIsVisible(true);
@@ -1080,7 +1085,7 @@ void DrawPlatform()
 						pPiece3->setFriendlyName("piece1");	// We use to search 
 						pPiece3->setPositionXYZ(pointOfImpact);
 						pPiece3->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
-						pPiece3->setScale(1.0f);
+						pPiece3->setScale(glm::vec3(1.0f));
 						pPiece3->setVelocity(glm::vec3(randInRange(10.0f, 30.0f), randInRange(10.0f, 30.0f), randInRange(10.0f, 30.0f)));
 						pPiece3->setInverseMass(1.0f);
 						pPiece3->setIsVisible(true);
@@ -1095,7 +1100,7 @@ void DrawPlatform()
 						pPiece4->setFriendlyName("piece1");	// We use to search 
 						pPiece4->setPositionXYZ(pointOfImpact);
 						pPiece4->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
-						pPiece4->setScale(1.0f);
+						pPiece4->setScale(glm::vec3(1.0f));
 						pPiece4->setVelocity(glm::vec3(randInRange(10.0f, 30.0f), randInRange(10.0f, 30.0f), randInRange(10.0f, 30.0f)));
 						pPiece4->setInverseMass(1.0f);
 						pPiece4->setIsVisible(true);
@@ -1110,7 +1115,7 @@ void DrawPlatform()
 						pPiece5->setFriendlyName("piece1");	// We use to search 
 						pPiece5->setPositionXYZ(pointOfImpact);
 						pPiece5->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
-						pPiece5->setScale(1.0f);
+						pPiece5->setScale(glm::vec3(1.0f));
 						pPiece5->setVelocity(glm::vec3(randInRange(10.0f, 30.0f), randInRange(10.0f, 30.0f), randInRange(10.0f, 30.0f)));
 						pPiece5->setInverseMass(1.0f);
 						pPiece5->setIsVisible(true);
@@ -1125,7 +1130,7 @@ void DrawPlatform()
 						pPiece6->setFriendlyName("piece1");	// We use to search 
 						pPiece6->setPositionXYZ(pointOfImpact);
 						pPiece6->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
-						pPiece6->setScale(1.0f);
+						pPiece6->setScale(glm::vec3(1.0f));
 						pPiece6->setVelocity(glm::vec3(randInRange(10.0f, 30.0f), randInRange(10.0f, 30.0f), randInRange(10.0f, 30.0f)));
 						pPiece6->setInverseMass(1.0f);
 						pPiece6->setIsVisible(true);
@@ -1229,7 +1234,7 @@ void DrawSecondPass()
 
 	if (pMainCharacter != nullptr && currentAnimationName != "Jump" && currentAnimationName != "Roll" && currentAnimationName != "Dying" && currentAnimationName != "Attack")
 	{
-		if (pMainCharacter->getVelocity().z > 10.0f || pMainCharacter->getVelocity().x > 10.0f || pMainCharacter->getVelocity().z < -10.0f || pMainCharacter->getVelocity().x < -10.0f)
+		if (pMainCharacter->getVelocity().z > 20.0f || pMainCharacter->getVelocity().x > 20.0f || pMainCharacter->getVelocity().z < -20.0f || pMainCharacter->getVelocity().x < -20.0f)
 		{
 			currentAnimationName = "Run";
 		}
@@ -1274,9 +1279,10 @@ void DrawSecondPass()
 
 	// 4. Draw a single object (a triangle or quad)
 	iObject* pAIQuad = pFindObjectByFriendlyName("cube");
+	glm::mat4 matAIQuad = glm::mat4(1.0f);
 	if (pAIQuad)
 	{
-		pAIQuad->setScale(5.0f);
+		pAIQuad->setScale(glm::vec3(5.0f));
 		pAIQuad->setIsVisible(true);
 		//glm::vec3 oldLocation = glm::vec3(::g_pFlyCamera->eye.x, ::g_pFlyCamera->eye.y, ::g_pFlyCamera->eye.z);
 		pAIQuad->setPositionXYZ(glm::vec3(::g_pFlyCamera->getAtInWorldSpace().x, ::g_pFlyCamera->getAtInWorldSpace().y, ::g_pFlyCamera->getAtInWorldSpace().z + 300));
@@ -1285,7 +1291,7 @@ void DrawSecondPass()
 
 		// Move the camera
 		// Maybe set it to orthographic, etc.
-		glm::mat4 matAIQuad = glm::mat4(1.0f);
+		
 		DrawObject(matAIQuad, pAIQuad, shaderProgID, pTheVAOManager);
 	}
 
@@ -1301,9 +1307,10 @@ void DrawSecondPass()
 
 	// 4. Draw a single object (a triangle or quad)
 	iObject* pPlatformQuad = pFindObjectByFriendlyName("cube");
+	glm::mat4 matPlatformQuad = glm::mat4(1.0f);
 	if (pPlatformQuad)
 	{
-		pPlatformQuad->setScale(5.0f);
+		pPlatformQuad->setScale(glm::vec3(5.0f));
 		pPlatformQuad->setIsVisible(true);
 		//glm::vec3 oldLocation = glm::vec3(::g_pFlyCamera->eye.x, ::g_pFlyCamera->eye.y, ::g_pFlyCamera->eye.z);
 		pPlatformQuad->setPositionXYZ(glm::vec3(::g_pFlyCamera->getAtInWorldSpace().x - 100.0f, ::g_pFlyCamera->getAtInWorldSpace().y, ::g_pFlyCamera->getAtInWorldSpace().z + 300));
@@ -1312,7 +1319,7 @@ void DrawSecondPass()
 
 		// Move the camera
 		// Maybe set it to orthographic, etc.
-		glm::mat4 matPlatformQuad = glm::mat4(1.0f);
+		
 		DrawObject(matPlatformQuad, pPlatformQuad, shaderProgID, pTheVAOManager);
 	}
 
@@ -1372,6 +1379,17 @@ void DrawSecondPass()
 			shaderProgID, pTheVAOManager);
 
 	}//for (int index...
+
+	iObject* shipToken = pFindObjectByFriendlyName("shipTransporter");
+	float distance = glm::distance(pMainCharacter->getPositionXYZ(), shipToken->getPositionXYZ());
+
+	if (distance < 15)
+	{
+		if (currentRender == renderTag::none)
+		{
+			changeToAI = true;
+		}
+	}
 
 	for (int index = 0; index != ::g_vec_pEnvironmentObjects.size(); index++)
 	{
@@ -1437,9 +1455,9 @@ void DrawSecondPass()
 	iObject* pFullScreenQuad = pFindObjectByFriendlyName("fbo");
 	if (pFullScreenQuad)
 	{
-		pFullScreenQuad->setScale(1.55f);
+		pFullScreenQuad->setScale(glm::vec3(3.55f));
 		pFullScreenQuad->setIsVisible(true);
-		pFullScreenQuad->setPositionXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
+		pFullScreenQuad->setPositionXYZ(glm::vec3(-35.0f, 20.0f, 0.0f));
 		pFullScreenQuad->setIsWireframe(false);
 
 		v = glm::lookAt( glm::vec3( 0.0f, 0.0f, -50.0f ), glm::vec3( 0.0f, 0.0f, 0.0f ), glm::vec3( 0.0f, 1.0f, 0.0f ) );
@@ -1455,4 +1473,12 @@ void DrawSecondPass()
 	// 3. Use the FBO colour texture as the texture on that quad.
 	// set the passNumber to 1
 	glUniform1i(passNumber_UniLoc, 0);
+
+
+
+	bool displayMenu = true;
+	if (displayMenu)
+	{
+		RenderMenu();
+	}
 }

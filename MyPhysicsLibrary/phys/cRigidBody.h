@@ -109,7 +109,7 @@ namespace phys
 		void GetPreviousPosition(glm::vec3& positionOut);
 		virtual void GetVelocity(glm::vec3& velocityOut);
 		void GetRadius(float& radius);
-		void GetScale(float& scaleOut);
+		void GetScale(glm::vec3& scaleOut);
 		void GetMass(float& mass);
 		virtual int GetMassType();
 		virtual void SetMassType(int physicsType);

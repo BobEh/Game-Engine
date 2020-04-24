@@ -52,7 +52,7 @@ glm::quat cGameObject::getRotationXYZ()
 {
 	return this->qRotation;
 }
-float cGameObject::getScale()
+glm::vec3 cGameObject::getScale()
 {
 	return this->_scale;
 }
@@ -162,7 +162,7 @@ void cGameObject::setRotationXYZ(glm::quat rotationXYZ)
 {
 	this->qRotation = rotationXYZ;
 }
-void cGameObject::setScale(float scale)
+void cGameObject::setScale(glm::vec3 scale)
 {
 	this->_scale = scale;
 }
@@ -252,6 +252,11 @@ void cGameObject::SetPosition(glm::vec3 positionIn)
 	//this->_component->SetPosition(positionIn);
 }
 
+glm::vec3 cGameObject::GetRelativeDirection(glm::vec3 desiredDirection)
+{
+	return glm::vec3();
+}
+
 void cGameObject::ApplyForce(const glm::vec3& force)
 {
 	//this->_component->ApplyForce(force);
@@ -294,7 +299,7 @@ void cGameObject::SetMassType(int physicsType)
 
 cGameObject::cGameObject(nPhysics::eComponentType componentType)
 {
-	this->_scale = 0.0f;
+	this->_scale = glm::vec3(0.0f);
 	this->_isVisible = true;
 
 	this->mComponentType = componentType;

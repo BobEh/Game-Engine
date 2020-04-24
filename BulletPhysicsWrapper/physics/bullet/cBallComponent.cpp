@@ -46,7 +46,29 @@ void nPhysics::cBallComponent::GetTransform(glm::mat4& transformOut)
 void nPhysics::cBallComponent::ApplyForce(const glm::vec3& force)
 {
 	mBody->activate(true);
-	mBody->applyCentralForce(nConvert::ToBullet(force));
+	//mBody->applyCentralForce(nConvert::ToBullet(force));
+	//mBody->applyForce(nConvert::ToBullet(force), mBody->getCenterOfMassPosition());
+	//mBody->applyTorque(nConvert::ToBullet(force));
+
+	// The "forward" vector is +ve Z
+	// (the 4th number is because we need a vec4 later)
+	glm::vec4 forwardDirObject = glm::vec4(force, 1.0f);
+
+	glm::mat4 matModel = glm::mat4(1.0f);	// Identity
+
+	// Roation
+	// Constructor for the GLM mat4x4 can take a quaternion
+	float x, y, z;
+	mBody->getWorldTransform().getRotation().getEulerZYX(z, y, x);
+	glm::mat4 matRotation = glm::mat4(glm::quat(glm::vec3(x, y, z)));
+	matModel *= matRotation;
+	// *******************
+
+	// Like in the vertex shader, I mulitly the test points
+	// by the model matrix (MUST be a VEC4 because it's a 4x4 matrix)
+	glm::vec4 forwardInWorldSpace = matModel * forwardDirObject;
+
+	mBody->applyCentralForce(nConvert::ToBullet(nConvert::ToSimple(mBody->getCenterOfMassPosition()) + glm::vec3(forwardInWorldSpace)));
 }
 
 void nPhysics::cBallComponent::GetPosition(glm::vec3& positionOut)
@@ -60,7 +82,13 @@ void nPhysics::cBallComponent::GetPosition(glm::vec3& positionOut)
 
 void nPhysics::cBallComponent::SetPosition(glm::vec3 positionIn)
 {
-	position = positionIn;
+	btTransform initialTransform;
+
+	initialTransform.setOrigin(nConvert::ToBullet(positionIn));
+	initialTransform.setRotation(btQuaternion(0.0f, 0.0f, 0.0f));
+
+	mBody->setWorldTransform(initialTransform);
+	mBody->getMotionState()->setWorldTransform(initialTransform);
 }
 
 void nPhysics::cBallComponent::GetVelocity(glm::vec3& velocityOut)

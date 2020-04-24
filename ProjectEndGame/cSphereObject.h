@@ -59,7 +59,7 @@ public:
 	std::string getFriendlyName();
 	glm::vec3 getPositionXYZ();
 	glm::quat getRotationXYZ();
-	float getScale();
+	glm::vec3 getScale();
 	glm::mat4 getMatWorld();
 	glm::vec4 getObjectColourRGBA();
 	glm::vec4 getDiffuseColour();
@@ -93,7 +93,7 @@ public:
 	void setFriendlyName(std::string friendlyName);
 	void setPositionXYZ(glm::vec3 positionXYZ);
 	void setRotationXYZ(glm::quat rotationXYZ);
-	void setScale(float scale);
+	void setScale(glm::vec3 scale);
 	void setMatWorld(glm::mat4 matWorld);
 	void setObjectColourRGBA(glm::vec4 colourRGBA);
 	void setDiffuseColour(glm::vec4 diffuseColourRGBA);
@@ -114,6 +114,7 @@ public:
 	void addTestPoint(glm::vec3);
 
 	void MoveInRelativeDirection(glm::vec3 relativeDirection);
+	virtual glm::vec3 GetRelativeDirection(glm::vec3 desiredDirection);
 
 	void setTexture(std::string tex, int index);
 	void setTextureRatio(float texRatio, int index);
@@ -136,7 +137,7 @@ private:
 	unsigned int _friendlyIDNumber;
 	std::string _friendlyName;
 	glm::vec3  _positionXYZ;
-	float _scale;
+	glm::vec3 _scale;
 	glm::mat4 _matWorld;
 	glm::vec4  _objectColourRGBA;
 	glm::vec4 _diffuseColour;

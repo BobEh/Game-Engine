@@ -74,7 +74,7 @@ glm::quat cClothObject::getRotationXYZ()
 {
 	return this->qRotation;
 }
-float cClothObject::getScale()
+glm::vec3 cClothObject::getScale()
 {
 	return this->_scale;
 }
@@ -197,7 +197,7 @@ void cClothObject::setRotationXYZ(glm::quat rotationXYZ)
 {
 	this->qRotation = rotationXYZ;
 }
-void cClothObject::setScale(float scale)
+void cClothObject::setScale(glm::vec3 scale)
 {
 	this->_scale = scale;
 }
@@ -287,6 +287,11 @@ void cClothObject::SetPosition(glm::vec3 positionIn)
 	//this->_component->SetPosition(positionIn);
 }
 
+glm::vec3 cClothObject::GetRelativeDirection(glm::vec3 desiredDirection)
+{
+	return glm::vec3();
+}
+
 void cClothObject::GetVelocity(glm::vec3& velocityOut)
 {
 	velocityOut = this->_velocity;
@@ -329,7 +334,7 @@ nPhysics::iPhysicsComponent* cClothObject::GetComponent()
 
 cClothObject::cClothObject(nPhysics::eComponentType componentType)
 {
-	this->_scale = 0.0f;
+	this->_scale = glm::vec3(0.0f);
 	this->_isVisible = true;
 	this->mComponentType = componentType;
 

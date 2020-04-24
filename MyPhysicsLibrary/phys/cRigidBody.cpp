@@ -108,9 +108,9 @@ namespace phys
 	{
 		radius = mRadius;
 	}
-	void cRigidBody::GetScale(float& scaleOut)
+	void cRigidBody::GetScale(glm::vec3& scaleOut)
 	{
-		scaleOut = mScale.x;
+		scaleOut = mScale;
 	}
 	void cRigidBody::GetMass(float& mass)
 	{

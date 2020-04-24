@@ -22,7 +22,7 @@ namespace nPhysics
 		virtual void GetPosition(glm::vec3& positionOut);
 		virtual void SetPosition(glm::vec3 positionIn);
 		virtual void GetVelocity(glm::vec3& velocityOut);
-		virtual void GetScale(float& scaleOut);
+		virtual void GetScale(glm::vec3& scaleOut);
 		virtual int GetMassType();
 		virtual void SetMassType(int physicsType);
 		virtual void ApplyForce(const glm::vec3& force);

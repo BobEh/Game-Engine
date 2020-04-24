@@ -29,7 +29,7 @@ void nPhysics::cPlaneComponent::GetVelocity(glm::vec3& velocityOut)
 	velocityOut = velocity;
 }
 
-void nPhysics::cPlaneComponent::GetScale(float& scaleOut)
+void nPhysics::cPlaneComponent::GetScale(glm::vec3& scaleOut)
 {
 	mBody->GetScale(scaleOut);
 }

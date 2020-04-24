@@ -74,7 +74,7 @@ glm::quat cMeshObject::getRotationXYZ()
 {
 	return this->qRotation;
 }
-float cMeshObject::getScale()
+glm::vec3 cMeshObject::getScale()
 {
 	return this->_scale;
 }
@@ -184,7 +184,7 @@ void cMeshObject::setRotationXYZ(glm::quat rotationXYZ)
 {
 	this->qRotation = rotationXYZ;
 }
-void cMeshObject::setScale(float scale)
+void cMeshObject::setScale(glm::vec3 scale)
 {
 	this->_scale = scale;
 }
@@ -320,6 +320,11 @@ void cMeshObject::SetPosition(glm::vec3 positionIn)
 	//this->_component->SetPosition(positionIn);
 }
 
+glm::vec3 cMeshObject::GetRelativeDirection(glm::vec3 desiredDirection)
+{
+	return glm::vec3();
+}
+
 void cMeshObject::GetVelocity(glm::vec3& velocityOut)
 {
 	
@@ -362,7 +367,7 @@ nPhysics::iPhysicsComponent* cMeshObject::GetComponent()
 
 cMeshObject::cMeshObject(nPhysics::eComponentType componentType)
 {
-	this->_scale = 0.0f;
+	this->_scale = glm::vec3(0.0f);
 	this->_isVisible = true;
 	this->mComponentType = componentType;
 

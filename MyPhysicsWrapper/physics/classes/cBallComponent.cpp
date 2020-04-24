@@ -44,7 +44,7 @@ void nPhysics::cBallComponent::GetVelocity(glm::vec3& velocityOut)
 	mBody->GetVelocity(velocityOut);
 }
 
-void nPhysics::cBallComponent::GetScale(float& scaleOut)
+void nPhysics::cBallComponent::GetScale(glm::vec3& scaleOut)
 {
 	mBody->GetScale(scaleOut);
 }

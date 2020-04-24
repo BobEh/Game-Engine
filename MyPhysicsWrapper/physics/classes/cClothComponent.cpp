@@ -103,9 +103,9 @@ namespace nPhysics
 	void cClothComponent::GetVelocity(glm::vec3& velocityOut)
 	{
 	}
-	void cClothComponent::GetScale(float& scaleOut)
+	void cClothComponent::GetScale(glm::vec3& scaleOut)
 	{
-		scaleOut = 1.0f;
+		scaleOut = glm::vec3(1.0f);
 	}
 	int cClothComponent::GetMassType()
 	{

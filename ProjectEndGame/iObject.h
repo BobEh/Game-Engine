@@ -42,7 +42,7 @@ public:
 	virtual std::string getFriendlyName() = 0;
 	virtual glm::vec3 getPositionXYZ() = 0;
 	virtual glm::quat getRotationXYZ() = 0;
-	virtual float getScale() = 0;
+	virtual glm::vec3 getScale() = 0;
 	virtual glm::mat4 getMatWorld() = 0;
 	virtual glm::vec4 getObjectColourRGBA() = 0;
 	virtual glm::vec4 getDiffuseColour() = 0;
@@ -78,7 +78,7 @@ public:
 	virtual void setFriendlyName(std::string friendlyName) = 0;
 	virtual void setPositionXYZ(glm::vec3 positionXYZ) = 0;
 	virtual void setRotationXYZ(glm::quat rotationXYZ) = 0;
-	virtual void setScale(float scale) = 0;
+	virtual void setScale(glm::vec3 scale) = 0;
 	virtual void setMatWorld(glm::mat4 matWorld) = 0;
 	virtual void setObjectColourRGBA(glm::vec4 colourRGBA) = 0;
 	virtual void setDiffuseColour(glm::vec4 diffuseColourRGBA) = 0;
@@ -98,6 +98,7 @@ public:
 	virtual void setDisableDepthBufferWrite(bool disableDwpthBufferWrite) = 0;
 
 	virtual void MoveInRelativeDirection(glm::vec3 relativeDirection) = 0;
+	virtual glm::vec3 GetRelativeDirection(glm::vec3 desiredDirection) = 0;
 
 	virtual void setTexture(std::string tex, int index) = 0;
 	virtual void setTextureRatio(float texRatio, int index) = 0;

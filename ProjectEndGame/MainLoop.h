@@ -1460,9 +1460,7 @@ void DrawSecondPass()
 		pFullScreenQuad->setPositionXYZ(glm::vec3(-35.0f, 20.0f, 0.0f));
 		pFullScreenQuad->setIsWireframe(false);
 
-		v = glm::lookAt( glm::vec3( 0.0f, 0.0f, -50.0f ), glm::vec3( 0.0f, 0.0f, 0.0f ), glm::vec3( 0.0f, 1.0f, 0.0f ) );
-
-		// Move the camera
+		// Move the camera 
 		// Maybe set it to orthographic, etc.
 		glm::mat4 matFullScreenQuad = glm::mat4(1.0f);
 		glUniform1f(renderFullScreen_UL, true);
@@ -1470,8 +1468,40 @@ void DrawSecondPass()
 		glUniform1f(renderFullScreen_UL, false);
 	}
 
+	// 1. Disable the FBO
+	//glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	//// 2. Clear the ACTUAL screen buffer
+	//glViewport(0, 0, width, height);
+	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 	// 3. Use the FBO colour texture as the texture on that quad.
 	// set the passNumber to 1
+	glUniform1i(passNumber_UniLoc, 1);
+
+	glActiveTexture(GL_TEXTURE0 + 40);
+	glBindTexture(GL_TEXTURE_2D, pAIFBO->colourTexture_0_ID);
+
+	GLuint texSampFBO_UL = glGetUniformLocation(shaderProgID, "AIPassColourTexture");
+	glUniform1i(texSampFBO_UL, 40);
+
+	// 4. Draw a single object (a triangle or quad)
+	iObject* pQuadOrIsIt = pFindObjectByFriendlyName("cube");
+	pQuadOrIsIt->setScale(glm::vec3(0.4f));
+	pQuadOrIsIt->setIsVisible(true);
+	//glm::vec3 oldLocation = glm::vec3(::g_pFlyCamera->eye.x, ::g_pFlyCamera->eye.y, ::g_pFlyCamera->eye.z);
+	pQuadOrIsIt->setPositionXYZ(glm::vec3(17.0f, -7.0f, -10.0f));
+	//pQuadOrIsIt->setPositionXYZ(glm::vec3(::g_pFlyCamera->eye.x, ::g_pFlyCamera->eye.y, ::g_pFlyCamera->eye.z + 100));
+	pQuadOrIsIt->setIsWireframe(false);
+
+	// Move the camera
+	// Maybe set it to orthographic, etc.
+	glm::mat4 matQuad = glm::mat4(1.0f);
+	glUniform1f(renderFullScreen_UL, true);
+	DrawObject(matQuad, pQuadOrIsIt, shaderProgID, pTheVAOManager);
+	glUniform1f(renderFullScreen_UL, false);
+
+	// set pass number back to 0 to render the rest of the scene
 	glUniform1i(passNumber_UniLoc, 0);
 
 

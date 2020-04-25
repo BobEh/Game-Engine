@@ -160,7 +160,7 @@ int main(void)
 
 		PlaceLights();
 
-		GLint eyeLocation_UL = glGetUniformLocation(shaderProgID, "eyeLocation");
+		eyeLocation_UL = glGetUniformLocation(shaderProgID, "eyeLocation");
 
 		glUniform4f(eyeLocation_UL,
 			::g_pFlyCamera->eye.x,

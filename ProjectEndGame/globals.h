@@ -64,6 +64,7 @@ cFBO* pAIFBO = NULL;
 cFBO* pPlatformFBO = NULL;
 GLint passNumber_UniLoc;
 GLint renderFullScreen_UL;
+GLint eyeLocation_UL;
 
 glm::mat4 p, v, AIv, Pv, FSv;
 

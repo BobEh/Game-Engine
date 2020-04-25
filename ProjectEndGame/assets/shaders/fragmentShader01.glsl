@@ -48,15 +48,15 @@ uniform bool bIsSand;
 
 uniform bool bIsIsland;
 
+uniform bool shipLevelCompleted;
+uniform bool platformerCompleted;
+
 // For now, we will use the same shader for both passes
 // Pass 0 is the pass to the FBO (the 1st one)
 // Pass 1 is the "2nd" pass, texturing the "quad"
 uniform int passNumber;
 
 uniform vec4 tex_0_3_ratio;
-
-
-
 
 out vec4 pixelColour;			// RGB A   (0 to 1)
 
@@ -283,9 +283,9 @@ void main()
 	float tex1_ratio = 0.4f;
 	float tex2_ratio = 0.0f; 
 
-		vec3 texRGB =   ( tex0_ratio * tex0_RGB ) 
-				  + ( tex1_ratio * tex1_RGB ) 
-				  + ( tex2_ratio * tex2_RGB );
+	vec3 texRGB =   ( tex0_ratio * tex0_RGB ) 
+				+ ( tex1_ratio * tex1_RGB ) 
+				+ ( tex2_ratio * tex2_RGB );
 
 	if (bIsSand)
 	{
@@ -319,31 +319,6 @@ void main()
 				  + ( 1.0f * tex1_RGB ) 
 				  + ( 0.0f * tex2_RGB );
 		}
-//		if (fVertWorldLocation.y > 90.0f && fVertWorldLocation.y < 110.0f)
-//		{
-//			float smoothTransitionLocationY = smoothstep(90.0f, 110.0f, 100.0f);
-//			vec4 smoothTransitionLocation = vec3(fVertWorldLocation.x, smoothTransitionLocationY, fVertWorldLocation.z, 1.0f);
-//			texRGB = ( 1.0f * tex0_RGB ) 
-//				  + ( 0.0f * tex1_RGB ) 
-//				  + ( 0.0f * tex2_RGB );
-//
-//			vec3 rgbTex1 = (1.0f * tex0_RGB);
-//			vec3 rgbTex2 = (1.0f * tex1_RGB);
-//
-//			float smoothTransitionR = smoothstep(rgbTex1.r, rgbTex2.r, 1.0f);
-//			float smoothTransitionG = smoothstep(rgbTex1.g, rgbTex2.g, 1.0f);
-//			float smoothTransitionB = smoothstep(rgbTex1.b, rgbTex2.b, 1.0f);
-//
-//			vec3 smoothTransitionColour = vec3(smoothTransitionR, smoothTransitionG, smoothTransitionB);
-//
-//			vec4 outColour = calcualteLightContrib( smoothTransition, fNormal.xyz, 
-//													smoothTransitionLocation, specularColour );
-//			pixelColour = outColour;
-//
-//			pixelColour.a = diffuseColour.a;
-//			return;
-//			
-//		}
 	}
 	
 	if (bIsWater)
@@ -374,10 +349,6 @@ void main()
 		return;
 	}
 
-//	vec4 materialColour = vec4(1.0f, 1.0f, 1.0f, 1.0f);
-//	vec4 specColour = vec4(0.0f,0.0f,0.0f,1.0f);// materialColour;
-	
-
 	vec4 outColour = calcualteLightContrib( texRGB.rgb, fNormal.xyz, 
 	                                        fVertWorldLocation.xyz, specularColour );
 
@@ -386,43 +357,6 @@ void main()
 
 	pixelColour.a = diffuseColour.a;
 
-//	if (bIsIsland)
-//	{
-//		if (fVertWorldLocation.y > 85.0f && fVertWorldLocation.y < 115.0f)
-//		{
-//			vec2 st = vec2(0.5f);
-//			texRGB = ( 1.0f * tex0_RGB ) 
-//				  + ( 0.0f * tex1_RGB ) 
-//				  + ( 0.0f * tex2_RGB );
-//			vec4 outColour1 = calcualteLightContrib( texRGB.rgb, fNormal.xyz, 
-//													fVertWorldLocation.xyz, specularColour );
-//			
-//			texRGB = ( 0.0f * tex0_RGB ) 
-//				  + ( 1.0f * tex1_RGB ) 
-//				  + ( 0.0f * tex2_RGB );
-//			vec4 outColour2 = calcualteLightContrib( texRGB.rgb, fNormal.xyz, 
-//										fVertWorldLocation.xyz, specularColour );
-//
-//			vec4 pct = vec4(st.x);
-//			
-//			outColour = mix(outColour1, outColour2, pct);
-//
-//			pixelColour = outColour;
-//			pixelColour.a = diffuseColour.a;
-//			
-//		}
-//		if (fVertWorldLocation.y < 30.0f)
-//		{
-//			texRGB = ( 0.0f * tex0_RGB ) 
-//				  + ( 0.0f * tex1_RGB ) 
-//				  + ( 1.0f * tex2_RGB );
-//		}
-//	}
-	
-//	pixelColour.rgb += vec3(0.5f, 0.5f, 0.5f);
-	
-//	pixelColour.rgb += fNormal.xyz;
-//	pixelColour.rgb += fVertWorldLocation.xyz;
 	
 }	// Ooops
 
@@ -564,8 +498,6 @@ vec4 calcualteLightContrib( vec3 vertexMaterialColour, vec3 vertexNormal,
 			}
 						
 		}// if ( intLightType == 1 )
-		
-		
 					
 		finalObjectColour.rgb += (vertexMaterialColour.rgb * lightDiffuseContrib.rgb)
 								  + (vertexSpecular.rgb  * lightSpecularContrib.rgb );

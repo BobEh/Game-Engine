@@ -325,6 +325,16 @@ glm::vec3 cMeshObject::GetRelativeDirection(glm::vec3 desiredDirection)
 	return glm::vec3();
 }
 
+bool cMeshObject::GetIsSelected()
+{
+	return _isSelected;
+}
+
+void cMeshObject::SetIsSelected(bool selected)
+{
+	this->_isSelected = selected;
+}
+
 void cMeshObject::GetVelocity(glm::vec3& velocityOut)
 {
 	

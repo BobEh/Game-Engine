@@ -256,7 +256,42 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 
 	if (!isShiftKeyDownByAlone(mods) && !isCtrlKeyDownByAlone(mods))
 	{
-
+		if (key == GLFW_KEY_UP && action == GLFW_PRESS)
+		{
+			if (currentMenuSelection == menuSelection::exit)
+			{
+				currentMenuSelection = menuSelection::platform;
+				//g_vec_pMenuItemsObjects.at(1)->setRotationXYZ(glm::vec3(0.0f, glm::radians(90.0f), 0.0f));
+			}
+			else if (currentMenuSelection == menuSelection::platform)
+			{
+				currentMenuSelection = menuSelection::galactica;
+				//g_vec_pMenuItemsObjects.at(2)->setRotationXYZ(glm::vec3(0.0f, glm::radians(90.0f), 0.0f));
+			}
+			else if (currentMenuSelection == menuSelection::galactica)
+			{
+				currentMenuSelection = menuSelection::overworld;
+				//g_vec_pMenuItemsObjects.at(3)->setRotationXYZ(glm::vec3(0.0f, glm::radians(90.0f), 0.0f));
+			}
+		}
+		if (key == GLFW_KEY_DOWN && action == GLFW_PRESS)
+		{
+			if (currentMenuSelection == menuSelection::platform)
+			{
+				currentMenuSelection = menuSelection::exit;
+				//g_vec_pMenuItemsObjects.at(0)->setRotationXYZ(glm::vec3(0.0f, glm::radians(90.0f), 0.0f));
+			}
+			else if (currentMenuSelection == menuSelection::galactica)
+			{
+				currentMenuSelection = menuSelection::platform;
+				//g_vec_pMenuItemsObjects.at(1)->setRotationXYZ(glm::vec3(0.0f, glm::radians(90.0f), 0.0f));
+			}
+			else if (currentMenuSelection == menuSelection::overworld)
+			{
+				currentMenuSelection = menuSelection::galactica;
+				//g_vec_pMenuItemsObjects.at(2)->setRotationXYZ(glm::vec3(0.0f, glm::radians(90.0f), 0.0f));
+			}
+		}
 		if (key == GLFW_KEY_B)
 		{
 
@@ -483,6 +518,43 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 	if (isCtrlKeyDownByAlone(mods) && isShiftKeyDownByAlone(mods))
 	{
 
+	}
+
+	if (key == GLFW_KEY_ENTER && action == GLFW_PRESS)
+	{
+		if (currentRender != renderTag::Menu)
+		{
+			currentRender = renderTag::Menu;
+		}
+		else
+		{
+			for (int i = 0; i < g_vec_pMenuItemsObjects.size(); i++)
+			{
+				if (g_vec_pMenuItemsObjects.at(i)->GetIsSelected())
+				{
+					if (currentMenuSelection == menuSelection::exit)
+					{
+						glfwSetWindowShouldClose(window, GLFW_TRUE);
+					}
+					else if (currentMenuSelection == menuSelection::platform)
+					{
+						currentRender = renderTag::Platform;
+					}
+					else if (currentMenuSelection == menuSelection::galactica)
+					{
+						currentRender = renderTag::AI;
+					}
+					else if (currentMenuSelection == menuSelection::overworld)
+					{
+						currentRender = renderTag::none;
+						pCurrentObject = pFindObjectByFriendlyName("mainCharacter");
+						pCurrentObject->setAnimation("Idle");
+						pCurrentObject->setRotationXYZ(glm::vec3(0.0f, 0.0f, 0.0f));
+					}
+				}
+				g_vec_pMenuItemsObjects.at(i)->setRotationXYZ(glm::vec3(0.0f, glm::radians(90.0f), 0.0f));
+			}
+		}
 	}
 
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)

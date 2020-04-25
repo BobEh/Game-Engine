@@ -444,6 +444,15 @@ void cSphereObject::SetPosition(glm::vec3 positionIn)
 	//this->_component->SetPosition(positionIn);
 }
 
+bool cSphereObject::GetIsSelected()
+{
+	return false;
+}
+
+void cSphereObject::SetIsSelected(bool selected)
+{
+}
+
 void cSphereObject::GetVelocity(glm::vec3& velocityOut)
 {
 	glm::vec3 result = glm::vec3(0.0f);

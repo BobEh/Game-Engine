@@ -221,6 +221,12 @@ int LoadMeshes()
 		std::cout << "Error: couldn't find the debug cube ply file." << std::endl;
 	}
 
+	cMesh menuItemMesh;
+	if (!pTheModelLoader->LoadPlyModel("assets/models/MenuItem.ply", menuItemMesh))
+	{
+		std::cout << "Error: couldn't find the menuItem ply file." << std::endl;
+	}
+
 	cMesh eagleMesh;
 	pTheModelLoader->LoadPlyModel("assets/models/Eagle_xyz_n_uv.ply", eagleMesh);
 
@@ -251,6 +257,12 @@ int LoadMeshes()
 	pTheVAOManager->LoadModelIntoVAO("sphere",
 		sphereMesh,		// Sphere mesh info
 		sphereMeshInfo,
+		shaderProgID);
+
+	sModelDrawInfo menuItemMeshInfo;
+	pTheVAOManager->LoadModelIntoVAO("menuItem",
+		menuItemMesh,		// Sphere mesh info
+		menuItemMeshInfo,
 		shaderProgID);
 
 	sModelDrawInfo platformCharacterMeshInfo;
@@ -421,6 +433,14 @@ int LoadTextures()
 
 	g_pTextureManager->Create2DTextureFromBMPFile("Menu.bmp", true);
 
+	g_pTextureManager->Create2DTextureFromBMPFile("Overworld.bmp", true);
+
+	g_pTextureManager->Create2DTextureFromBMPFile("Galactica.bmp", true);
+
+	g_pTextureManager->Create2DTextureFromBMPFile("Platformer.bmp", true);
+
+	g_pTextureManager->Create2DTextureFromBMPFile("ExitGame.bmp", true);
+
 	::g_pTextureManager->Create2DTextureFromBMPFile("water_800.bmp", true);
 
 	::g_pTextureManager->Create2DTextureFromBMPFile("purple.bmp", true);
@@ -428,6 +448,7 @@ int LoadTextures()
 	::g_pTextureManager->Create2DTextureFromBMPFile("white.bmp", true);
 	::g_pTextureManager->Create2DTextureFromBMPFile("blue.bmp", true);
 	::g_pTextureManager->Create2DTextureFromBMPFile("green.bmp", true);
+	g_pTextureManager->Create2DTextureFromBMPFile("black.bmp", true);
 	g_pTextureManager->Create2DTextureFromBMPFile("X-Wing-Texture_bit.bmp", true);
 
 	//Cube Maps loaded here
@@ -808,6 +829,26 @@ void LoadAnimationObjects()
 	pPlatformCharacter->setTransprancyValue(1.0f);
 	g_vec_pPlatformCharacterObjects.push_back(pPlatformCharacter);
 	//physicsWorld->AddComponent(pPlatformCharacter->GetComponent());
+
+	pTokenCharacter = pFactory->CreateObject("sphere", nPhysics::eComponentType::ball);
+	pTokenCharacter->setAnimation("Idle");
+	pTokenCharacter->setMeshName("platformCharacter");
+	pTokenCharacter->setFriendlyName("characterToken");	// We use to search
+	pTokenCharacter->setPositionXYZ(glm::vec3(50.0, 5.0f, -100.0f));
+	pTokenCharacter->setRotationXYZ(glm::vec3(glm::radians(-90.0f), 0.0f, 0.0f));
+	pTokenCharacter->setScale(glm::vec3(0.05f));
+	pTokenCharacter->setDebugColour(glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+	pTokenCharacter->setVelocity(glm::vec3(0.0f, 0.0f, 0.0f));
+	pTokenCharacter->setAccel(glm::vec3(0.0f, 0.0f, 0.0f));
+	pTokenCharacter->setInverseMass(1.0f);
+	pTokenCharacter->setIsVisible(true);
+	pTokenCharacter->setIsWireframe(false);
+	pTokenCharacter->setTexture("StoneTex_1024.bmp", 0);
+	pTokenCharacter->setTexture("grassTexture_512.bmp", 1);
+	pTokenCharacter->setTexture("sandTexture_1024.bmp", 2);
+	pTokenCharacter->setTextureRatio(1, 1);
+	pTokenCharacter->setTransprancyValue(1.0f);
+	g_vec_pEnvironmentObjects.push_back(pTokenCharacter);
 }
 
 DWORD WINAPI LoadObjects(LPVOID params)
@@ -1492,6 +1533,99 @@ DWORD WINAPI LoadObjects(LPVOID params)
 		pBigTreeTrunk->setTransprancyValue(1.0f);
 		g_vec_pEnvironmentObjects.push_back(pBigTreeTrunk);
 	}
+
+	iObject* pMenuSelector = pFactory->CreateObject("mesh", nPhysics::eComponentType::plane);
+	pMenuSelector->setAnimation("Idle");
+	pMenuSelector->setMeshName("platformCharacter");
+	pMenuSelector->setFriendlyName("menuSelector");	// We use to search
+	pMenuSelector->setPositionXYZ(glm::vec3(30.0f, 10.5f, 20.0f));
+	pMenuSelector->setRotationXYZ(glm::vec3(0.0f,0.0f,0.0f));
+	pMenuSelector->setRotationXYZ(glm::vec3(glm::radians(-90.0f), 0.0f, 0.0f));
+	pMenuSelector->setScale(glm::vec3(0.008f));
+	pMenuSelector->setDebugColour(glm::vec4(0.8f, 0.8f, 0.8f, 1.0f));
+	pMenuSelector->setVelocity(glm::vec3(0.0f, 0.0f, 0.0f));
+	pMenuSelector->setAccel(glm::vec3(0.0f, 0.0f, 0.0f));
+	pMenuSelector->setInverseMass(1.0f);
+	pMenuSelector->setIsVisible(true);
+	pMenuSelector->setIsWireframe(true);
+	pMenuSelector->setTexture("StoneTex_1024.bmp", 0);
+	pMenuSelector->setTexture("grassTexture_512.bmp", 1);
+	pMenuSelector->setTexture("sandTexture_1024.bmp", 2);
+	pMenuSelector->setTextureRatio(1, 1);
+	pMenuSelector->setTransprancyValue(1.0f);
+	g_vec_pEnvironmentObjects.push_back(pMenuSelector);
+
+	iObject* pMenuItemExitGame = pFactory->CreateObject("mesh", nPhysics::eComponentType::plane);
+	pMenuItemExitGame->setMeshName("menuItem");
+	pMenuItemExitGame->setFriendlyName("exitGameMenuItem");
+	pMenuItemExitGame->setRotationXYZ(glm::vec3(0.0f, glm::radians(90.0f), 0.0f));
+	pMenuItemExitGame->setScale(glm::vec3(1.0f));
+	pMenuItemExitGame->setDebugColour(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+	pMenuItemExitGame->setIsWireframe(true);
+	pMenuItemExitGame->setInverseMass(0.0f);			// Sphere won't move
+	pMenuItemExitGame->setIsVisible(false);
+	pMenuItemExitGame->setScale(glm::vec3(3.55f));
+	pMenuItemExitGame->setIsVisible(true);
+	pMenuItemExitGame->setPositionXYZ(glm::vec3(0.0f, -12.5f, 34.0f));
+	pMenuItemExitGame->setIsWireframe(false);
+	pMenuItemExitGame->setTexture("ExitGame.bmp", 1);
+	pMenuItemExitGame->setTextureRatio(1, 1);
+	pMenuItemExitGame->setTransprancyValue(1.0f);
+	g_vec_pMenuItemsObjects.push_back(pMenuItemExitGame);
+
+	iObject* pMenuItemPlatformer = pFactory->CreateObject("mesh", nPhysics::eComponentType::plane);
+	pMenuItemPlatformer->setMeshName("menuItem");
+	pMenuItemPlatformer->setFriendlyName("platformerMenuItem");
+	pMenuItemPlatformer->setRotationXYZ(glm::vec3(0.0f, glm::radians(90.0f), 0.0f));
+	pMenuItemPlatformer->setScale(glm::vec3(1.0f));
+	pMenuItemPlatformer->setDebugColour(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+	pMenuItemPlatformer->setIsWireframe(true);
+	pMenuItemPlatformer->setInverseMass(0.0f);			// Sphere won't move
+	pMenuItemPlatformer->setIsVisible(false);
+	pMenuItemPlatformer->setScale(glm::vec3(3.55f));
+	pMenuItemPlatformer->setIsVisible(true);
+	pMenuItemPlatformer->setPositionXYZ(glm::vec3(0.0f, -4.5f, 36.0f));
+	pMenuItemPlatformer->setIsWireframe(false);
+	pMenuItemPlatformer->setTexture("Platformer.bmp", 1);
+	pMenuItemPlatformer->setTextureRatio(1, 1);
+	pMenuItemPlatformer->setTransprancyValue(1.0f);
+	g_vec_pMenuItemsObjects.push_back(pMenuItemPlatformer);
+
+	iObject* pMenuItemGalactica = pFactory->CreateObject("mesh", nPhysics::eComponentType::plane);
+	pMenuItemGalactica->setMeshName("menuItem");
+	pMenuItemGalactica->setFriendlyName("galacticaMenuItem");
+	pMenuItemGalactica->setRotationXYZ(glm::vec3(0.0f, glm::radians(90.0f), 0.0f));
+	pMenuItemGalactica->setScale(glm::vec3(1.0f));
+	pMenuItemGalactica->setDebugColour(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+	pMenuItemGalactica->setIsWireframe(true);
+	pMenuItemGalactica->setInverseMass(0.0f);			// Sphere won't move
+	pMenuItemGalactica->setIsVisible(false);
+	pMenuItemGalactica->setScale(glm::vec3(3.55f));
+	pMenuItemGalactica->setIsVisible(true);
+	pMenuItemGalactica->setPositionXYZ(glm::vec3(1.5f, 2.0f, 38.0f));
+	pMenuItemGalactica->setIsWireframe(false);
+	pMenuItemGalactica->setTexture("Galactica.bmp", 1);
+	pMenuItemGalactica->setTextureRatio(1, 1);
+	pMenuItemGalactica->setTransprancyValue(1.0f);
+	g_vec_pMenuItemsObjects.push_back(pMenuItemGalactica);
+
+	iObject* pMenuItemOverWorld = pFactory->CreateObject("mesh", nPhysics::eComponentType::plane);
+	pMenuItemOverWorld->setMeshName("menuItem");
+	pMenuItemOverWorld->setFriendlyName("overWorldMenuItem");
+	pMenuItemOverWorld->setRotationXYZ(glm::vec3(0.0f, glm::radians(90.0f), 0.0f));
+	pMenuItemOverWorld->setScale(glm::vec3(1.0f));
+	pMenuItemOverWorld->setDebugColour(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+	pMenuItemOverWorld->setIsWireframe(true);
+	pMenuItemOverWorld->setInverseMass(0.0f);			// Sphere won't move
+	pMenuItemOverWorld->setIsVisible(false);
+	pMenuItemOverWorld->setScale(glm::vec3(3.55f));
+	pMenuItemOverWorld->setIsVisible(true);
+	pMenuItemOverWorld->setPositionXYZ(glm::vec3(0.0f, 8.0f, 40.0f));
+	pMenuItemOverWorld->setIsWireframe(false);
+	pMenuItemOverWorld->setTexture("Overworld.bmp", 1);
+	pMenuItemOverWorld->setTextureRatio(1, 1);
+	pMenuItemOverWorld->setTransprancyValue(1.0f);
+	g_vec_pMenuItemsObjects.push_back(pMenuItemOverWorld);
 
 	LeaveCriticalSection(&output_lock);
 

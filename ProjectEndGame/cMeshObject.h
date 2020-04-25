@@ -20,6 +20,9 @@ public:
 	virtual void SetPosition(glm::vec3 positionIn);
 	virtual glm::vec3 GetRelativeDirection(glm::vec3 desiredDirection);
 
+	virtual bool GetIsSelected();
+	virtual void SetIsSelected(bool selected);
+
 	//virtual void ApplyForce(const glm::vec3& force);
 
 	virtual void GetVelocity(glm::vec3& velocityOut);
@@ -117,6 +120,7 @@ public:
 	void setIsTranspanrancy(bool isTranspanrancy);
 
 private:
+	bool _isSelected;
 	std::string _Animation;
 	std::string _Behaviour;
 	cSimpleAssimpSkinnedMesh* pSM;

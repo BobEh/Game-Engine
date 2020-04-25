@@ -32,6 +32,9 @@ public:
 	virtual void SetComponent(nPhysics::iPhysicsComponent*) = 0;
 	virtual nPhysics::iPhysicsComponent* GetComponent() = 0;
 
+	virtual bool GetIsSelected() = 0;
+	virtual void SetIsSelected(bool selected) = 0;
+
 	//getters
 	virtual std::string getAnimation() = 0;
 	virtual std::string getBehaviour() = 0;

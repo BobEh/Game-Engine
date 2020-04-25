@@ -292,6 +292,15 @@ glm::vec3 cClothObject::GetRelativeDirection(glm::vec3 desiredDirection)
 	return glm::vec3();
 }
 
+bool cClothObject::GetIsSelected()
+{
+	return false;
+}
+
+void cClothObject::SetIsSelected(bool selected)
+{
+}
+
 void cClothObject::GetVelocity(glm::vec3& velocityOut)
 {
 	velocityOut = this->_velocity;

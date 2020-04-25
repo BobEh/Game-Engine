@@ -257,6 +257,15 @@ glm::vec3 cGameObject::GetRelativeDirection(glm::vec3 desiredDirection)
 	return glm::vec3();
 }
 
+bool cGameObject::GetIsSelected()
+{
+	return false;
+}
+
+void cGameObject::SetIsSelected(bool selected)
+{
+}
+
 void cGameObject::ApplyForce(const glm::vec3& force)
 {
 	//this->_component->ApplyForce(force);

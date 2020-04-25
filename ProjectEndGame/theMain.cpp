@@ -186,6 +186,18 @@ int main(void)
 		GLint floatBufferOffset_UL = glGetUniformLocation(shaderProgID, "bufferOffset");
 		glUniform1f(floatBufferOffset_UL, bufferOffset);
 
+		shipLevelCompleted_UL = glGetUniformLocation(shaderProgID, "shipLevelCompleted");
+		platformerCompleted_UL = glGetUniformLocation(shaderProgID, "platformerCompleted");
+		renderMenu_UL = glGetUniformLocation(shaderProgID, "isMenu");
+		renderMenuNotSelected_UL = glGetUniformLocation(shaderProgID, "isMenuNotSelected");
+		renderMenuSelector_UL = glGetUniformLocation(shaderProgID, "isMenuSelector");
+
+		randomLightContrib_UL = glGetUniformLocation(shaderProgID, "randomLightContrib");
+		glUniform1f(randomLightContrib_UL, randInRange(0.0f, 1.5f));
+
+		randomScaling_UL = glGetUniformLocation(shaderProgID, "randomScaling");
+		glUniform1f(randomScaling_UL, randInRange(0.2f, 0.25f));
+
 		if (changeToAI)
 		{
 			TransitionToAI(deltaTime);
@@ -238,7 +250,16 @@ int main(void)
 		//                                                           
 		//   
 
-		if (currentRender == renderTag::AI)
+		if (currentRender == renderTag::Menu)
+		{
+			glUniform1f(renderPlatform_UL, false);
+			glUniform1f(renderAI_UL, false);
+			//g_pFlyCamera->eye = glm::vec3(0.0f, 20.0f, 50.0f);
+			//v = glm::lookAt(g_pFlyCamera->eye, glm::vec3(0.0f), g_pFlyCamera->getUpVector());
+			std::cout << "Camera Location:\n" << "X: " << g_pFlyCamera->eye.x << "Y: " << g_pFlyCamera->eye.y << "Z: " << g_pFlyCamera->eye.z << std::endl;
+			RenderMenu();
+		}
+		else if (currentRender == renderTag::AI)
 		{
 			glUniform1f(renderAI_UL, true);
 			DrawAI();

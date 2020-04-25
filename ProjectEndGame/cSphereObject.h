@@ -21,6 +21,9 @@ public:
 	virtual void GetPosition(glm::vec3& positionOut);
 	virtual void SetPosition(glm::vec3 positionIn);
 
+	virtual bool GetIsSelected();
+	virtual void SetIsSelected(bool selected);
+
 	//virtual void ApplyForce(const glm::vec3& force);
 
 	virtual void GetVelocity(glm::vec3& velocityOut);

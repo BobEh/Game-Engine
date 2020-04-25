@@ -40,10 +40,24 @@ uniform vec2 textOffset;
 const int MAXNUMBEROFBONES = 100;
 uniform mat4 matBonesArray[MAXNUMBEROFBONES];
 uniform bool isSkinnedMesh;
+uniform float randomLightContrib;
+
+uniform bool shipLevelCompleted;
+uniform bool platformerCompleted;
+uniform float randomScaling;
+uniform bool isMenuSelector;
+
+uniform bool isMenu;
+uniform bool isMenuNotSelected;
 
 void main()
 {
     vec4 vertPosition = vPosition;
+
+//	if (platformerCompleted)
+//	{
+//		vertPosition.y += randomScaling;
+//	}
 
 	if ( useHeightMap )
 	{
@@ -142,7 +156,7 @@ void main()
 		gl_Position = matMVP * vertOriginal;
 	
 		// Vertex location in "world space"
-		fVertWorldLocation = matModel * vec4(vertPosition.xyz, 1.0);	
+		fVertWorldLocation = matModel * vec4(vertPosition.xyz, 1.0);
 	
 		mat4 matModelInverseTranspose = inverse(transpose(matModel));
 	
@@ -150,6 +164,31 @@ void main()
 
 		vec3 theNormal = normalize(vNormal.xyz);
  		fNormal = matModelInverseTranspose * vec4(theNormal, 1.0f);
+
+		if (shipLevelCompleted)
+		{
+			fNormal *= randomLightContrib;
+		}
+
+		if (platformerCompleted)
+		{
+			fNormal *= randomLightContrib * 2.0f;
+		}
+
+		if (isMenu)
+		{
+			fNormal *= 14.5f;
+		}
+
+		if (isMenuNotSelected)
+		{
+			fNormal *= 5.0f;
+		}
+
+		if (isMenuSelector)
+		{
+			fNormal *= 0.01f;
+		}
 	
 		// Pass the colour and UV unchanged. And the other stuff??? maybe??
 		fColour = vColour;	

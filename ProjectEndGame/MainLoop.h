@@ -57,7 +57,209 @@ int attackCount = 0;
 
 void RenderMenu()
 {
+	drawSpace = false;
+	// 1. Disable the FBO
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+	// 2. Clear the ACTUAL screen buffer
+	glViewport(0, 0, width, height);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	// 3. Use the FBO colour texture as the texture on that quad.
+	// set the passNumber to 1
+	glUniform1i(passNumber_UniLoc, 1);
+
+	glActiveTexture(GL_TEXTURE0 + 40);
+	glBindTexture(GL_TEXTURE_2D, pAIFBO->colourTexture_0_ID);
+
+	GLuint texSampFBO_UL = glGetUniformLocation(shaderProgID, "AIPassColourTexture");
+	glUniform1i(texSampFBO_UL, 40);
+
+	// 4. Draw a single object (a triangle or quad)
+	iObject* pQuadOrIsIt = pFindObjectByFriendlyName("cube");
+	pQuadOrIsIt->setScale(glm::vec3(10.0f));
+	pQuadOrIsIt->setIsVisible(true);
+	//glm::vec3 oldLocation = glm::vec3(::g_pFlyCamera->eye.x, ::g_pFlyCamera->eye.y, ::g_pFlyCamera->eye.z);
+	pQuadOrIsIt->setPositionXYZ(glm::vec3(::g_pFlyCamera->getAtInWorldSpace().x, ::g_pFlyCamera->getAtInWorldSpace().y, ::g_pFlyCamera->getAtInWorldSpace().z + 300));
+	//pQuadOrIsIt->setPositionXYZ(glm::vec3(::g_pFlyCamera->eye.x, ::g_pFlyCamera->eye.y, ::g_pFlyCamera->eye.z + 100));
+	pQuadOrIsIt->setIsWireframe(false);
+
+	// Move the camera
+	// Maybe set it to orthographic, etc.
+	glm::mat4 matQuad = glm::mat4(1.0f);
+	//DrawObject(matQuad, pQuadOrIsIt, shaderProgID, pTheVAOManager);
+
+	// set pass number back to 0 to render the rest of the scene
+	glUniform1i(passNumber_UniLoc, 0);
+
+	iObject* pMenuItemOverWorld = pFindObjectByFriendlyName("overWorldMenuItem");
+	pMenuItemOverWorld->setIsVisible(true);
+	//std::cout << "Y Rotation: " << pMenuItemOverWorld->getRotationXYZ().y << std::endl;
+	if (pMenuItemOverWorld->getRotationXYZ().y < 0.999f)
+	{
+		glm::quat selectorRotation = glm::quat(glm::vec3(0.0f, glm::radians(4.0f), 0.0f));
+		pMenuItemOverWorld->setRotationXYZ(pMenuItemOverWorld->getRotationXYZ() * selectorRotation);
+	}
+
+	// Move the camera 
+	// Maybe set it to orthographic, etc.
+	glm::mat4 matFullScreenQuad = glm::mat4(1.0f);
+	g_pFlyCamera->eye = glm::vec3(40.0f, 6.0f, -64.0f);
+	//glUniform1f(renderFullScreen_UL, true);
+	if (pMenuItemOverWorld->GetIsSelected())
+	{
+		glUniform1f(renderMenu_UL, true);
+	}
+	else
+	{
+		glUniform1f(renderMenuNotSelected_UL, true);
+	}
+	DrawObject(matFullScreenQuad, pMenuItemOverWorld, shaderProgID, pTheVAOManager);
+	glUniform1f(renderMenu_UL, false);
+	glUniform1f(renderMenuNotSelected_UL, false);
+	//glUniform1f(renderFullScreen_UL, false);
+
+	iObject* pMenuItemGalactica = pFindObjectByFriendlyName("galacticaMenuItem");
+	pMenuItemGalactica->setIsVisible(true);
+	if (pMenuItemGalactica->getRotationXYZ().y < 0.999f)
+	{
+		glm::quat selectorRotation = glm::quat(glm::vec3(0.0f, glm::radians(4.0f), 0.0f));
+		pMenuItemGalactica->setRotationXYZ(pMenuItemGalactica->getRotationXYZ() * selectorRotation);
+	}
+
+	// Move the camera 
+	// Maybe set it to orthographic, etc.
+	glm::mat4 matGalacticaQuad = glm::mat4(1.0f);
+	g_pFlyCamera->eye = glm::vec3(40.0f, 6.0f, -64.0f);
+	//glUniform1f(renderFullScreen_UL, true);
+	if (pMenuItemGalactica->GetIsSelected())
+	{
+		glUniform1f(renderMenu_UL, true);
+	}
+	else
+	{
+		glUniform1f(renderMenuNotSelected_UL, true);
+	}
+	DrawObject(matGalacticaQuad, pMenuItemGalactica, shaderProgID, pTheVAOManager);
+	glUniform1f(renderMenu_UL, false);
+	glUniform1f(renderMenuNotSelected_UL, false);
+	//glUniform1f(renderFullScreen_UL, false);
+
+	iObject* pMenuItemPlatformer = pFindObjectByFriendlyName("platformerMenuItem");
+	pMenuItemPlatformer->setIsVisible(true);
+	if (pMenuItemPlatformer->getRotationXYZ().y < 0.999f)
+	{
+		glm::quat selectorRotation = glm::quat(glm::vec3(0.0f, glm::radians(4.0f), 0.0f));
+		pMenuItemPlatformer->setRotationXYZ(pMenuItemPlatformer->getRotationXYZ() * selectorRotation);
+	}
+
+	// Move the camera 
+	// Maybe set it to orthographic, etc.
+	glm::mat4 matPlatformerQuad = glm::mat4(1.0f);
+	g_pFlyCamera->eye = glm::vec3(40.0f, 6.0f, -64.0f);
+	//glUniform1f(renderFullScreen_UL, true);
+	if (pMenuItemPlatformer->GetIsSelected())
+	{
+		glUniform1f(renderMenu_UL, true);
+	}
+	else
+	{
+		glUniform1f(renderMenuNotSelected_UL, true);
+	}
+	DrawObject(matPlatformerQuad, pMenuItemPlatformer, shaderProgID, pTheVAOManager);
+	glUniform1f(renderMenu_UL, false);
+	glUniform1f(renderMenuNotSelected_UL, false);
+	//glUniform1f(renderFullScreen_UL, false);
+	
+	iObject* pMenuItemExitGame = pFindObjectByFriendlyName("exitGameMenuItem");
+	pMenuItemExitGame->setIsVisible(true);
+	if (pMenuItemExitGame->getRotationXYZ().y < 0.999f)
+	{
+		glm::quat selectorRotation = glm::quat(glm::vec3(0.0f, glm::radians(4.0f), 0.0f));
+		pMenuItemExitGame->setRotationXYZ(pMenuItemExitGame->getRotationXYZ() * selectorRotation);
+	}
+
+	// Move the camera 
+	// Maybe set it to orthographic, etc.
+	glm::mat4 matExitGameQuad = glm::mat4(1.0f);
+	g_pFlyCamera->eye = glm::vec3(40.0f, 6.0f, -64.0f);
+	//glUniform1f(renderFullScreen_UL, true);
+	if (pMenuItemExitGame->GetIsSelected())
+	{
+		glUniform1f(renderMenu_UL, true);
+	}
+	else
+	{
+		glUniform1f(renderMenuNotSelected_UL, true);
+	}
+	DrawObject(matExitGameQuad, pMenuItemExitGame, shaderProgID, pTheVAOManager);
+	glUniform1f(renderMenu_UL, false);
+	glUniform1f(renderMenuNotSelected_UL, false);
+	//glUniform1f(renderFullScreen_UL, false);
+
+	iObject* pMenuItemFiller = pFactory->CreateObject("mesh", nPhysics::eComponentType::plane);
+	pMenuItemFiller->setMeshName("menuItem");
+	pMenuItemFiller->setFriendlyName("exitGameMenuItem");
+	pMenuItemFiller->setRotationXYZ(glm::vec3(0.0f, glm::radians(180.0f), 0.0f));
+	pMenuItemFiller->setScale(glm::vec3(1.0f));
+	pMenuItemFiller->setDebugColour(glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+	pMenuItemFiller->setIsWireframe(true);
+	pMenuItemFiller->setInverseMass(0.0f);			// Sphere won't move
+	pMenuItemFiller->setIsVisible(false);
+	pMenuItemFiller->setScale(glm::vec3(3.55f));
+	pMenuItemFiller->setIsVisible(true);
+	pMenuItemFiller->setPositionXYZ(glm::vec3(0.0f, -18.5f, 32.0f));
+	pMenuItemFiller->setIsWireframe(false);
+	pMenuItemFiller->setTexture("black.bmp", 1);
+	pMenuItemFiller->setTextureRatio(1, 1);
+	pMenuItemFiller->setTransprancyValue(1.0f);
+
+	// Move the camera 
+	// Maybe set it to orthographic, etc.
+	glm::mat4 matFillerQuad = glm::mat4(1.0f);
+	g_pFlyCamera->eye = glm::vec3(40.0f, 6.0f, -64.0f);
+	//glUniform1f(renderFullScreen_UL, true);
+	glUniform1f(renderMenu_UL, true);
+	DrawObject(matFillerQuad, pMenuItemFiller, shaderProgID, pTheVAOManager);
+	glUniform1f(renderMenu_UL, false);
+	//glUniform1f(renderFullScreen_UL, false);
+
+	iObject* pMenuSelector = pFindObjectByFriendlyName("menuSelector");
+	glm::quat selectorRotation = glm::quat(glm::vec3(0.0f, 0.0f, glm::radians(-4.0f)));
+	pMenuSelector->setRotationXYZ(pMenuSelector->getRotationXYZ()* selectorRotation);
+	pMenuSelector->setIsVisible(true);
+	for (int i = 0; i < g_vec_pMenuItemsObjects.size(); i++)
+	{
+		if (i == static_cast<int>(currentMenuSelection))
+		{
+			g_vec_pMenuItemsObjects.at(i)->SetIsSelected(true);
+		}
+		else
+		{
+			g_vec_pMenuItemsObjects.at(i)->SetIsSelected(false);
+		}
+	}
+	if (pMenuItemOverWorld->GetIsSelected())
+	{
+		pMenuSelector->setPositionXYZ(glm::vec3(pMenuItemOverWorld->getPositionXYZ().x + 30.0f, pMenuItemOverWorld->getPositionXYZ().y + 4.0f, pMenuItemOverWorld->getPositionXYZ().z -4.0f));
+	}
+	if (pMenuItemGalactica->GetIsSelected())
+	{
+		pMenuSelector->setPositionXYZ(glm::vec3(pMenuItemGalactica->getPositionXYZ().x + 30.0f, pMenuItemGalactica->getPositionXYZ().y + 4.0f, pMenuItemGalactica->getPositionXYZ().z - 4.0f));
+	}
+	if (pMenuItemPlatformer->GetIsSelected())
+	{
+		pMenuSelector->setPositionXYZ(glm::vec3(pMenuItemPlatformer->getPositionXYZ().x + 30.0f, pMenuItemPlatformer->getPositionXYZ().y + 4.0f, pMenuItemPlatformer->getPositionXYZ().z - 4.0f));
+	}
+	if (pMenuItemExitGame->GetIsSelected())
+	{
+		pMenuSelector->setPositionXYZ(glm::vec3(pMenuItemExitGame->getPositionXYZ().x + 30.0f, pMenuItemExitGame->getPositionXYZ().y + 4.0f, pMenuItemExitGame->getPositionXYZ().z - 4.0f));
+	}
+
+	glm::mat4 matSelectorQuad = glm::mat4(1.0f);
+	glUniform1f(renderMenuSelector_UL, true);
+	DrawObject(matSelectorQuad, pMenuSelector, shaderProgID, pTheVAOManager);
+	glUniform1f(renderMenuSelector_UL, false);
 }
 
 void DrawAIFBO()
@@ -1381,13 +1583,24 @@ void DrawSecondPass()
 	}//for (int index...
 
 	iObject* shipToken = pFindObjectByFriendlyName("shipTransporter");
-	float distance = glm::distance(pMainCharacter->getPositionXYZ(), shipToken->getPositionXYZ());
+	float shipDistance = glm::distance(pMainCharacter->getPositionXYZ(), shipToken->getPositionXYZ());
 
-	if (distance < 15)
+	if (shipDistance < 10)
 	{
 		if (currentRender == renderTag::none)
 		{
 			changeToAI = true;
+		}
+	}
+
+	iObject* characterToken = pFindObjectByFriendlyName("characterToken");
+	float characterDistance = glm::distance(pMainCharacter->getPositionXYZ(), characterToken->getPositionXYZ());
+
+	if (characterDistance < 10)
+	{
+		if (currentRender == renderTag::none)
+		{
+			changeToPlatform = true;
 		}
 	}
 
@@ -1397,9 +1610,45 @@ void DrawSecondPass()
 
 		iObject* pCurrentObject = ::g_vec_pEnvironmentObjects[index];
 
+		if (pCurrentObject->getFriendlyName() == "menuSelector")
+		{
+			pCurrentObject->setIsVisible(false);
+		}
+		if (pCurrentObject->getFriendlyName() == "overWorldMenuItem")
+		{
+			pCurrentObject->setIsVisible(false);
+		}
+		if (pCurrentObject->getFriendlyName() == "galacticaMenuItem")
+		{
+			pCurrentObject->setIsVisible(false);
+		}
+		if (pCurrentObject->getFriendlyName() == "platformerMenuItem")
+		{
+			pCurrentObject->setIsVisible(false);
+		}
+		if (pCurrentObject->getFriendlyName() == "exitGameMenuItem")
+		{
+			pCurrentObject->setIsVisible(false);
+		}
+
+		if (pCurrentObject->getFriendlyName() == "shipTransporter")
+		{
+			glUniform1f(shipLevelCompleted_UL, GL_TRUE);
+		}
+		if (pCurrentObject->getFriendlyName() == "characterToken")
+		{
+			glUniform1f(platformerCompleted_UL, GL_TRUE);
+		}
 		DrawObject(matModel, pCurrentObject,
 			shaderProgID, pTheVAOManager);
-
+		if (pCurrentObject->getFriendlyName() == "shipTransporter")
+		{
+			glUniform1f(shipLevelCompleted_UL, GL_FALSE);
+		}
+		if (pCurrentObject->getFriendlyName() == "characterToken")
+		{
+			glUniform1f(platformerCompleted_UL, GL_FALSE);
+		}
 	}//for (int index...
 
 	for (int index = 0; index != g_vec_pClothObjects.size(); index++)
@@ -1503,12 +1752,4 @@ void DrawSecondPass()
 
 	// set pass number back to 0 to render the rest of the scene
 	glUniform1i(passNumber_UniLoc, 0);
-
-
-
-	bool displayMenu = true;
-	if (displayMenu)
-	{
-		RenderMenu();
-	}
 }

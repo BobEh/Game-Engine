@@ -9,10 +9,20 @@ enum class renderTag
 {
 	AI,
 	Platform,
+	Menu,
 	none
+};
+
+enum class menuSelection
+{
+	exit,
+	platform,
+	galactica,
+	overworld
 };
 bool drawSpace = false;
 renderTag currentRender;
+menuSelection currentMenuSelection = menuSelection::overworld;
 
 // physics stuff
 nPhysics::iPhysicsFactory* physicsFactory;
@@ -65,6 +75,13 @@ cFBO* pPlatformFBO = NULL;
 GLint passNumber_UniLoc;
 GLint renderFullScreen_UL;
 GLint eyeLocation_UL;
+GLint shipLevelCompleted_UL;
+GLint randomLightContrib_UL;
+GLint randomScaling_UL;
+GLint platformerCompleted_UL;
+GLint renderMenu_UL;
+GLint renderMenuNotSelected_UL;
+GLint renderMenuSelector_UL;
 
 glm::mat4 p, v, AIv, Pv, FSv;
 
@@ -111,6 +128,7 @@ std::vector<iObject*> g_vec_pPlatformCharacterObjects;
 std::vector<iObject*> g_vec_pPlatformExplosionObjects;
 std::vector<iObject*> g_vec_pExplosionObjects;
 std::vector<iObject*> g_vec_pPlaceHolderObjects;
+std::vector<iObject*> g_vec_pMenuItemsObjects;
 std::map<std::string /*FriendlyName*/, iObject*> g_map_GameObjectsByFriendlyName;
 
 //AI
@@ -138,6 +156,7 @@ bool gotHit = false;
 bool changeToAI = false;
 bool changeToMain = false;
 bool changeToPlatform = false;
+bool renderMenu = false;
 
 float bufferOffset = 0.0f;
 
@@ -166,6 +185,7 @@ iObject* pMars;
 iObject* pMainShip;
 iObject* gPlayerBullet;
 iObject* pShipToken;
+iObject* pTokenCharacter;
 
 #define NUM_OF_THREADS 1
 
@@ -204,19 +224,26 @@ void TransitionToAI(float dt)
 	iObject* pMainCharacter = pFindObjectByFriendlyName("mainCharacter");
 	pMainCharacter->setPositionXYZ(glm::vec3(40.0f, 5.0f, 0.0f));
 	pMainCharacter->ApplyForce(glm::vec3(0.0f, 0.0f, -10.0f));
+	//g_pFlyCamera->eye = glm::vec3(0.0f, 80.0, -80.0);
 	changeToAI = false;
 }
 
 void TransitionToPlatform(float dt)
 {
-	if (transitionTime < 5.0f)
+	if (transitionTime < 3.0f)
 	{
-		bufferOffset += dt * 0.1f;
+		bufferOffset += randInRange(0.0f, 0.5f);
 		transitionTime += dt;
+		glm::quat tokenRotation = glm::quat(glm::vec3(0.0f, 0.0f, glm::radians(10.0f)));
+		pTokenCharacter->setRotationXYZ(pTokenCharacter->getRotationXYZ() * tokenRotation);
 		return;
 	}
 	currentRender = renderTag::Platform;
 	transitionTime = 0.0f;
 	bufferOffset = 0.0f;
+	iObject* pMainCharacter = pFindObjectByFriendlyName("mainCharacter");
+	pMainCharacter->setPositionXYZ(glm::vec3(40.0f, 5.0f, 0.0f));
+	pMainCharacter->ApplyForce(glm::vec3(0.0f, 0.0f, 10.0f));
+	//g_pFlyCamera->eye = glm::vec3(0.0f, 80.0, -80.0);
 	changeToPlatform = false;
 }

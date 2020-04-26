@@ -196,7 +196,7 @@ int main(void)
 		glUniform1f(randomLightContrib_UL, randInRange(0.0f, 1.5f));
 
 		randomScaling_UL = glGetUniformLocation(shaderProgID, "randomScaling");
-		glUniform1f(randomScaling_UL, randInRange(0.2f, 0.25f));
+		glUniform1f(randomScaling_UL, randInRange(0.0f, 1.0f));
 
 		if (changeToAI)
 		{

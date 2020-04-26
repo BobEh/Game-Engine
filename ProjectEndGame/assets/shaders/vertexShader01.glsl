@@ -78,6 +78,13 @@ void main()
 		
 		vertPosition.y += (texValue1*ratio1) + (texValue2 * ratio2);
 	}
+
+	if (shipLevelCompleted)
+	{
+		vertPosition.x += (randomScaling*1.0f) + (randomScaling * 1.5f);
+		vertPosition.y += (randomScaling*1.0f) + (randomScaling * 1.5f);
+		vertPosition.z += (randomScaling*1.0f) + (randomScaling * 1.5f);
+	}
 	
 	if (isSkinnedMesh)
 	{
